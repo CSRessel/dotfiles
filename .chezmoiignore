@@ -1,0 +1,4 @@
+dot_vim/plugged/*
+dot_vim/dot_git/*
+dot_vim/dot_gitmodules
+dot_vim/executable_dot_gitignore
