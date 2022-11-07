@@ -1,5 +1,6 @@
 [core]
 	symlinks = false
+	excludesfile = ~/.gitignore_global
 [init]
 	defaultBranch = master
 [user]
