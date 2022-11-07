@@ -1,0 +1,7 @@
+[core]
+	symlinks = false
+[init]
+	defaultBranch = master
+[user]
+	name = Clifford Ressel
+	email = CSRessel@gmail.com
