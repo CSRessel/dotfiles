@@ -8,6 +8,7 @@
 *.swo
 *~
 
-autoload/*
-plugged/*
+dot_vim/autoload/*
+dot_vim/plugged/*
 .netrwhist
+
