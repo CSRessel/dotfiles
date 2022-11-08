@@ -33,9 +33,15 @@
 
 ### TODO
 
-- https://wiki.archlinux.org/title/KVM
-- https://wiki.archlinux.org/title/QEMU
-- https://www.kali.org/docs/virtualization/install-qemu-guest-vm/
+- document virtualization setup
+  - https://wiki.archlinux.org/title/KVM
+  - https://wiki.archlinux.org/title/QEMU
+  - https://www.kali.org/docs/virtualization/install-qemu-guest-vm/
+- document containerization setup
+  - https://wiki.archlinux.org/title/Podman
+  - https://wiki.archlinux.org/title/Buildah
+  - https://wiki.archlinux.org/title/Docker
+  - https://wiki.archlinux.org/title/Kubernetes
 
 ### previously
 
