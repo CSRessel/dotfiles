@@ -42,7 +42,7 @@ call plug#end()
 " Options ------------------------------------------------------{{{
 
 " Mouse isn't ALL bad
-set mouse=a
+"set mouse=a
 " Search as you type
 set incsearch
 " highlight search matches

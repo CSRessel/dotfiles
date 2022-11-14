@@ -5,6 +5,7 @@
 - bitwarden
 - chezmoi
 - firefox
+- skippy-xd
 - tmux
 - vim
 - zsh
