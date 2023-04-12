@@ -1,8 +1,11 @@
 [core]
 	symlinks = false
 	excludesfile = ~/.gitignore_global
+	editor = vim
 [init]
 	defaultBranch = master
 [user]
 	name = Clifford Ressel
 	email = CSRessel@gmail.com
+[credential]
+	helper = store

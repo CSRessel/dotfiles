@@ -5,9 +5,8 @@
 - bitwarden
 - chezmoi
 - firefox
-- skippy-xd
 - tmux
-- vim
+- gvim
 - zsh
 
 ## work
