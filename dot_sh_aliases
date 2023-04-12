@@ -1,0 +1,6 @@
+alias vim="lvim"
+
+alias cp="cp -i" # confirm before overwriting something
+alias df='df -h' # human-readable sizes
+alias more=less
+
