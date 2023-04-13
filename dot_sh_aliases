@@ -1,6 +1,14 @@
 alias vim="lvim"
 
 alias cp="cp -i" # confirm before overwriting something
-alias df='df -h' # human-readable sizes
-alias more=less
+alias df="df -h" # human-readable sizes
+alias more="less"
+
+alias docker="podman"
+alias docker-compose="podman-compose"
+alias kubectl="minikube kubectl --"
+
+alias obstatus="rclone check gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
+alias obpull="rclone sync -i gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
+alias obpush="rclone sync -i /home/clifford/Documents/knowledgebase/ gdrive:/knowledgebase"
 

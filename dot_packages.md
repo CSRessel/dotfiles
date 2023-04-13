@@ -6,46 +6,46 @@
 - chezmoi
 - firefox
 - tmux
-- gvim
 - zsh
+- neovim
 
-## work
+## tech
 
-- burpsuite
-- code
-- ghidra
-- nvm
-- python-pipenv
+- dev
+  - nerd fonts
+  - LunarVim
+  - vs code
+- shell
+  - git
+  - gh cli
+  - oh-my-zsh
+  - rclone
+- lang
+  - rustup
+  - nvm
+  - conda
+- sec
+  - burpsuite
+  - ghidra
+  - wireshark
+  - kali
+- containers
+  - qemu-system-x86
+  - podman
+  - minikube
 
-## media/fun
+## media
 
+- audacity
 - discord
 - gimp
-- optimus-manager
 - slippi-launcher
-- snapd
 - steam
+- vlc
 
 ## snapd
 
-- audacity
+- bitwarden
+- obsidian
 - spotify
-
-### TODO
-
-- document virtualization setup
-  - https://wiki.archlinux.org/title/KVM
-  - https://wiki.archlinux.org/title/QEMU
-  - https://www.kali.org/docs/virtualization/install-qemu-guest-vm/
-- document containerization setup
-  - https://wiki.archlinux.org/title/Podman
-  - https://wiki.archlinux.org/title/Buildah
-  - https://wiki.archlinux.org/title/Docker
-  - https://wiki.archlinux.org/title/Kubernetes
-
-### previously
-
-- atom
-- feh
-- noto-fonts-emoji
 
