@@ -9,6 +9,6 @@ alias docker-compose="podman-compose"
 alias kubectl="minikube kubectl --"
 
 alias obstatus="rclone check gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
-alias obpull="rclone sync -i gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
-alias obpush="rclone sync -i /home/clifford/Documents/knowledgebase/ gdrive:/knowledgebase"
+alias obpull="rclone sync --filter '- .git/**' -i gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
+alias obpush="rclone sync --filter '- .git/**' -i /home/clifford/Documents/knowledgebase/ gdrive:/knowledgebase"
 
