@@ -1,7 +1,8 @@
 {
     "version": "1.4.0",
     "autoload": {
-        "AT Translated Set 2 keyboard": "match pangolin to launchlite"
+        "AT Translated Set 2 keyboard": "match pangolin to launchlite",
+        "SONiX USB-Keyboard": "cloud9 swap alt super"
     },
     "macros": {
         "keystroke_sleep_ms": 10

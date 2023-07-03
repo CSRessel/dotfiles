@@ -1,4 +1,5 @@
 alias vim="lvim"
+alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
 
 alias cp="cp -i" # confirm before overwriting something
 alias df="df -h" # human-readable sizes
@@ -8,7 +9,7 @@ alias docker="podman"
 alias docker-compose="podman-compose"
 alias kubectl="minikube kubectl --"
 
-alias obstatus="rclone check gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
+alias obstatus="rclone check --filter '- .git/**' gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
 alias obpull="rclone sync --filter '- .git/**' -i gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
 alias obpush="rclone sync --filter '- .git/**' -i /home/clifford/Documents/knowledgebase/ gdrive:/knowledgebase"
 
