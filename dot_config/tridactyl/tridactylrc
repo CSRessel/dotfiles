@@ -1,0 +1,38 @@
+" "
+" " Binds
+" "
+"
+" " Comment toggler for Reddit, Hacker News and Lobste.rs
+" bind ;c hint -Jc [class*="expand"],[class*="togg"],[class="comment_folder"]
+"
+" " GitHub pull request checkout command to clipboard (only works if you're a collaborator or above)
+" bind yp composite js document.getElementById("clone-help-step-1").textContent.replace("git checkout -b", "git checkout -B").replace("git pull ", "git fetch ") + "git reset --hard " + document.getElementById("clone-help-step-1").textContent.split(" ")[3].replace("-","/") | yank
+"
+" " Git{Hub,Lab} git clone via SSH yank
+" bind yg composite js "git clone " + document.location.href.replace(/https?:\/\//,"git@").replace("/",":").replace(/$/,".git") | clipboard yank
+"
+" " As above but execute it and open terminal in folder
+" bind ,g js let uri = document.location.href.replace(/https?:\/\//,"git@").replace("/",":").replace(/$/,".git"); tri.native.run("cd ~/projects; git clone " + uri + "; cd \"$(basename \"" + uri + "\" .git)\"; st")
+"
+"
+" " make d take you to the left (I find it much less confusing)
+" bind d composite tabprev; tabclose #
+" bind D tabclose
+"
+" " make t open the selection with tabopen
+" bind --mode=visual t composite js document.getSelection().toString() | fillcmdline tabopen
+"
+" " I like wikiwand but I don't like the way it changes URLs
+" bindurl wikiwand.com yy composite js document.location.href.replace("wikiwand.com/en","wikipedia.org/wiki") | clipboard yank
+"
+" " Make gu take you back to subreddit from comments
+" bindurl reddit.com gu urlparent 4
+"
+" " Only hint search results on Google and DDG
+" bindurl www.google.com f hint -Jc #search a
+" bindurl www.google.com F hint -Jbc #search a
+"
+
+unbindurl youtube.com <<
+unbindurl youtube.com >>
+

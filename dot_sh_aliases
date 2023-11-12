@@ -5,6 +5,8 @@ alias cp="cp -i" # confirm before overwriting something
 alias df="df -h" # human-readable sizes
 alias more="less"
 
+alias kc="kubectl"
+alias kx="kubectx"
 alias docker="podman"
 alias docker-compose="podman-compose"
 alias kubectl="minikube kubectl --"
