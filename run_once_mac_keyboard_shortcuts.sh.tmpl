@@ -1,0 +1,90 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+# This script is used to create keyboard shortcuts on MacOS
+# This script uses if-blocks around everything, to remain idempotent. For more
+# info, see: https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/#understand-how-scripts-work
+
+# Preparing settings for shortcuts: https://apple.stackexchange.com/a/398735
+# Apps using custom shortcuts must first be added to the list of apps in
+# System Preferences > Keyboard > Shortcuts > App Shortcuts
+#
+# Which is populated by this plist file:
+CUSTOM_APPS=$(defaults read com.apple.universalaccess com.apple.custommenu.apps)
+if [[ ${CUSTOM_APPS} != *"NSGlobalDomain"* ]];then
+  echo "Adding NSGlobalDomain to custommenu.apps"
+  defaults write com.apple.universalaccess com.apple.custommenu.apps -array-add "NSGlobalDomain"
+fi
+if [[ ${CUSTOM_APPS} != *"com.googlecode.iterm2"* ]];then
+  echo "Adding com.googlecode.iterm2 to custommenu.apps"
+  defaults write com.apple.universalaccess com.apple.custommenu.apps -array-add "com.googlecode.iterm2"
+fi
+
+# Adding shortcuts via command line: https://superuser.com/a/545221
+# Current shortcuts can be viewed with:
+# $ defaults read com.apple.universalaccess  com.apple.custommenu.apps
+# $ defaults read NSGlobalDomain NSUserKeyEquivalents                                                                                  (ppac-dev-us-east-2/default)
+# $ defaults read com.googlecode.iterm2 NSUserKeyEquivalents
+#
+# Output looks like:
+# (
+#     "com.googlecode.iterm2",
+#     NSGlobalDomain
+# )
+# {
+#     "Close Tab" = "^w";
+#     "Close Window" = "^$w";
+#     "New Incognito Window" = "^$n";
+#     "New Tab" = "^t";
+#     "New Window" = "^n";
+#     "Reopen Closed Tab" = "^$t";
+# }
+# {
+#     Copy = "^$c";
+#     Cut = "^$x";
+#     Paste = "^$v";
+# }
+
+# Command line configuration of necessary shortcuts within each app
+# Global
+CUSTOM_GLOBAL_SHORTCUTS=$(defaults read NSGlobalDomain NSUserKeyEquivalents)
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Close Tab"* ]];then
+  echo "Adding Close Tab to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Close Tab" "^w"
+fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Close Window"* ]];then
+  echo "Adding Close Window to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Close Window" "^\$w"
+fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"New Incognito Window"* ]];then
+  echo "Adding New Incognito Window to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "New Incognito Window" "^\$n"
+fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"New Tab"* ]];then
+  echo "Adding New Tab to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "New Tab" "^t"
+fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"New Window"* ]];then
+  echo "Adding New Window to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Close Tab" "^n"
+fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Reopen Closed Tab"* ]];then
+  echo "Adding Reopen Closed Tab to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Reopen Closed Tab" "^\$t"
+fi
+# iTerm2
+CUSTOM_ITERM_SHORTCUTS=$(defaults read com.googlecode.iterm2 NSUserKeyEquivalents)
+if [[ $CUSTOM_ITERM_SHORTCUTS != *"Copy"* ]];then
+  echo "Adding Copy to com.googlecode.iterm2"
+  defaults write com.googlecode.iterm2 NSUserKeyEquivalents -dict-add "Copy" "^\$c"
+fi
+if [[ $CUSTOM_ITERM_SHORTCUTS != *"Cut"* ]];then
+  echo "Adding Cut to com.googlecode.iterm2"
+  defaults write com.googlecode.iterm2 NSUserKeyEquivalents -dict-add "Cut" "^\$x"
+fi
+if [[ $CUSTOM_ITERM_SHORTCUTS != *"Paste"* ]];then
+  echo "Adding Paste to com.googlecode.iterm2"
+  defaults write com.googlecode.iterm2 NSUserKeyEquivalents -dict-add "Paste" "^\$v"
+fi
+
+{{ end -}}
