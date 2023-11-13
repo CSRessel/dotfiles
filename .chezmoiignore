@@ -6,3 +6,15 @@ dot_vim/dot_gitignore
 dot_vim/dot_gitmodules
 dot_vim/executable_dot_gitignore
 
+{{ if ne .chezmoi.username "clifford" }}
+# only access these on personal machines
+.bashrc
+.config/input-remapper
+.config/tridactyl
+.config/lvim/plugin
+.packages.md
+.vim
+{{- else if ne .chezmoi.username "resselc" }}
+# only access these on work machines
+.packages_mac.md
+{{- end }}
