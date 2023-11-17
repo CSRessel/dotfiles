@@ -75,7 +75,9 @@ plugins=(
     vi-mode
     asdf
     kubectl
+{{ if eq .chezmoi.username "resselc" }}
     zsh-kubectl-prompt
+{{- end }}
 )
 
 source $ZSH/oh-my-zsh.sh
