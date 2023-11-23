@@ -152,7 +152,9 @@ lvim.plugins = {
         },
       })
     end,
-  }
+  },
+  { "nyoom-engineering/oxocarbon.nvim" },
+  { "catppuccin/nvim" },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -166,3 +168,4 @@ lvim.plugins = {
 -- vim.api.nvim_set_keymap("i", "<C-.>", 'copilot#Next("<C-.>")', { silent = true, expr = true })
 -- vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Next("<C-Space>")', { silent = true, expr = true })
 
+lvim.colorscheme = "oxocarbon"
