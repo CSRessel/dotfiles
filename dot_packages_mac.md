@@ -7,14 +7,18 @@ colima: Container runtimes on MacOS (and Linux) with minimal setup
 direnv: Load/unload environment variables based on $PWD
 Warning: Treating docker as a formula. For the cask, use homebrew/cask/docker
 docker: Pack, ship and run any application as a lightweight container
+fd: Simple, fast and user-friendly alternative to find
+fzf: Command-line fuzzy finder written in Go
 gh: GitHub command-line tool
 jq: Lightweight and flexible command-line JSON processor
 minikube: Run a Kubernetes cluster locally
 mkcert: Simple tool to make locally trusted development certificates
 neovim: Ambitious Vim-fork focused on extensibility and agility
 nginx: HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
+openjdk@17: Development kit for the Java programming language
 pipenv: Python dependency management tool
 podman-compose: Alternative to docker-compose using podman
+pyenv: Python version management
 ripgrep: Search tool like grep and The Silver Searcher
 tmux: Terminal multiplexer
 zsh-completions: Additional completion definitions for zsh
@@ -122,6 +126,9 @@ $ brew deps --tree --installed
 
 amethyst
 
+autoconf
+└── m4
+
 awscli
 ├── cffi
 │   ├── pycparser
@@ -140,6 +147,49 @@ awscli
 └── six
 
 ca-certificates
+
+cairo
+├── fontconfig
+│   └── freetype
+│       └── libpng
+├── freetype
+│   └── libpng
+├── glib
+│   ├── pcre2
+│   └── gettext
+├── libpng
+├── libx11
+│   ├── libxcb
+│   │   ├── libxau
+│   │   │   └── xorgproto
+│   │   └── libxdmcp
+│   │       └── xorgproto
+│   └── xorgproto
+├── libxcb
+│   ├── libxau
+│   │   └── xorgproto
+│   └── libxdmcp
+│       └── xorgproto
+├── libxext
+│   ├── libx11
+│   │   ├── libxcb
+│   │   │   ├── libxau
+│   │   │   │   └── xorgproto
+│   │   │   └── libxdmcp
+│   │   │       └── xorgproto
+│   │   └── xorgproto
+│   └── xorgproto
+├── libxrender
+│   ├── libx11
+│   │   ├── libxcb
+│   │   │   ├── libxau
+│   │   │   │   └── xorgproto
+│   │   │   └── libxdmcp
+│   │   │       └── xorgproto
+│   │   └── xorgproto
+│   └── xorgproto
+├── lzo
+└── pixman
 
 capstone
 
@@ -213,13 +263,26 @@ docutils
 
 dtc
 
+fd
+
 font-fira-code-nerd-font
 
 font-fira-mono-nerd-font
 
+fontconfig
+└── freetype
+    └── libpng
+
+freetype
+└── libpng
+
+fzf
+
 gettext
 
 gh
+
+giflib
 
 glib
 ├── pcre2
@@ -247,6 +310,61 @@ gnutls
     ├── libnghttp2
     └── openssl@3
         └── ca-certificates
+
+graphite2
+
+harfbuzz
+├── cairo
+│   ├── fontconfig
+│   │   └── freetype
+│   │       └── libpng
+│   ├── freetype
+│   │   └── libpng
+│   ├── glib
+│   │   ├── pcre2
+│   │   └── gettext
+│   ├── libpng
+│   ├── libx11
+│   │   ├── libxcb
+│   │   │   ├── libxau
+│   │   │   │   └── xorgproto
+│   │   │   └── libxdmcp
+│   │   │       └── xorgproto
+│   │   └── xorgproto
+│   ├── libxcb
+│   │   ├── libxau
+│   │   │   └── xorgproto
+│   │   └── libxdmcp
+│   │       └── xorgproto
+│   ├── libxext
+│   │   ├── libx11
+│   │   │   ├── libxcb
+│   │   │   │   ├── libxau
+│   │   │   │   │   └── xorgproto
+│   │   │   │   └── libxdmcp
+│   │   │   │       └── xorgproto
+│   │   │   └── xorgproto
+│   │   └── xorgproto
+│   ├── libxrender
+│   │   ├── libx11
+│   │   │   ├── libxcb
+│   │   │   │   ├── libxau
+│   │   │   │   │   └── xorgproto
+│   │   │   │   └── libxdmcp
+│   │   │   │       └── xorgproto
+│   │   │   └── xorgproto
+│   │   └── xorgproto
+│   ├── lzo
+│   └── pixman
+├── freetype
+│   └── libpng
+├── glib
+│   ├── pcre2
+│   └── gettext
+├── graphite2
+└── icu4c
+
+icu4c
 
 intellij-idea
 
@@ -285,6 +403,13 @@ libtasn1
 libtermkey
 └── unibilium
 
+libtiff
+├── jpeg-turbo
+├── xz
+└── zstd
+    ├── lz4
+    └── xz
+
 libunistring
 
 libusb
@@ -292,6 +417,46 @@ libusb
 libuv
 
 libvterm
+
+libx11
+├── libxcb
+│   ├── libxau
+│   │   └── xorgproto
+│   └── libxdmcp
+│       └── xorgproto
+└── xorgproto
+
+libxau
+└── xorgproto
+
+libxcb
+├── libxau
+│   └── xorgproto
+└── libxdmcp
+    └── xorgproto
+
+libxdmcp
+└── xorgproto
+
+libxext
+├── libx11
+│   ├── libxcb
+│   │   ├── libxau
+│   │   │   └── xorgproto
+│   │   └── libxdmcp
+│   │       └── xorgproto
+│   └── xorgproto
+└── xorgproto
+
+libxrender
+├── libx11
+│   ├── libxcb
+│   │   ├── libxau
+│   │   │   └── xorgproto
+│   │   └── libxdmcp
+│   │       └── xorgproto
+│   └── xorgproto
+└── xorgproto
 
 libyaml
 
@@ -343,6 +508,15 @@ lima
         ├── lz4
         └── xz
 
+little-cms2
+├── jpeg-turbo
+└── libtiff
+    ├── jpeg-turbo
+    ├── xz
+    └── zstd
+        ├── lz4
+        └── xz
+
 luajit
 
 luv
@@ -351,6 +525,8 @@ luv
 lz4
 
 lzo
+
+m4
 
 minikube
 └── kubernetes-cli
@@ -386,6 +562,69 @@ nginx
 
 oniguruma
 
+openjdk@17
+├── giflib
+├── harfbuzz
+│   ├── cairo
+│   │   ├── fontconfig
+│   │   │   └── freetype
+│   │   │       └── libpng
+│   │   ├── freetype
+│   │   │   └── libpng
+│   │   ├── glib
+│   │   │   ├── pcre2
+│   │   │   └── gettext
+│   │   ├── libpng
+│   │   ├── libx11
+│   │   │   ├── libxcb
+│   │   │   │   ├── libxau
+│   │   │   │   │   └── xorgproto
+│   │   │   │   └── libxdmcp
+│   │   │   │       └── xorgproto
+│   │   │   └── xorgproto
+│   │   ├── libxcb
+│   │   │   ├── libxau
+│   │   │   │   └── xorgproto
+│   │   │   └── libxdmcp
+│   │   │       └── xorgproto
+│   │   ├── libxext
+│   │   │   ├── libx11
+│   │   │   │   ├── libxcb
+│   │   │   │   │   ├── libxau
+│   │   │   │   │   │   └── xorgproto
+│   │   │   │   │   └── libxdmcp
+│   │   │   │   │       └── xorgproto
+│   │   │   │   └── xorgproto
+│   │   │   └── xorgproto
+│   │   ├── libxrender
+│   │   │   ├── libx11
+│   │   │   │   ├── libxcb
+│   │   │   │   │   ├── libxau
+│   │   │   │   │   │   └── xorgproto
+│   │   │   │   │   └── libxdmcp
+│   │   │   │   │       └── xorgproto
+│   │   │   │   └── xorgproto
+│   │   │   └── xorgproto
+│   │   ├── lzo
+│   │   └── pixman
+│   ├── freetype
+│   │   └── libpng
+│   ├── glib
+│   │   ├── pcre2
+│   │   └── gettext
+│   ├── graphite2
+│   └── icu4c
+├── jpeg-turbo
+├── libpng
+└── little-cms2
+    ├── jpeg-turbo
+    └── libtiff
+        ├── jpeg-turbo
+        ├── xz
+        └── zstd
+            ├── lz4
+            └── xz
+
 openssl@3
 └── ca-certificates
 
@@ -406,6 +645,9 @@ pipenv
 │   │   └── readline
 │   └── xz
 └── virtualenv
+    ├── python-distlib
+    ├── python-filelock
+    ├── python-platformdirs
     └── python@3.12
         ├── mpdecimal
         ├── openssl@3
@@ -415,6 +657,8 @@ pipenv
         └── xz
 
 pixman
+
+pkg-config
 
 podman
 └── qemu
@@ -573,6 +817,14 @@ podman-desktop
 
 pycparser
 
+pyenv
+├── autoconf
+│   └── m4
+├── openssl@3
+│   └── ca-certificates
+├── pkg-config
+└── readline
+
 python-certifi
 └── ca-certificates
 
@@ -686,6 +938,8 @@ vde
 visual-studio-code
 
 warp
+
+xorgproto
 
 xz
 

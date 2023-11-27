@@ -167,6 +167,7 @@ lvim.plugins = {
   },
   { "nyoom-engineering/oxocarbon.nvim" },
   { "catppuccin/nvim" },
+  { "folke/tokyonight.nvim" },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -181,7 +182,8 @@ lvim.plugins = {
 -- vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Next("<C-Space>")', { silent = true, expr = true })
 
 -- lvim.colorscheme = "oxocarbon"
-lvim.colorscheme = "catppuccin-mocha"
+-- lvim.colorscheme = "catppuccin-mocha"
+lvim.colorscheme = "tokyonight-night"
 
 lvim.builtin.which_key.mappings["a"] = {
   name = "AI (ChatGPT)",

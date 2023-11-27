@@ -15,6 +15,7 @@
   - nerd fonts
   - LunarVim
   - vs code
+  - fd and fzf
 - shell
   - git
   - gh cli
