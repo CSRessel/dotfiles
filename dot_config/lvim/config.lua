@@ -202,3 +202,10 @@ lvim.builtin.which_key.mappings["a"] = {
   r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
   l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
 }
+
+-- Fix for treesitter indent affecting Python files
+-- https://github.com/LunarVim/LunarVim/issues/2630
+lvim.builtin.treesitter.indent = {
+  enable = true,
+  disable = { "yaml", "python" },
+} -- treesitter is buggy :(
