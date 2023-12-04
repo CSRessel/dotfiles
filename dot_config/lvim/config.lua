@@ -168,20 +168,28 @@ lvim.plugins = {
   { "nyoom-engineering/oxocarbon.nvim" },
   { "catppuccin/nvim" },
   { "folke/tokyonight.nvim" },
+  {
+    "ggandor/leap.nvim",
+    config = function()
+      -- require('leap').add_default_mappings()
+    end,
+    dependencies = {
+      "tpope/vim-repeat",
+    }
+  }
 }
 
 -- vim.g.copilot_assume_mapped = true
 -- vim.g.copilot_no_tab_map = true
 -- vim.api.nvim_set_keymap("n", "<c-s>", "<cmd>lua require('copilot.suggestion').toggle_auto_trigger()<CR>", opts)
--- vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<C-S-j>", 'copilot#Next("<CR>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("i", "<C-S-j>", 'copilot#Next("<CR>")', { silent = true, expr = true })
+vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true, expr = true })
 -- vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
 -- vim.api.nvim_set_keymap("i", "<C-.>", 'copilot#Next("<C-.>")', { silent = true, expr = true })
 -- vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Next("<C-Space>")', { silent = true, expr = true })
 
--- lvim.colorscheme = "oxocarbon"
+-- lvim.colorscheme = "oxocarbon" -- the best color scheme, except I can't stand having diffs without red/green colros
 -- lvim.colorscheme = "catppuccin-mocha"
 lvim.colorscheme = "tokyonight-night"
 
@@ -208,4 +216,22 @@ lvim.builtin.which_key.mappings["a"] = {
 lvim.builtin.treesitter.indent = {
   enable = true,
   disable = { "yaml", "python" },
-} -- treesitter is buggy :(
+} -- treesitter is buggy for these languages :(
+
+
+lvim.autocommands = {
+  {
+    "BufEnter", -- see `:h autocmd-events`
+    {
+      pattern = { "*.py" },
+      callback = function()
+        vim.opt.expandtab = true
+        vim.opt.shiftwidth = 4
+        vim.opt.shiftround = true
+        vim.opt.tabstop = 4
+      end
+    }
+  },
+}
+
+
