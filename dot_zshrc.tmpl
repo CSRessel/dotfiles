@@ -155,20 +155,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 {{- /* only on personal machine */ -}}
 
 # python
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-#__conda_setup="$('/home/clifford/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-#if [ $? -eq 0 ]; then
-#    eval "$__conda_setup"
-#else
-#    if [ -f "/home/clifford/miniconda3/etc/profile.d/conda.sh" ]; then
-#        . "/home/clifford/miniconda3/etc/profile.d/conda.sh"
-#    else
-#        export PATH="/home/clifford/miniconda3/bin:$PATH"
-#    fi
-#fi
-#unset __conda_setup
-# <<< conda initialize <<<
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 
 {{ else if eq .chezmoi.username "resselc" }}
 {{- /* only on work machine */ -}}
