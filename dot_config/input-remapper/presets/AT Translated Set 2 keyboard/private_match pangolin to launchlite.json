@@ -8,12 +8,20 @@
             "Super_L",
             "keyboard"
         ],
+        "1,1,1": [
+            "Caps_Lock",
+            "keyboard"
+        ],
         "1,58,1": [
+            "KEY_LEFTCTRL",
+            "keyboard"
+        ],
+        "1,54,1": [
             "Escape",
             "keyboard"
         ],
-        "1,1,1": [
-            "Caps_Lock",
+        "1,100,1": [
+            "BackSpace",
             "keyboard"
         ]
     }
