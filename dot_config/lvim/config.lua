@@ -68,6 +68,9 @@ lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
+-- ----------------------------------------------------------------
+-- Filetype and language configurations
+
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
@@ -83,17 +86,20 @@ lvim.builtin.treesitter.ensure_installed = {
   "java",
   "yaml",
 }
+vim.filetype.add({
+  extension = {
+    typ = 'typst',
+  },
+})
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
-
--- Additional Plugins
--- lvim.plugins = {
---     {
---       "folke/trouble.nvim",
---       cmd = "TroubleToggle",
---     },
--- }
+lvim.builtin.treesitter.indent = {
+  -- Fix for treesitter indent affecting Python files
+  -- https://github.com/LunarVim/LunarVim/issues/2630
+  enable = true,
+  disable = { "yaml", "python" },
+} -- treesitter is buggy for these languages :(
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
@@ -108,13 +114,23 @@ lvim.builtin.treesitter.highlight.enable = true
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
-
-vim.filetype.add({
-  extension = {
-    typ = 'typst',
+lvim.autocommands = {
+  {
+    "BufEnter", -- see `:h autocmd-events`
+    {
+      pattern = { "*.py" },
+      callback = function()
+        vim.opt.expandtab = true
+        vim.opt.shiftwidth = 4
+        vim.opt.shiftround = true
+        vim.opt.tabstop = 4
+      end
+    }
   },
-})
+}
 
+-- ----------------------------------------------------------------
+-- Plugins and their specific config
 lvim.plugins = {
   {
     "zbirenbaum/copilot.lua",
@@ -165,9 +181,6 @@ lvim.plugins = {
       "nvim-telescope/telescope.nvim"
     }
   },
-  { "nyoom-engineering/oxocarbon.nvim" },
-  { "catppuccin/nvim" },
-  { "folke/tokyonight.nvim" },
   {
     "ggandor/leap.nvim",
     config = function()
@@ -176,7 +189,12 @@ lvim.plugins = {
     dependencies = {
       "tpope/vim-repeat",
     }
-  }
+  },
+  { "NoahTheDuke/vim-just" },
+  {"IndianBoy42/tree-sitter-just"},
+  { "nyoom-engineering/oxocarbon.nvim" },
+  { "catppuccin/nvim" },
+  { "folke/tokyonight.nvim" },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -209,29 +227,6 @@ lvim.builtin.which_key.mappings["a"] = {
   x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
   r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
   l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
-}
-
--- Fix for treesitter indent affecting Python files
--- https://github.com/LunarVim/LunarVim/issues/2630
-lvim.builtin.treesitter.indent = {
-  enable = true,
-  disable = { "yaml", "python" },
-} -- treesitter is buggy for these languages :(
-
-
-lvim.autocommands = {
-  {
-    "BufEnter", -- see `:h autocmd-events`
-    {
-      pattern = { "*.py" },
-      callback = function()
-        vim.opt.expandtab = true
-        vim.opt.shiftwidth = 4
-        vim.opt.shiftround = true
-        vim.opt.tabstop = 4
-      end
-    }
-  },
 }
 
 
