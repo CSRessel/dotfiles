@@ -17,11 +17,15 @@
             "keyboard"
         ],
         "1,54,1": [
-            "Escape",
+            "Alt_R",
             "keyboard"
         ],
         "1,100,1": [
-            "BackSpace",
+            "Escape",
+            "keyboard"
+        ],
+        "1,29,1": [
+            "KEY_VOLUMEDOWN",
             "keyboard"
         ]
     }
