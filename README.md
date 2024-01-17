@@ -10,9 +10,12 @@ Tools that will be configured by chezmoi below.
 
 - git
 - neovim
-- LunarVim
-- tmux
+  - LunarVim
 - zsh
+  - oh-my-zsh
+  - zsh-kubectl-prompt
+- tmux
+- direnv
 - input-remapper
 - Tridactyl
 
