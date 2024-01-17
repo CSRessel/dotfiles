@@ -1,3 +1,9 @@
+{{ if eq .chezmoi.username "clifford.ressel" }}
+{{- /* only on work machine */ -}}
+[credential "https://github.com"]
+  helper = 
+  helper = !/usr/bin/gh auth git-credential
+{{- end }}
 [core]
   excludesfile = ~/.gitignore_global
   editor = vim
