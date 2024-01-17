@@ -164,6 +164,8 @@ eval "$(pyenv virtualenv-init -)"
 {{ else if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 
+export AWS_PROFILE=dev
+
 {{ else if eq .chezmoi.username "resselc" }}
 {{- /* only on legacy machine */ -}}
 
