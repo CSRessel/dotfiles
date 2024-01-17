@@ -1,10 +1,29 @@
 [core]
-	excludesfile = ~/.gitignore_global
-	editor = vim
+  excludesfile = ~/.gitignore_global
+  editor = vim
 [init]
-	defaultBranch = master
+  # In accordance with recent changes in the Git community,
+  # use "main" to designate default branch
+  defaultBranch = main
+  # defaultBranch = master
 [user]
-	name = Clifford Ressel
-	email = {{ .email | quote }}
+  name = Clifford Ressel
+  email = {{ .email | quote }}
 [credential]
-	helper = store
+  helper = store
+[color]
+  # Use terminal colors when supported
+  ui = auto
+  interactive = auto
+[alias]
+  a = !git add -A && git status
+  br = branch
+  c = commit
+  ca = commit --amend
+  co = checkout
+  cob = checkout -b
+  df = diff --color-words
+  lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit
+  lp = log -p
+  pushf = push --force-with-lease
+  st = status

@@ -6,6 +6,9 @@ dot_vim/dot_gitignore
 dot_vim/dot_gitmodules
 dot_vim/executable_dot_gitignore
 
+.packages_mac.md
+run_once_mac_keyboard_shortcuts.sh.tmpl
+
 {{ if ne .chezmoi.username "clifford" }}
 # only access these on personal machines
 .bashrc
@@ -14,7 +17,6 @@ dot_vim/executable_dot_gitignore
 .config/lvim/plugin
 .packages.md
 .vim
-{{- else if ne .chezmoi.username "resselc" }}
+{{- else if ne .chezmoi.username "clifford.ressel" }}
 # only access these on work machines
-.packages_mac.md
 {{- end }}

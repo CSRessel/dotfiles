@@ -4,13 +4,32 @@
 
 [Quick Start](https://www.chezmoi.io/quick-start/)
 
+## Pre-Install Dependencies
+
+Tools that will be configured by chezmoi below.
+
+- git
+- neovim
+- LunarVim
+- tmux
+- zsh
+- input-remapper
+- Tridactyl
+
 ## Getting Started
 
-> **Note**: This relies on my personal computer having the username `clifford`, and my work machine having the username of `resselc`.
+> **Note**: This relies on my personal computer having the username `clifford`, and my work machine having the username of `clifford.ressel`.
+
+Install binary, for example:
+
+> [One-line binary install](https://www.chezmoi.io/install/#one-line-binary-install)
+
+Then configure for local files and templating:
 
 ```
+mkdir -p ~/.config/chezmoi/
 touch ~/.config/chezmoi/chezmoi.toml
-echo "[data]"                             >> ~/.config/chezmoi/chezmoi.toml
+echo "[data]"                           >> ~/.config/chezmoi/chezmoi.toml
 echo "  email = \"CSRessel@gmail.com\"" >> ~/.config/chezmoi/chezmoi.toml
 
 chezmoi cd
@@ -21,4 +40,3 @@ exit
 chezmoi status
 chezmoi diff
 ```
-
