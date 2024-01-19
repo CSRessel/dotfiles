@@ -49,7 +49,7 @@ lvim.format_on_save.enabled = true
 require "lvim.lsp.null-ls.formatters".setup {
   {
     name = "black",
-    args = { "--line-length", "120" },
+    -- args = { "--line-length", "120" },
   }
 }
 

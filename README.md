@@ -6,7 +6,7 @@
 
 ## Pre-Install Dependencies
 
-Tools that will be configured by chezmoi below.
+Tools that will be configured by chezmoi below:
 
 - git
 - neovim
@@ -18,6 +18,20 @@ Tools that will be configured by chezmoi below.
 - direnv
 - input-remapper
 - Tridactyl
+
+Tools needed for my aliases and vim to work:
+
+- lang and toolchains
+  - rustup
+  - node (through nvm)
+  - python3 (through the system)
+- command line replacements
+  - fd (fd-find)
+  - ripgrep
+  - bat
+  - fzf
+  - delta (git-delta)
+  - dust (cargo install du-dust)
 
 ## Getting Started
 
