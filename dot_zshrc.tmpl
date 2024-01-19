@@ -166,8 +166,14 @@ eval "$(pyenv virtualenv-init -)"
 
 export AWS_PROFILE=dev
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+. "$HOME/.cargo/env"
+
 {{ else if eq .chezmoi.username "resselc" }}
-{{- /* only on legacy machine */ -}}
+{{- /* only on legacy mac machine */ -}}
 
 # brew
 eval "$(/opt/homebrew/bin/brew shellenv)"
