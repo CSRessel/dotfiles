@@ -7,7 +7,6 @@ overrideIfInstalled kc kubectl
 overrideIfInstalled kx kubectx
 overrideIfInstalled cat bat
 overrideIfInstalled du dust
-overrideIfInstalled find fd
 overrideIfInstalled grep rg
 
 alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
@@ -31,3 +30,9 @@ alias obpush="rclone sync --filter '- .git/**' -i /home/clifford/Documents/knowl
 {{- end }}
 
 alias network-displays="G_MESSAGES_DEBUG=all flatpak run org.gnome.NetworkDisplays"
+
+watchpytest () {
+    GLOB=${1:-"./"}
+    # Using fd-find syntax
+    fdfind . -e py "$GLOB" | entr -d -s "pytest $GLOB"
+}
