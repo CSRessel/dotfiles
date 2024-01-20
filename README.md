@@ -26,9 +26,9 @@ Tools needed for my aliases and vim to work:
   - node (through nvm)
   - python3 (through the system)
 - command line replacements
-  - fd (fd-find)
-  - ripgrep
-  - bat
+  - fd (cargo install fd-find)
+  - ripgrep (cargo install rigrep)
+  - bat (rust-bat)
   - fzf
   - delta (git-delta)
   - dust (cargo install du-dust)
