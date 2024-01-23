@@ -58,7 +58,10 @@ require "lvim.lsp.null-ls.formatters".setup {
 require "lvim.lsp.null-ls.linters".setup {
   {
     name = "flake8",
-    args = { "--max-line-length", "120", "--ignore", "E203,W503" },
+    args = {
+      -- "--max-line-length", "120",
+      "--ignore", "E203,W503",
+    },
   }
 }
 
