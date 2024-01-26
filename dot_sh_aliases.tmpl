@@ -8,6 +8,7 @@ overrideIfInstalled kx kubectx
 overrideIfInstalled cat bat
 overrideIfInstalled du dust
 overrideIfInstalled grep rg
+overrideIfInstalled fd fdfind
 
 alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
 
