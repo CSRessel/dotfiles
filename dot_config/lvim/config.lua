@@ -235,6 +235,7 @@ lvim.plugins = {
   { "nyoom-engineering/oxocarbon.nvim" },
   { "catppuccin/nvim" },
   { "folke/tokyonight.nvim" },
+  { "alexghergh/nvim-tmux-navigation" },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -249,7 +250,7 @@ vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true,
 
 -- lvim.colorscheme = "oxocarbon" -- the best color scheme, except I can't stand having diffs without red/green colros
 -- lvim.colorscheme = "catppuccin-mocha"
-lvim.colorscheme = "tokyonight-night"
+lvim.colorscheme = "tokyonight-moon"
 
 lvim.builtin.which_key.mappings["a"] = {
   name = "AI (ChatGPT)",
