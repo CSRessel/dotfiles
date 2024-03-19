@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Slippi Launcher
+Comment=Melee with rollback netcode on your PC
+Exec=/home/clifford/.local/bin/slippi-launcher
+Icon=/home/clifford/.local/bin/slippi.png
+Categories=Game;

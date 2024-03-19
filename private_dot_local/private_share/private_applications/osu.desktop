@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=osu!
+Exec=/home/clifford/.local/bin/osu
+Icon=/home/clifford/.local/bin/lazer.png
+Categories=Game;
