@@ -1,10 +1,11 @@
 README.md
 
-dot_vim/plugged/*
-dot_vim/dot_git/*
-dot_vim/dot_gitignore
-dot_vim/dot_gitmodules
-dot_vim/executable_dot_gitignore
+.vim
+# .vim/plugged/*
+# .vim/.git/*
+# .vim/.gitignore
+# .vim/.gitmodules
+# .vim/.gitignore
 
 .packages_mac.md
 run_once_mac_keyboard_shortcuts.sh.tmpl
