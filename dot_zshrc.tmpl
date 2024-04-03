@@ -165,6 +165,7 @@ eval "$(pyenv virtualenv-init -)"
 {{- /* only on work machine */ -}}
 
 export AWS_PROFILE=dev
+export AWS_DEFAULT_REGION="us-east-2"
 export PYARROW_IGNORE_TIMEZONE=1
 export DAGSTER_HOME="$HOME/dagster-home"
 
