@@ -3,4 +3,4 @@ Version=0.0.1
 Type=Application
 Name=Keymapp
 Exec=/home/clifford/.local/bin/keymapp
-Icon=/home/clifford/.local/bin/keymappicon.png
+Icon=/home/clifford/.local/share/applications/keymappicon.png
