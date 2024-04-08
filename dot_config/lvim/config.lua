@@ -251,6 +251,16 @@ lvim.plugins = {
       }
     end,
   },
+  {
+    "ThePrimeagen/refactoring.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("refactoring").setup()
+    end,
+  },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -285,4 +295,14 @@ lvim.builtin.which_key.mappings["a"] = {
   l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
 }
 
+lvim.builtin.which_key.mappings["r"] = {
+  name = "Refactoring",
+  e = { "<cmd>Refactor extract<CR>", "Extract", mode = { "v" } },
+  f = { "<cmd>Refactor extract_to_file<CR>", "Extract to File", mode = { "v" } },
+  v = { "<cmd>Refactor extract_var<CR>", "Extract Variable", mode = { "x" } },
+  i = { "<cmd>Refactor inline_var<CR>", "Inline Variable", mode = { "n", "v" } },
+  I = { "<cmd>Refactor inline_func<CR>", "Inline Function", mode = { "n" } },
+  b = { "<cmd>Refactor extract_block<CR>", "Extract Block", mode = { "n" } },
+  -- f = { "<cmd>Refactor extract_block_to_file<CR>", "Extract Block to File", mode = { "n" } },
+}
 
