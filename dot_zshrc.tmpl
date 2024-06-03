@@ -137,6 +137,12 @@ export PATH="$PATH:/home/{{ .chezmoi.username }}/.local/bin"
 # direnv
 eval "$(direnv hook zsh)"
 
+# python
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
 {{ if eq .chezmoi.username "clifford" }}
 {{- /* only on personal machine */ -}}
 
@@ -154,12 +160,6 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-
-# python
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 
 {{ else if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
