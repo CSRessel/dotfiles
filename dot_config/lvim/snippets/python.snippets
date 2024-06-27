@@ -1,0 +1,22 @@
+snippet flc
+    from dagster import build_asset_context
+    from fgrovep.core import lake_client
+    from fgrovep.core.spark import spark_sessions
+    from pyspark.sql import SparkSession
+    context = build_asset_context(partition_key="${1:2024-04-01}")
+    log = context.log
+    spark = (
+        SparkSession.Builder()
+        .config(conf=spark_sessions.iceberg_glue_spark_config())
+        .getOrCreate()
+    )
+    ${2:df} = (
+        lake_client.Client(
+            database="${3:prod}",
+            readonly=True,
+            session=spark,
+        )
+        .table("${4:core_table}")
+        .read_spark_df()
+    )
+

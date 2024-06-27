@@ -48,14 +48,23 @@ lvim.format_on_save.enabled = true
 
 -- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" }) -- manually configure pyright
 
-require "lvim.lsp.null-ls.formatters".setup {
+local formatters = require "lvim.lsp.null-ls.formatters"
+local linters = require "lvim.lsp.null-ls.linters"
+local code_actions = require "lvim.lsp.null-ls.code_actions"
+
+formatters.setup {
   {
     name = "black",
     -- args = { "--line-length", "120" },
-  }
+  },
+  {
+    name = "ruff",
+  },
 }
-
-require "lvim.lsp.null-ls.linters".setup {
+linters.setup {
+  {
+    name = "ruff",
+  },
   {
     name = "flake8",
     args = {
@@ -64,8 +73,7 @@ require "lvim.lsp.null-ls.linters".setup {
     },
   }
 }
-
-require "lvim.lsp.null-ls.code_actions".setup { }
+code_actions.setup { }
 
 lvim.format_on_save.pattern = { "*.py" }
 
