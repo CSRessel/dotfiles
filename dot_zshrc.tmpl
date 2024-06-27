@@ -138,10 +138,10 @@ export PATH="$PATH:/home/{{ .chezmoi.username }}/.local/bin"
 eval "$(direnv hook zsh)"
 
 # python
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+#export PYENV_ROOT="$HOME/.pyenv"
+#[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
 
 {{ if eq .chezmoi.username "clifford" }}
 {{- /* only on personal machine */ -}}
