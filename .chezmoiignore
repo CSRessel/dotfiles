@@ -20,6 +20,7 @@ run_once_mac_keyboard_shortcuts.sh.tmpl
 .packages.md
 .packages_mac.md
 .vim
+.config/k9s
 {{- else if ne .chezmoi.username "clifford.ressel" }}
 # only access these on work machines
 {{- end }}
