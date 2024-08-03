@@ -55,3 +55,21 @@ exit
 chezmoi status
 chezmoi diff
 ```
+
+## Configuration Philosophy
+
+1. Maximize consistency everywhere
+2. Minimize future cost to revise
+3. Never do something thrice, automate it after twice
+
+### Philosophy in Practice
+
+- For aliases, use a prefix of the command when possible.
+    - If you're ever in an unsupported environment, muscle memory is still consistent with the default tooling (*Consistency*), and if you ever revise your aliases or resolve a collision then you can still retain any existing muscle memory (*Revision Cost*).
+- TODO...
+    - keyboards,
+    - vi bindings everywhere,
+    - ephemeral environments,
+    - treat yearly setups like infra provisioning,
+    - SSOT where possible for binaries/shortcuts/scripts/aliases/etc),
+
