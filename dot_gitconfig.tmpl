@@ -1,13 +1,19 @@
+# --------------------------------
+# Configuration
+
+[core]
+  excludesfile = ~/.gitignore_global
+  editor = vim
+  pager = delta # Much more readable
 {{ if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 [credential "https://github.com"]
   helper = 
   helper = !/usr/bin/gh auth git-credential
+{{- else }}
+[credential]
+  helper = store
 {{- end }}
-[core]
-  excludesfile = ~/.gitignore_global
-  editor = vim
-  pager = delta
 [init]
   # In accordance with recent changes in the Git community,
   # use "main" to designate default branch
@@ -16,12 +22,40 @@
 [user]
   name = Clifford Ressel
   email = {{ .email | quote }}
-[credential]
-  helper = store
+
+# --------------------------------
+# Stylistic
+
 [color]
   # Use terminal colors when supported
   ui = auto
   interactive = auto
+[delta "interactive"]
+  keep-plus-minus-markers = false
+  line-numbers = false
+  navigate = true
+  side-by-side = false
+[delta]
+  keep-plus-minus-markers = false
+  line-numbers = false
+  navigate = true
+  side-by-side = false
+# [diff]
+#   submodule = log
+#   colorMoved = default
+# [interactive]
+#   diffFilter = delta --color-only --features=interactive
+[pager]
+  blame  = delta
+  diff   = delta
+  reflog = delta
+  show   = delta
+[merge]
+  conflictstyle = diff3
+
+# --------------------------------
+# Shortcuts
+
 [alias]
   a = !git add -A && git status
   br = branch

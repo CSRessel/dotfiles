@@ -286,6 +286,15 @@ vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true,
 -- lvim.colorscheme = "catppuccin-mocha"
 lvim.colorscheme = "tokyonight-moon"
 
+lvim.builtin.which_key.mappings["G"] = {
+  name = "Refactoring",
+  s = { "<cmd>Git status<CR>", "status", mode = { "n" } },
+  d = { "<cmd>Git diff<CR>", "diff", mode = { "n" } },
+  l = { "<cmd>Git log<CR>", "log", mode = { "n" } },
+  c = { "<cmd>Git checkout<CR>", "checkout", mode = { "n" } },
+  b = { "<cmd>Git branch<CR>", "branch", mode = { "n" } },
+}
+
 lvim.builtin.which_key.mappings["a"] = {
   name = "AI (ChatGPT)",
   a = { "<cmd>ChatGPTCompleteCode<CR>", "Complete Code" },
