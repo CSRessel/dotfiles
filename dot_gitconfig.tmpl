@@ -4,7 +4,7 @@
 [core]
   excludesfile = ~/.gitignore_global
   editor = vim
-  pager = delta # Much more readable
+  # pager = delta
 {{ if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 [credential "https://github.com"]
@@ -40,16 +40,16 @@
   line-numbers = false
   navigate = true
   side-by-side = false
-# [diff]
-#   submodule = log
-#   colorMoved = default
+[diff]
+  submodule = log
+  colorMoved = default
 # [interactive]
 #   diffFilter = delta --color-only --features=interactive
-[pager]
-  blame  = delta
-  diff   = delta
-  reflog = delta
-  show   = delta
+# [pager]
+#   blame  = delta
+#   diff   = delta
+#   reflog = delta
+#   show   = delta
 [merge]
   conflictstyle = diff3
 
