@@ -180,6 +180,7 @@ lvim.autocommands = {
 -- ----------------------------------------------------------------
 -- Plugins and their specific config
 lvim.plugins = {
+  { "tpope/vim-fugitive" },
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
