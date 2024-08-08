@@ -16,6 +16,7 @@ run_once_mac_keyboard_shortcuts.sh.tmpl
 .config/input-remapper
 .config/tridactyl
 .config/lvim/plugin
+.installed_packages
 .local
 .packages.md
 .packages_mac.md
