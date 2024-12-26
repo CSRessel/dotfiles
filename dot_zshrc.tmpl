@@ -78,6 +78,8 @@ plugins=(
 {{- if eq .chezmoi.username "clifford.ressel" }}
     zsh-kubectl-prompt
     poetry
+{{ else if eq .chezmoi.username "clifford" }}
+    pdm
 {{- end }}
 )
 
