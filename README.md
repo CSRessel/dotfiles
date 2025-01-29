@@ -25,13 +25,16 @@ Tools needed for my aliases and vim to work:
   - rustup
   - node (through nvm)
   - python3 (through the system)
+  - (TODO) uv
 - command line replacements
-  - fd (cargo install fd-find)
-  - ripgrep (cargo install rigrep)
-  - bat (rust-bat)
   - fzf
-  - delta (git-delta)
-  - dust (cargo install du-dust)
+  - ~~delta (git-delta)~~
+  - cargo
+    - bat
+    - fd-find
+    - ripgrep
+    - du-dust
+    - (TODO review repo, pick a commit hash) zenith (cargo install --git https://github.com/bvaisvil/zenith.git)
 
 ## Getting Started
 
@@ -56,20 +59,23 @@ chezmoi status
 chezmoi diff
 ```
 
-## Configuration Philosophy
+## Philosophy
 
 1. Maximize consistency everywhere
 2. Minimize future cost to revise
-3. Never do something thrice, automate it after twice
+3. Automation used less than yearly is the worst of all worlds
+4. Never do thrice, automate at twice (assuming #3)
 
 ### Philosophy in Practice
 
 - For aliases, use a prefix of the command when possible.
-    - If you're ever in an unsupported environment, muscle memory is still consistent with the default tooling (*Consistency*), and if you ever revise your aliases or resolve a collision then you can still retain any existing muscle memory (*Revision Cost*).
+    - If you're ever in an unsupported environment, muscle memory is still consistent with the default tooling (*Consistency*)
+    - If you ever revise your aliases or resolve a collision then you can still retain any existing muscle memory (*Revision Cost*)
 - TODO...
     - keyboards,
     - vi bindings everywhere,
     - ephemeral environments,
+    - remote development,
     - treat yearly setups like infra provisioning,
-    - SSOT where possible for binaries/shortcuts/scripts/aliases/etc),
+    - SSOT where possible for binaries/shortcuts/scripts/aliases/etc,
 
