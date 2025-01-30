@@ -7,8 +7,11 @@ README.md
 # .vim/.gitmodules
 # .vim/.gitignore
 
+.packages.md
 .packages_mac.md
 run_once_mac_keyboard_shortcuts.sh.tmpl
+
+24-bit-color.sh
 
 {{ if ne .chezmoi.username "clifford" }}
 # only access these on personal machines
@@ -18,8 +21,7 @@ run_once_mac_keyboard_shortcuts.sh.tmpl
 .config/lvim/plugin
 .installed_packages
 .local
-.packages.md
-.packages_mac.md
+.nethackrc
 .vim
 .config/k9s
 {{- else if ne .chezmoi.username "clifford.ressel" }}
