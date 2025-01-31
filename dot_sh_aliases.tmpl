@@ -9,6 +9,20 @@ overrideIfInstalled cat bat
 overrideIfInstalled grep rg
 overrideIfInstalled fd fdfind
 
+chezmoiAliased() {
+    if [ $# -eq 1 ]; then
+        if [ "$1" = "st" ]; then
+            chezmoi status
+        elif [ "$1" = "di" ]; then
+            chezmoi diff
+        else
+            chezmoi "$@"
+        fi
+    else
+        chezmoi "$@"
+    fi
+}
+alias ch=chezmoiAliased
 alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
 
 alias cp="cp -i" # confirm before overwriting something

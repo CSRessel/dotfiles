@@ -1,0 +1,52 @@
+[snippets]
+include_default_snippets = true
+custom_paths = []
+
+[display]
+dataframes = "rich"
+cell_output = "below"
+default_width = "medium"
+theme = "system"
+code_editor_font_size = 18
+
+[runtime]
+auto_instantiate = true
+auto_reload = "off"
+on_cell_change = "autorun"
+
+[completion]
+copilot = "github"
+activate_on_typing = true
+
+[experimental]
+chat_sidebar = true
+tracing = true
+
+[package_management]
+manager = "uv"
+
+[server]
+browser = "default"
+follow_symlink = false
+
+[keymap]
+preset = "default"
+[keymap.overrides]
+"cell.createAbove" = "Ctrl-Shift-:"
+"cell.createBelow" = "Ctrl-;"
+
+[ai]
+rules = ""
+[ai.anthropic]
+
+[ai.open_ai]
+
+[ai.google]
+
+[save]
+format_on_save = true
+autosave = "after_delay"
+autosave_delay = 1000
+
+[formatting]
+line_length = 80

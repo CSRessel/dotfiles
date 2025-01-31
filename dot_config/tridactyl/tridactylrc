@@ -36,3 +36,4 @@
 unbindurl youtube.com <<
 unbindurl youtube.com >>
 blacklistadd monkeytype.com
+set newtab about:blank

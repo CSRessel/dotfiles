@@ -36,6 +36,14 @@ Tools needed for my aliases and vim to work:
     - du-dust
     - (TODO review repo, pick a commit hash) zenith (cargo install --git https://github.com/bvaisvil/zenith.git)
 
+Other tools, useful but not blocking install:
+
+- gh
+- jq
+- yq
+- direnv
+- kubectl
+
 ## Getting Started
 
 Install binary, for example:
@@ -71,7 +79,7 @@ chezmoi diff
 - For aliases, use a prefix of the command when possible.
     - If you're ever in an unsupported environment, muscle memory is still consistent with the default tooling (*Consistency*)
     - If you ever revise your aliases or resolve a collision then you can still retain any existing muscle memory (*Revision Cost*)
-- TODO...
+- TODO philosophy on...
     - keyboards,
     - vi bindings everywhere,
     - ephemeral environments,
