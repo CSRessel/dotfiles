@@ -71,15 +71,21 @@ chezmoi diff
 
 1. Maximize consistency everywhere
 2. Minimize future cost to revise
-3. Automation used less than yearly is the worst of all worlds
-4. Never do thrice, automate at twice (assuming #3)
 
 ### Philosophy in Practice
 
 - For aliases, use a prefix of the command when possible.
     - If you're ever in an unsupported environment, muscle memory is still consistent with the default tooling (*Consistency*)
     - If you ever revise your aliases or resolve a collision then you can still retain any existing muscle memory (*Revision Cost*)
-- TODO philosophy on...
+- Satisfy all (or every possible) tooling need with solely a terminal + a browser.
+    - Fewer applications means fewer configs to update with changes (*Revision Cost*) and less config drift (*Consistency*)
+    - If any of them phase in and out of use, configs break or are out-of-date
+- Never do thrice, automate after twice
+    - If it's not automated, it's not likely to stay up-to-date (*Consistency*)
+    - And if it's manual to update and sync across environments, it's honerous to change (*Revision Cost*)
+    - However, automation used less than yearly is often the worst of all worlds (if the automation itself breaks, you did twice the work and got no use out of it!)
+
+- TODO...
     - keyboards,
     - vi bindings everywhere,
     - ephemeral environments,
