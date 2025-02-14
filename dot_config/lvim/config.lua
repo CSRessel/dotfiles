@@ -270,6 +270,25 @@ lvim.plugins = {
       require("refactoring").setup()
     end,
   },
+  {
+    "epwalsh/obsidian.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      require("obsidian").setup({
+        workspaces = {
+          {
+            name = "knowledgebase",
+            path = "~/Documents/knowledgebase/",
+          },
+        },
+        -- Optional, boolean or a function that takes a filename and returns a boolean.
+        -- `true` indicates that you don't want obsidian.nvim to manage frontmatter.
+        disable_frontmatter = true,
+      })
+    end,
+  },
 }
 
 -- vim.g.copilot_assume_mapped = true
