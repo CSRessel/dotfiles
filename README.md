@@ -23,13 +23,13 @@ Tools needed for my aliases and vim to work:
 
 - lang and toolchains
   - rustup
+  - uv
   - node (through nvm)
-  - python3 (through the system)
-  - (TODO) uv
 - command line replacements
   - fzf
   - ~~delta (git-delta)~~
   - cargo
+    - tldr
     - bat
     - fd-find
     - ripgrep
