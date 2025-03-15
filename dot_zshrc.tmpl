@@ -79,7 +79,6 @@ plugins=(
     zsh-kubectl-prompt
     poetry
 {{ else if eq .chezmoi.username "clifford" }}
-    pdm
 {{- end }}
 )
 
@@ -138,14 +137,6 @@ export PATH="$PATH:/home/{{ .chezmoi.username }}/.local/bin"
 
 # direnv
 eval "$(direnv hook zsh)"
-
-# python
-if [ "$POETRY_ACTIVE" != "1" ]; then
-    export PYENV_ROOT="$HOME/.pyenv"
-    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-fi
 
 {{ if eq .chezmoi.username "clifford" }}
 {{- /* only on personal machine */ -}}
