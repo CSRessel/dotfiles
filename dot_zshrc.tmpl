@@ -121,12 +121,11 @@ RPROMPT='%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}'
 # enable vim bindings
 bindkey -v
 
-export EDITOR='lvim'
-export VISUAL='lvim'
-#export TERM='xterm-256color'
+export VISUAL=lvim
+export EDITOR="$VISUAL"
 
 if [ -f ~/.sh_aliases ]; then
-    . ~/.sh_aliases
+    source ~/.sh_aliases
 fi
 
 # --------------------------------
