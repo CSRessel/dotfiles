@@ -15,8 +15,6 @@ Tools that will be configured by chezmoi below:
   - oh-my-zsh
   - zsh-kubectl-prompt
 - tmux
-- direnv
-- input-remapper
 - Tridactyl
 
 Tools needed for my aliases and vim to work:
@@ -24,12 +22,10 @@ Tools needed for my aliases and vim to work:
 - lang and toolchains
   - rustup
   - uv
-  - node (through nvm)
+  - node (through bun)
 - command line replacements
-  - fzf
-  - ~~delta (git-delta)~~
   - cargo
-    - tldr
+    - tealdeer
     - bat
     - fd-find
     - ripgrep
@@ -38,6 +34,7 @@ Tools needed for my aliases and vim to work:
 
 Other tools, useful but not blocking install:
 
+- fzf
 - gh
 - jq
 - yq
