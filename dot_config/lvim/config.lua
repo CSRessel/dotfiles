@@ -222,7 +222,7 @@ lvim.plugins = {
     "jackMort/ChatGPT.nvim",
     event = "VeryLazy",
     config = function()
-      require("chatgpt").setup()
+      require("chatgpt").setup({})
     end,
     dependencies = {
       "MunifTanjim/nui.nvim",
@@ -334,6 +334,7 @@ lvim.builtin.which_key.mappings["a"] = {
 
 lvim.builtin.which_key.mappings["r"] = {
   name = "Refactoring",
+  r = { ":!rustc -o %.o % && %.o <CR>", "Run", mode = { "n" } },
   e = { "<cmd>Refactor extract<CR>", "Extract", mode = { "v" } },
   f = { "<cmd>Refactor extract_to_file<CR>", "Extract to File", mode = { "v" } },
   v = { "<cmd>Refactor extract_var<CR>", "Extract Variable", mode = { "x" } },
