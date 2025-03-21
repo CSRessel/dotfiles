@@ -23,14 +23,6 @@ Tools needed for my aliases and vim to work:
   - rustup
   - uv
   - node (through bun)
-- command line replacements
-  - cargo
-    - tealdeer
-    - bat
-    - fd-find
-    - ripgrep
-    - du-dust
-    - (TODO review repo, pick a commit hash) zenith (cargo install --git https://github.com/bvaisvil/zenith.git)
 
 Other tools, useful but not blocking install:
 
