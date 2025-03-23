@@ -1,0 +1,131 @@
+{
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "explorer.autoReveal": false,
+  "[python]": {
+    "editor.formatOnType": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "cSpell.userWords": [
+    "allclose",
+    "astype",
+    "dagster",
+    "dataframe",
+    "denormalization",
+    "denormalize",
+    "dropna",
+    "dtype",
+    "dtypes",
+    "fhir",
+    "fillna",
+    "flowthrough",
+    "hackathon",
+    "intraday",
+    "isin",
+    "iterrows",
+    "microfrontend",
+    "notna",
+    "numpy",
+    "nunique",
+    "oidc",
+    "pyarrow",
+    "pyspark",
+    "secmaster",
+    "styleguide",
+    "testid",
+    "unpivot",
+    "wallstreet"
+  ],
+  "eslint.rules.customizations": [
+    {
+      "rule": "*",
+      "severity": "warn"
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": [
+        "K"
+      ],
+      "commands": [
+        "editor.action.showHover"
+      ],
+      "silent": true
+    }
+  ],
+  "vim.leader": "<space>",
+  "vscode-neovim.neovimExecutablePaths.darwin": "/usr/local/bin/nvim",
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "editor.fontSize": 16,
+  "remote.SSH.remotePlatform": {
+    "dev": "linux",
+    "i-009214b4f70b74e7c": "linux",
+    "i-06825c1cc35681349": "linux",
+    "i-09474f9344438cf6c": "linux",
+    "i-09bd1e981f6e1f57c": "linux"
+  },
+  "git.openRepositoryInParentFolders": "always",
+  "terminal.integrated.fontFamily": "FiraCode Nerd Font",
+  "mypy-type-checker.severity": {
+    "error": "Error",
+    "note": "Information",
+    "warning": "Warning"
+  },
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.autoImportCompletions": true,
+  "terminal.integrated.allowChords": false,
+  "terminal.integrated.confirmOnExit": "hasChildProcesses",
+  "terminal.integrated.fontWeight": "normal",
+  "workbench.colorCustomizations": {},
+  "SQL-Formatter-VSCode.expressionWidth": 80,
+  "cSpell.minWordLength": 5,
+  "workbench.startupEditor": "none",
+  "redhat.telemetry.enabled": false,
+  "jupyter.askForKernelRestart": false,
+  "notebook.output.textLineLimit": 100,
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "icon": "terminal-powershell"
+    },
+    "Command Prompt": {
+      "path": [
+        "${env:windir}\\Sysnative\\cmd.exe",
+        "${env:windir}\\System32\\cmd.exe"
+      ],
+      "args": [],
+      "icon": "terminal-cmd"
+    },
+    "Git Bash": {
+      "source": "Git Bash"
+    },
+    "Ubuntu-22.04 (WSL)": {
+      "path": "C:\\Windows\\System32\\wsl.exe",
+      "args": [
+        "-d",
+        "Ubuntu-22.04"
+      ]
+    },
+    "Ubuntu (WSL)": {
+      "path": "C:\\Windows\\System32\\wsl.exe",
+      "args": [
+        "-d",
+        "Ubuntu"
+      ]
+    }
+  },
+  "terminal.integrated.defaultProfile.windows": "Ubuntu (WSL)",
+  "python.analysis.inlayHints.callArgumentNames": "all",
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "workbench.iconTheme": "catppuccin-macchiato",
+  "terminal.integrated.tabs.enabled": false,
+  "github.copilot.editor.enableAutoCompletions": true,
+  "interactiveWindow.executeWithShiftEnter": true,
+  "remote.autoForwardPorts": false,
+  "terminal.external.windowsExec": "C:\\Windows\\system32\\wsl.exe",
+  "workbench.navigationControl.enabled": false,
+  "window.commandCenter": false,
+  "python.terminal.activateEnvironment": false
+}
