@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Godot
+Exec=/home/clifford/.local/bin/godot-dotnet
+Icon=/home/clifford/.local/share/applications/godot.png

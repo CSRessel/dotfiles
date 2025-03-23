@@ -1,0 +1,6 @@
+[Desktop Entry]
+Version=0.0.1
+Type=Application
+Name=Cursor
+Exec=/home/clifford/.local/bin/cursor
+Icon=/home/clifford/.local/share/applications/cursor.png
