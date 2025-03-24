@@ -13,6 +13,9 @@ run_once_mac_keyboard_shortcuts.sh.tmpl
 
 24-bit-color.sh
 
+# backup only, not to be applied
+dot_config/private_Code/User
+
 {{ if ne .chezmoi.username "clifford" }}
 # only access these on personal machines
 .bashrc

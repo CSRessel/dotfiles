@@ -158,6 +158,18 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 {{ else if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 
+export SPARK_HOME=/opt/spark
+export PATH=$PATH:$SPARK_HOME/bin
+
+# python
+if [ "$POETRY_ACTIVE" != "1" ]; then
+    # for sanity sake, stopping pyenv for messing with poetry shells
+    export PYENV_ROOT="$HOME/.pyenv"
+    [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+fi
+
 export AWS_PROFILE=dev
 export AWS_DEFAULT_REGION="us-east-2"
 export PYARROW_IGNORE_TIMEZONE=1

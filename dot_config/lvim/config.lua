@@ -213,6 +213,8 @@ lvim.plugins = {
           ["rust"] = true,
           ["terraform"] = true,
           ["typescript"] = true,
+          ["vim"] = true,
+          ["vimscript"] = true,
           ["yaml"] = true,
         },
       })
