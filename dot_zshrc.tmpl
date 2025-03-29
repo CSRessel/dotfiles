@@ -155,6 +155,12 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
+if [[ "$ARGV0" =~ .*cursor$ ]]; then
+  # cursor weirdness
+  # https://github.com/getcursor/cursor/issues/549
+  unset ARGV0
+fi
+
 {{ else if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 
