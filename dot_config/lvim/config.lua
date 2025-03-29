@@ -47,7 +47,8 @@ lvim.format_on_save.enabled = true
 -- ----------------------------------------------------------------
 -- Filetype and language configurations
 
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" }) -- manually configure pyright
+-- lvim.lsp.installer.setup.automatic_installation = true -- outdated flag now?
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" }) -- manually configure pyright
 
 local formatters = require "lvim.lsp.null-ls.formatters"
 local linters = require "lvim.lsp.null-ls.linters"
