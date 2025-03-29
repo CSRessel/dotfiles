@@ -11,6 +11,7 @@ lvim.log.level = "warn"
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
+lvim.keys.insert_mode["<Tab>"] = "<Tab>"  -- disabled by default for some reason?
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
@@ -75,16 +76,20 @@ linters.setup {
 }
 code_actions.setup { }
 
-lvim.format_on_save.pattern = { "*.py" }
+lvim.format_on_save.pattern = { "*.py", "*.rs", "*.lua" }
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   "bash",
   "c",
+  "gdscript",
+  "godot_resource",
+  "gdshader",
   "javascript",
   "json",
   "lua",
   "python",
+  "rust",
   "typescript",
   "tsx",
   "css",
@@ -100,12 +105,12 @@ vim.filetype.add({
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enable = true
-lvim.builtin.treesitter.indent = {
-  -- Fix for treesitter indent affecting Python files
-  -- https://github.com/LunarVim/LunarVim/issues/2630
-  enable = true,
-  disable = { "yaml", "python" },
-} -- treesitter is buggy for these languages :(
+-- lvim.builtin.treesitter.indent = {
+--   -- Fix for treesitter indent affecting Python files
+--   -- https://github.com/LunarVim/LunarVim/issues/2630
+--   enable = true,
+--   disable = { "yaml", "python" },
+-- } -- treesitter is buggy for these languages :(
 --require("nvim-treesitter.configs").setup({})
 lvim.builtin.treesitter.incremental_selection = {
   enable = true,
@@ -148,6 +153,20 @@ lvim.builtin.treesitter.textobjects.select = {
   },
 }
 
+-- For better Godot support
+-- 
+-- local is_godot_project = false
+-- local godot_project_path = ''
+-- local cwd = vim.fn.getcwd()
+-- if vim.uv.fs_stat(cwd .. '/project.godot') then
+--   is_godot_project = true
+--   godot_project_path = cwd
+-- end
+-- if vim.uv.fs_stat(cwd .. '/../project.godot') then
+--   is_godot_project = true
+--   godot_project_path = cwd .. '/..'
+-- end
+
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {
@@ -162,20 +181,20 @@ lvim.builtin.treesitter.textobjects.select = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
-lvim.autocommands = {
-  {
-    "BufEnter", -- see `:h autocmd-events`
-    {
-      pattern = { "*.py" },
-      callback = function()
-        vim.opt.expandtab = true
-        vim.opt.shiftwidth = 4
-        vim.opt.shiftround = true
-        vim.opt.tabstop = 4
-      end
-    }
-  },
-}
+-- lvim.autocommands = {
+--   {
+--     "BufEnter", -- see `:h autocmd-events`
+--     {
+--       pattern = { "*.py" },
+--       callback = function()
+--         vim.opt.expandtab = true
+--         vim.opt.shiftwidth = 4
+--         vim.opt.shiftround = true
+--         vim.opt.tabstop = 4
+--       end
+--     }
+--   },
+-- }
 
 -- ----------------------------------------------------------------
 -- Plugins and their specific config
@@ -291,6 +310,12 @@ lvim.plugins = {
       })
     end,
   },
+  {
+    "rust-lang/rust.vim",
+    config = function()
+      vim.g.rustfmt_autosave = 1
+    end
+  }
 }
 
 -- vim.g.copilot_assume_mapped = true
