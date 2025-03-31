@@ -164,9 +164,6 @@ fi
 {{ else if eq .chezmoi.username "clifford.ressel" }}
 {{- /* only on work machine */ -}}
 
-export SPARK_HOME=/opt/spark
-export PATH=$PATH:$SPARK_HOME/bin
-
 # python
 if [ "$POETRY_ACTIVE" != "1" ]; then
     # for sanity sake, stopping pyenv for messing with poetry shells
