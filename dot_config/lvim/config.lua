@@ -11,7 +11,7 @@ lvim.log.level = "warn"
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
-lvim.keys.insert_mode["<Tab>"] = "<Tab>"  -- disabled by default for some reason?
+lvim.keys.insert_mode["<Tab>"] = "<Tab>" -- disabled by default for some reason?
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
@@ -75,7 +75,7 @@ linters.setup {
     },
   }
 }
-code_actions.setup { }
+code_actions.setup {}
 
 lvim.format_on_save.pattern = { "*.py", "*.rs", "*.lua" }
 
@@ -155,7 +155,7 @@ lvim.builtin.treesitter.textobjects.select = {
 }
 
 -- For better Godot support
--- 
+--
 -- local is_godot_project = false
 -- local godot_project_path = ''
 -- local cwd = vim.fn.getcwd()
@@ -269,15 +269,15 @@ lvim.plugins = {
   {
     "alexghergh/nvim-tmux-navigation",
     config = function()
-      require'nvim-tmux-navigation'.setup {
+      require 'nvim-tmux-navigation'.setup {
         -- disable_when_zoomed = true, -- defaults to false
         keybindings = {
-            left = "<C-h>",
-            down = "<C-j>",
-            up = "<C-k>",
-            right = "<C-l>",
-            -- last_active = "<C-\\>",
-            -- next = "<C-Space>",
+          left = "<C-h>",
+          down = "<C-j>",
+          up = "<C-k>",
+          right = "<C-l>",
+          -- last_active = "<C-\\>",
+          -- next = "<C-Space>",
         }
       }
     end,
@@ -311,12 +311,12 @@ lvim.plugins = {
       })
     end,
   },
-  {
-    "rust-lang/rust.vim",
-    config = function()
-      vim.g.rustfmt_autosave = 1
-    end
-  }
+  -- {
+  --   "rust-lang/rust.vim",
+  --   config = function()
+  --     vim.g.rustfmt_autosave = 1
+  --   end
+  -- }
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -371,4 +371,3 @@ lvim.builtin.which_key.mappings["r"] = {
   b = { "<cmd>Refactor extract_block<CR>", "Extract Block", mode = { "n" } },
   -- f = { "<cmd>Refactor extract_block_to_file<CR>", "Extract Block to File", mode = { "n" } },
 }
-
