@@ -94,7 +94,6 @@ lvim.builtin.treesitter.ensure_installed = {
   "typescript",
   "tsx",
   "css",
-  "rust",
   "java",
   "yaml",
 }
@@ -282,16 +281,16 @@ lvim.plugins = {
       }
     end,
   },
-  {
-    "ThePrimeagen/refactoring.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    config = function()
-      require("refactoring").setup()
-    end,
-  },
+  -- {
+  --   "ThePrimeagen/refactoring.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   config = function()
+  --     require("refactoring").setup()
+  --   end,
+  -- },
   {
     "epwalsh/obsidian.nvim",
     dependencies = {
@@ -311,12 +310,11 @@ lvim.plugins = {
       })
     end,
   },
-  -- {
-  --   "rust-lang/rust.vim",
-  --   config = function()
-  --     vim.g.rustfmt_autosave = 1
-  --   end
-  -- }
+  {
+    'mrcjkb/rustaceanvim',
+    version = '^6', -- Recommended
+    lazy = false,   -- This plugin is already lazy
+  },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -361,13 +359,24 @@ lvim.builtin.which_key.mappings["a"] = {
 }
 
 lvim.builtin.which_key.mappings["r"] = {
-  name = "Refactoring",
-  r = { ":!rustc -o %.o % && %.o <CR>", "Run", mode = { "n" } },
-  e = { "<cmd>Refactor extract<CR>", "Extract", mode = { "v" } },
-  f = { "<cmd>Refactor extract_to_file<CR>", "Extract to File", mode = { "v" } },
-  v = { "<cmd>Refactor extract_var<CR>", "Extract Variable", mode = { "x" } },
-  i = { "<cmd>Refactor inline_var<CR>", "Inline Variable", mode = { "n", "v" } },
-  I = { "<cmd>Refactor inline_func<CR>", "Inline Function", mode = { "n" } },
-  b = { "<cmd>Refactor extract_block<CR>", "Extract Block", mode = { "n" } },
-  -- f = { "<cmd>Refactor extract_block_to_file<CR>", "Extract Block to File", mode = { "n" } },
+  name = "Rust",
+  r = { "<cmd>RustLsp runnables<Cr>", "Runnables" },
+  t = { "<cmd>RustLsp testables<Cr>", "Testables" },
+  e = { "<cmd>RustLsp expandMacro<Cr>", "Macro Expand" },
+  h = { "<cmd>RustLsp hover actions<Cr>", "Hover" },
+  p = { "<cmd>RustLsp rebuildProcMacros<Cr>", "Rebuild Macros" },
+  g = { "<cmd>RustLsp codeAction<Cr>", "Code Action" },
+  x = { "<cmd>RustLsp explainError<Cr>", "Explain Error" },
+  d = { "<cmd>RustLsp renderDiagnostic<Cr>", "Diagnostic" },
+  c = { "<cmd>RustLsp flyCheck<Cr>", "Check" },
 }
+
+-- lvim.builtin.which_key.mappings["r"] = {
+--   name = "Refactoring",
+--   e = { "<cmd>Refactor extract<CR>", "Extract", mode = { "v" } },
+--   f = { "<cmd>Refactor extract_to_file<CR>", "Extract to File", mode = { "v" } },
+--   v = { "<cmd>Refactor extract_var<CR>", "Extract Variable", mode = { "x" } },
+--   i = { "<cmd>Refactor inline_var<CR>", "Inline Variable", mode = { "n", "v" } },
+--   I = { "<cmd>Refactor inline_func<CR>", "Inline Function", mode = { "n" } },
+--   b = { "<cmd>Refactor extract_block<CR>", "Extract Block", mode = { "n" } },
+-- }
