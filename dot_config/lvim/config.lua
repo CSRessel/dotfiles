@@ -85,7 +85,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "c",
   "gdscript",
   "godot_resource",
-  "gdshader",
+  -- "gdshader",
   "javascript",
   "json",
   "lua",
@@ -222,6 +222,7 @@ lvim.plugins = {
         filetypes = {
           ["*"] = false,
           ["c"] = true,
+          ["cs"] = true,
           ["c++"] = true,
           ["dockerfile"] = true,
           ["go"] = true,
