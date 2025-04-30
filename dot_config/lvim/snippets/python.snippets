@@ -1,0 +1,9 @@
+snippet flc
+    # TODO remove this!!!
+
+    from dagster import build_asset_context
+    from fgrovep.core import lake_client
+    context = build_asset_context(partition_key="${1:2024-08-01}")
+    lc = lake_client.create("prod")
+    ${2:df} = client.table("${3:core_table}").to_spark()
+
