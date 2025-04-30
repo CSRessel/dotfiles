@@ -316,6 +316,45 @@ lvim.plugins = {
     version = '^6', -- Recommended
     lazy = false,   -- This plugin is already lazy
   },
+  {
+    'sotte/Presenting.nvim',
+    opts = {
+      -- fill in your options here
+      -- see :help Presenting.config
+      options = {
+        -- The width of the slide buffer.
+        width = 80,
+      },
+      separator = {
+        -- Separators for different filetypes.
+        -- You can add your own or oberwrite existing ones.
+        -- Note: separators are lua patterns, not regexes.
+        markdown = "^##? ", -- overridden to limit at h2
+        -- org = "^*+ ",
+        -- adoc = "^==+ ",
+        -- asciidoctor = "^==+ ",
+      },
+      -- Keep the separator, useful if you're parsing based on headings.
+      -- If you want to parse on a non-heading separator, e.g. `---` set this to false.
+      -- keep_separator = true,
+      keymaps = {
+        -- These are local mappings for the open slide buffer.
+        -- Disable existing keymaps by setting them to `nil`.
+        -- Add your own keymaps as you desire.
+        -- ["n"] = function() Presenting.next() end,
+        -- ["p"] = function() Presenting.prev() end,
+        ["q"] = nil, -- function() Presenting.quit() end,
+        ["f"] = nil, -- function() Presenting.first() end,
+        ["l"] = nil, -- function() Presenting.last() end,
+        -- ["<CR>"] = function() Presenting.next() end,
+        -- ["<BS>"] = function() Presenting.prev() end,
+      },
+      -- -- A function that configures the slide buffer.
+      -- -- If you want custom settings write your own function that accepts a buffer id as argument.
+      -- configure_slide_buffer = function(buf) H.configure_slide_buffer(buf) end,
+    },
+    cmd = { "Presenting" },
+  },
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -331,6 +370,12 @@ vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true,
 -- lvim.colorscheme = "oxocarbon" -- the best color scheme, except I can't stand having diffs without red/green colros
 -- lvim.colorscheme = "catppuccin-mocha"
 lvim.colorscheme = "tokyonight-moon"
+
+lvim.builtin.which_key.mappings["L"]["p"] = {
+  name = "Presenting",
+  p = { "<cmd>Presenting<CR>", "Start Presenting" },
+  q = { "<cmd>lua Presenting.quit()<CR>", "Quit Presenting" },
+}
 
 lvim.builtin.which_key.mappings["G"] = {
   name = "Git",
