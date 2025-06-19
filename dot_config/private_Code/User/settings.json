@@ -11,11 +11,13 @@
     "astype",
     "dagster",
     "dataframe",
+    "dayfirst",
     "denormalization",
     "denormalize",
     "dropna",
     "dtype",
     "dtypes",
+    "fgrovep",
     "fhir",
     "fillna",
     "flowthrough",
@@ -24,6 +26,7 @@
     "isin",
     "iterrows",
     "microfrontend",
+    "navify",
     "notna",
     "numpy",
     "nunique",
@@ -33,6 +36,7 @@
     "secmaster",
     "styleguide",
     "testid",
+    "trinet",
     "unpivot",
     "wallstreet"
   ],
@@ -107,16 +111,9 @@
         "-d",
         "Ubuntu-22.04"
       ]
-    },
-    "Ubuntu (WSL)": {
-      "path": "C:\\Windows\\System32\\wsl.exe",
-      "args": [
-        "-d",
-        "Ubuntu"
-      ]
     }
   },
-  "terminal.integrated.defaultProfile.windows": "Ubuntu (WSL)",
+  "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
   "python.analysis.inlayHints.callArgumentNames": "all",
   "workbench.colorTheme": "Catppuccin Macchiato",
   "workbench.iconTheme": "catppuccin-macchiato",
@@ -127,5 +124,8 @@
   "terminal.external.windowsExec": "C:\\Windows\\system32\\wsl.exe",
   "workbench.navigationControl.enabled": false,
   "window.commandCenter": false,
-  "python.terminal.activateEnvironment": false
+  "python.terminal.activateEnvironment": false,
+  "editor.fontFamily": "FiraCode Nerd Font Retina, FiraCode Nerd Font, Consolas, monospace",
+  "workbench.colorTheme": "Catppuccin Macchiato",
+  "vscode-neovim.neovimExecutablePaths.linux": "/home/clifford/.local/bin/nvim"
 }

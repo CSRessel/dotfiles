@@ -200,46 +200,46 @@ lvim.builtin.treesitter.textobjects.select = {
 -- Plugins and their specific config
 lvim.plugins = {
   { "tpope/vim-fugitive" },
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = {
-          enabled = true,
-          auto_trigger = true,
-          debounce = 75,
-          keymap = {
-            accept = "<Tab>",
-            accept_word = false,
-            accept_line = false,
-            next = "<M-]>",
-            prev = "<M-[>",
-            dismiss = "<C-]>",
-          },
-        },
-        filetypes = {
-          ["*"] = false,
-          ["c"] = true,
-          ["cs"] = true,
-          ["c++"] = true,
-          ["dockerfile"] = true,
-          ["go"] = true,
-          ["javascript"] = true,
-          ["lua"] = true,
-          ["python"] = true,
-          ["sh"] = true,
-          ["rust"] = true,
-          ["terraform"] = true,
-          ["typescript"] = true,
-          ["vim"] = true,
-          ["vimscript"] = true,
-          ["yaml"] = true,
-        },
-      })
-    end,
-  },
+  -- {
+  --   "zbirenbaum/copilot.lua",
+  --   cmd = "Copilot",
+  --   event = "InsertEnter",
+  --   config = function()
+  --     require("copilot").setup({
+  --       suggestion = {
+  --         enabled = true,
+  --         auto_trigger = true,
+  --         debounce = 75,
+  --         keymap = {
+  --           accept = "<Tab>",
+  --           accept_word = false,
+  --           accept_line = false,
+  --           next = "<M-]>",
+  --           prev = "<M-[>",
+  --           dismiss = "<C-]>",
+  --         },
+  --       },
+  --       filetypes = {
+  --         ["*"] = false,
+  --         ["c"] = true,
+  --         ["cs"] = true,
+  --         ["c++"] = true,
+  --         ["dockerfile"] = true,
+  --         ["go"] = true,
+  --         ["javascript"] = true,
+  --         ["lua"] = true,
+  --         ["python"] = true,
+  --         ["sh"] = true,
+  --         ["rust"] = true,
+  --         ["terraform"] = true,
+  --         ["typescript"] = true,
+  --         ["vim"] = true,
+  --         ["vimscript"] = true,
+  --         ["yaml"] = true,
+  --       },
+  --     })
+  --   end,
+  -- },
   {
     "jackMort/ChatGPT.nvim",
     event = "VeryLazy",
