@@ -37,4 +37,6 @@ unbindurl youtube.com <<
 unbindurl youtube.com >>
 blacklistadd monkeytype.com
 blacklistadd localhost:2718
+blacklistadd colab.research.google.com
+blacklistadd docs.google.com
 set newtab about:blank
