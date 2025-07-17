@@ -67,3 +67,10 @@
   logg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit
   logp = log -p
   pushf = push --force-with-lease
+{{ if (lookPath "git-lfs") -}}
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+{{ end -}}
