@@ -48,7 +48,7 @@ lvim.format_on_save.enabled = true
 -- Filetype and language configurations
 
 -- lvim.lsp.installer.setup.automatic_installation = true -- outdated flag now?
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" }) -- manually configure pyright
+-- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
 
 local formatters = require "lvim.lsp.null-ls.formatters"
 local linters = require "lvim.lsp.null-ls.linters"
@@ -200,69 +200,6 @@ lvim.builtin.treesitter.textobjects.select = {
 -- Plugins and their specific config
 lvim.plugins = {
   { "tpope/vim-fugitive" },
-  -- {
-  --   "zbirenbaum/copilot.lua",
-  --   cmd = "Copilot",
-  --   event = "InsertEnter",
-  --   config = function()
-  --     require("copilot").setup({
-  --       suggestion = {
-  --         enabled = true,
-  --         auto_trigger = true,
-  --         debounce = 75,
-  --         keymap = {
-  --           accept = "<Tab>",
-  --           accept_word = false,
-  --           accept_line = false,
-  --           next = "<M-]>",
-  --           prev = "<M-[>",
-  --           dismiss = "<C-]>",
-  --         },
-  --       },
-  --       filetypes = {
-  --         ["*"] = false,
-  --         ["c"] = true,
-  --         ["cs"] = true,
-  --         ["c++"] = true,
-  --         ["dockerfile"] = true,
-  --         ["go"] = true,
-  --         ["javascript"] = true,
-  --         ["lua"] = true,
-  --         ["python"] = true,
-  --         ["sh"] = true,
-  --         ["rust"] = true,
-  --         ["terraform"] = true,
-  --         ["typescript"] = true,
-  --         ["vim"] = true,
-  --         ["vimscript"] = true,
-  --         ["yaml"] = true,
-  --       },
-  --     })
-  --   end,
-  -- },
-  {
-    "jackMort/ChatGPT.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("chatgpt").setup({})
-    end,
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim"
-    }
-  },
-  -- {
-  --   "ggandor/leap.nvim",
-  --   config = function()
-  --     -- require('leap').add_default_mappings()
-  --   end,
-  --   dependencies = {
-  --     "tpope/vim-repeat",
-  --   }
-  -- },
-  { "NoahTheDuke/vim-just" },
-  { "IndianBoy42/tree-sitter-just" },
   { "nyoom-engineering/oxocarbon.nvim" },
   { "catppuccin/nvim" },
   { "folke/tokyonight.nvim" },
@@ -282,16 +219,6 @@ lvim.plugins = {
       }
     end,
   },
-  -- {
-  --   "ThePrimeagen/refactoring.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  --   config = function()
-  --     require("refactoring").setup()
-  --   end,
-  -- },
   {
     "epwalsh/obsidian.nvim",
     dependencies = {
@@ -310,11 +237,6 @@ lvim.plugins = {
         disable_frontmatter = true,
       })
     end,
-  },
-  {
-    'mrcjkb/rustaceanvim',
-    version = '^6', -- Recommended
-    lazy = false,   -- This plugin is already lazy
   },
   {
     'sotte/Presenting.nvim',
@@ -355,6 +277,23 @@ lvim.plugins = {
     },
     cmd = { "Presenting" },
   },
+  -- { "NoahTheDuke/vim-just" },
+  -- { "IndianBoy42/tree-sitter-just" },
+  -- {
+  --   "ThePrimeagen/refactoring.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  --   config = function()
+  --     require("refactoring").setup()
+  --   end,
+  -- },
+  -- {
+  --   'mrcjkb/rustaceanvim',
+  --   version = '^6', -- Recommended
+  --   lazy = false,   -- This plugin is already lazy
+  -- },
 }
 
 -- vim.g.copilot_assume_mapped = true
