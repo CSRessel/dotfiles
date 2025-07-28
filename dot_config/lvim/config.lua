@@ -181,20 +181,20 @@ lvim.builtin.treesitter.textobjects.select = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
--- lvim.autocommands = {
---   {
---     "BufEnter", -- see `:h autocmd-events`
---     {
---       pattern = { "*.py" },
---       callback = function()
---         vim.opt.expandtab = true
---         vim.opt.shiftwidth = 4
---         vim.opt.shiftround = true
---         vim.opt.tabstop = 4
---       end
---     }
---   },
--- }
+lvim.autocommands = {
+  {
+    "BufEnter", -- see `:h autocmd-events`
+    {
+      pattern = { "*.rs" },
+      callback = function()
+        vim.opt.tabstop = 4
+        vim.opt.shiftwidth = 4
+        vim.opt.shiftround = true
+        vim.opt.expandtab = true
+      end
+    }
+  },
+}
 
 -- ----------------------------------------------------------------
 -- Plugins and their specific config
@@ -293,6 +293,7 @@ lvim.plugins = {
   --   'mrcjkb/rustaceanvim',
   --   version = '^6', -- Recommended
   --   lazy = false,   -- This plugin is already lazy
+  --   -- opt = {},
   -- },
 }
 
@@ -345,15 +346,18 @@ lvim.builtin.which_key.mappings["a"] = {
 
 lvim.builtin.which_key.mappings["r"] = {
   name = "Rust",
-  r = { "<cmd>RustLsp runnables<Cr>", "Runnables" },
-  t = { "<cmd>RustLsp testables<Cr>", "Testables" },
-  e = { "<cmd>RustLsp expandMacro<Cr>", "Macro Expand" },
-  h = { "<cmd>RustLsp hover actions<Cr>", "Hover" },
-  p = { "<cmd>RustLsp rebuildProcMacros<Cr>", "Rebuild Macros" },
-  g = { "<cmd>RustLsp codeAction<Cr>", "Code Action" },
-  x = { "<cmd>RustLsp explainError<Cr>", "Explain Error" },
-  d = { "<cmd>RustLsp renderDiagnostic<Cr>", "Diagnostic" },
-  c = { "<cmd>RustLsp flyCheck<Cr>", "Check" },
+  -- r = { "<cmd>RustLsp runnables<CR>", "Runnables" },
+  -- t = { "<cmd>RustLsp testables<CR>", "Testables" },
+  -- e = { "<cmd>RustLsp expandMacro<CR>", "Macro Expand" },
+  -- h = { "<cmd>RustLsp hover actions<CR>", "Hover" },
+  -- p = { "<cmd>RustLsp rebuildProcMacros<CR>", "Rebuild Macros" },
+  -- g = { "<cmd>RustLsp codeAction<CR>", "Code Action" },
+  -- x = { "<cmd>RustLsp explainError<CR>", "Explain Error" },
+  -- d = { "<cmd>RustLsp renderDiagnostic<CR>", "Diagnostic" },
+  -- c = { "<cmd>RustLsp flyCheck<CR>", "Check" },
+  c = { "<cmd>!cargo check<CR>", "Check" },
+  r = { "<cmd>!cargo run<CR>", "Run" },
+  t = { "<cmd>!cargo test<CR>", "Test" },
 }
 
 -- lvim.builtin.which_key.mappings["r"] = {
