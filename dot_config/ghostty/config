@@ -50,4 +50,4 @@ keybind = alt+three=unbind
 keybind = alt+four=unbind
 keybind = shift+enter=text:\n
 
-window-decorations = none
+window-decoration = none
