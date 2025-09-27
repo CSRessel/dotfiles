@@ -220,6 +220,9 @@ lvim.plugins = {
     end,
   },
   {
+    "github/copilot.vim"
+  },
+  {
     "epwalsh/obsidian.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
