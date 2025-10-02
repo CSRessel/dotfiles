@@ -1,0 +1,4 @@
+notify = ["python3", "/home/clifford/.codex/notify.py"]
+
+[projects."/home/clifford/Documents/source/"]
+trust_level = "trusted"
