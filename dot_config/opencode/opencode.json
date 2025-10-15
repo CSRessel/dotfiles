@@ -1,0 +1,80 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "keybinds": {
+    "session_child_cycle": "none",
+    "session_child_cycle_reverse": "none",
+  },
+  "provider": {
+    "openai": {
+      "options": {
+        "reasoningEffort": "medium",
+        "reasoningSummary": "auto",
+        "textVerbosity": "medium",
+        "include": [
+          "reasoning.encrypted_content"
+        ]
+      },
+      "models": {
+        "gpt-5-codex-low-chatgpt": {
+          "name": "GPT-5 Codex Low (ChatGPT)",
+          "options": {
+            "reasoningEffort": "low",
+            "reasoningSummary": "auto",
+            "textVerbosity": "medium"
+          },
+        },
+        "gpt-5-codex-medium-chatgpt": {
+          "name": "GPT-5 Codex Medium (ChatGPT)",
+          "options": {
+            "reasoningEffort": "medium",
+            "reasoningSummary": "auto",
+            "textVerbosity": "medium"
+          },
+        },
+        "gpt-5-codex-high-chatgpt": {
+          "name": "GPT-5 Codex High (ChatGPT)",
+          "options": {
+            "reasoningEffort": "high",
+            "reasoningSummary": "detailed",
+            "textVerbosity": "medium"
+          },
+        },
+        "gpt-5-minimal-chatgpt": {
+          "name": "GPT-5 Minimal (ChatGPT)",
+          "options": {
+            "reasoningEffort": "minimal",
+            "reasoningSummary": "auto",
+            "textVerbosity": "low"
+          },
+        },
+        "gpt-5-low-chatgpt": {
+          "name": "GPT-5 Low (ChatGPT)",
+          "options": {
+            "reasoningEffort": "low",
+            "reasoningSummary": "auto",
+            "textVerbosity": "low"
+          },
+        },
+        "gpt-5-medium-chatgpt": {
+          "name": "GPT-5 Medium (ChatGPT)",
+          "options": {
+            "reasoningEffort": "medium",
+            "reasoningSummary": "auto",
+            "textVerbosity": "medium"
+          },
+        },
+        "gpt-5-high-chatgpt": {
+          "name": "GPT-5 High (ChatGPT)",
+          "options": {
+            "reasoningEffort": "high",
+            "reasoningSummary": "detailed",
+            "textVerbosity": "high"
+          },
+        }
+      }
+    }
+  },
+  "plugin": [
+    "opencode-openai-codex-auth@2.1.1"
+  ]
+}
