@@ -1,4 +1,6 @@
 notify = ["python3", "/home/clifford/.codex/notify.py"]
+model = "gpt-5-codex"
+model_reasoning_effort = "medium"
 
 [projects."/home/clifford/Documents/source/"]
 trust_level = "trusted"
