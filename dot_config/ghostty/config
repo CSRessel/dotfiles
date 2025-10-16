@@ -48,6 +48,11 @@ keybind = alt+one=unbind
 keybind = alt+two=unbind
 keybind = alt+three=unbind
 keybind = alt+four=unbind
-keybind = shift+enter=text:\n
+
+# Stick with CSI-u sequence as it's the most up-to-date and best supported
+#keybind = shift+enter=text:\n
+#keybind = shift+enter=text:\x1b\r
+#keybind = shift+enter=csi:27;2;13~
+keybind = shift+enter=csi:13;2u
 
 window-decoration = none
