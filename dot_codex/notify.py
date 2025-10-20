@@ -4,6 +4,13 @@ import sys
 
 
 def main() -> int:
+    """
+    And in your ~/.codex/config.toml
+
+    notify = ["python3", "/home/clifford/.codex/notify.py"]
+    model = "gpt-5-codex"
+    model_reasoning_effort = "medium"
+    """
     if len(sys.argv) != 2:
         print("Usage: notify.py <NOTIFICATION_JSON>")
         return 1
