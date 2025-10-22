@@ -51,3 +51,6 @@ watchpytest () {
     # Using fd-find syntax
     fdfind . -e py "$GLOB" | entr -d -s "pytest $GLOB"
 }
+
+alias codex="bunx @openai/codex"
+alias claude="bunx @anthropic-ai/claude-code"
