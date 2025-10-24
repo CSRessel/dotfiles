@@ -172,7 +172,14 @@ if [[ "$ARGV0" =~ .*cursor$ ]]; then
   unset ARGV0
 fi
 
+{{ if (stat (joinPath .chezmoi.homeDir "Documents/builds/platform-tools")).isDir -}}
 # AOSP tools
 export PATH="$PATH:/home/clifford/Documents/builds/platform-tools"
+{{- end }}
+{{ if (stat (joinPath .chezmoi.homeDir "Android/Sdk")).isDir -}}
+# Android SDK
+export ANDROID_HOME="/home/clifford/Android/Sdk"
+export ANDROID_STUDIO="/home/clifford/Android"
+{{- end }}
 
 {{- end }}
