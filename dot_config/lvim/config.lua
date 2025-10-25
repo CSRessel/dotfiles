@@ -322,6 +322,7 @@ lvim.builtin.which_key.mappings["L"]["p"] = {
 
 lvim.builtin.which_key.mappings["G"] = {
   name = "Git",
+  o = { "<cmd>!open_github.sh<CR>", "Open on GitHub", mode = { "n" } },
   s = { "<cmd>Git status<CR>", "status", mode = { "n" } },
   d = { "<cmd>Git diff<CR>", "diff", mode = { "n" } },
   D = { "<cmd>Git diff HEAD<CR>", "diff HEAD", mode = { "n" } },
