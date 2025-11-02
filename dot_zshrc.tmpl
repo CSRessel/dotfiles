@@ -140,24 +140,24 @@ eval "$(direnv hook zsh)"
 {{ if eq .chezmoi.username "clifford" }}
 {{- /* only on personal machine */ -}}
 
-{{ if (stat (joinPath .chezmoi.homeDir ".opencode")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir ".opencode")) -}}
 # opencode
 export PATH=/home/clifford/.opencode/bin:$PATH
 {{- end }}
 
-{{ if (stat (joinPath .chezmoi.homeDir ".cargo")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir ".cargo")) -}}
 # rust
 . "$HOME/.cargo/env"
 {{- end }}
 
-{{ if (stat (joinPath .chezmoi.homeDir ".nvm")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir ".nvm")) -}}
 # nvm
 export NVM_DIR="${HOME}/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 {{- end }}
 
-{{ if (stat (joinPath .chezmoi.homeDir ".bun")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir ".bun")) -}}
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
@@ -172,11 +172,11 @@ if [[ "$ARGV0" =~ .*cursor$ ]]; then
   unset ARGV0
 fi
 
-{{ if (stat (joinPath .chezmoi.homeDir "Documents/builds/platform-tools")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir "Documents/builds/platform-tools")) -}}
 # AOSP tools
 export PATH="$PATH:/home/clifford/Documents/builds/platform-tools"
 {{- end }}
-{{ if (stat (joinPath .chezmoi.homeDir "Android/Sdk")).isDir -}}
+{{ if (stat (joinPath .chezmoi.homeDir "Android/Sdk")) -}}
 # Android SDK
 export ANDROID_HOME="/home/clifford/Android/Sdk"
 export ANDROID_STUDIO="/home/clifford/Android"
