@@ -3,6 +3,9 @@ lvim is the global options object
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
+-- vim.opt.foldmethod = "marker"
+-- -    config = function()
+
 -- general
 lvim.log.level = "warn"
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -298,6 +301,40 @@ lvim.plugins = {
   --   lazy = false,   -- This plugin is already lazy
   --   -- opt = {},
   -- },
+  -- copilot settings...
+  -- require("copilot").setup({
+  --   suggestion = {
+  --     enabled = true,
+  --     auto_trigger = true,
+  --     debounce = 75,
+  --     keymap = {
+  --       accept = "<Tab>",
+  --       accept_word = false,
+  --       accept_line = false,
+  --       next = "<M-]>",
+  --       prev = "<M-[>",
+  --       dismiss = "<C-]>",
+  --     },
+  --   },
+  --   filetypes = {
+  --     ["*"] = false,
+  --     ["c"] = true,
+  --     ["c++"] = true,
+  --     ["dockerfile"] = true,
+  --     ["go"] = true,
+  --     ["javascript"] = true,
+  --     ["lua"] = true,
+  --     ["python"] = true,
+  --     ["sh"] = true,
+  --     ["rust"] = true,
+  --     ["terraform"] = true,
+  --     ["typescript"] = true,
+  --     ["vim"] = true,
+  --     ["vimscript"] = true,
+  --     ["yaml"] = true,
+  --   },
+  -- })
+  --
 }
 
 -- vim.g.copilot_assume_mapped = true
