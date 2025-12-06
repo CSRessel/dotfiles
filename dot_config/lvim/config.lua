@@ -3,9 +3,6 @@ lvim is the global options object
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
--- vim.opt.foldmethod = "marker"
--- -    config = function()
-
 -- general
 lvim.log.level = "warn"
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -186,7 +183,7 @@ lvim.builtin.treesitter.textobjects.select = {
 -- })
 lvim.autocommands = {
   {
-    "BufEnter", -- see `:h autocmd-events`
+    "BufEnter",     -- see `:h autocmd-events`
     {
       pattern = { "*.rs" },
       callback = function()
@@ -222,9 +219,9 @@ lvim.plugins = {
       }
     end,
   },
-  {
-    "github/copilot.vim"
-  },
+  -- {
+  --     "github/copilot.vim"
+  -- },
   {
     "epwalsh/obsidian.nvim",
     dependencies = {
@@ -257,7 +254,7 @@ lvim.plugins = {
         -- Separators for different filetypes.
         -- You can add your own or oberwrite existing ones.
         -- Note: separators are lua patterns, not regexes.
-        markdown = "^##? ", -- overridden to limit at h2
+        markdown = "^##? ",         -- overridden to limit at h2
         -- org = "^*+ ",
         -- adoc = "^==+ ",
         -- asciidoctor = "^==+ ",
@@ -271,9 +268,9 @@ lvim.plugins = {
         -- Add your own keymaps as you desire.
         -- ["n"] = function() Presenting.next() end,
         -- ["p"] = function() Presenting.prev() end,
-        ["q"] = nil, -- function() Presenting.quit() end,
-        ["f"] = nil, -- function() Presenting.first() end,
-        ["l"] = nil, -- function() Presenting.last() end,
+        ["q"] = nil,         -- function() Presenting.quit() end,
+        ["f"] = nil,         -- function() Presenting.first() end,
+        ["l"] = nil,         -- function() Presenting.last() end,
         -- ["<CR>"] = function() Presenting.next() end,
         -- ["<BS>"] = function() Presenting.prev() end,
       },
@@ -301,40 +298,6 @@ lvim.plugins = {
   --   lazy = false,   -- This plugin is already lazy
   --   -- opt = {},
   -- },
-  -- copilot settings...
-  -- require("copilot").setup({
-  --   suggestion = {
-  --     enabled = true,
-  --     auto_trigger = true,
-  --     debounce = 75,
-  --     keymap = {
-  --       accept = "<Tab>",
-  --       accept_word = false,
-  --       accept_line = false,
-  --       next = "<M-]>",
-  --       prev = "<M-[>",
-  --       dismiss = "<C-]>",
-  --     },
-  --   },
-  --   filetypes = {
-  --     ["*"] = false,
-  --     ["c"] = true,
-  --     ["c++"] = true,
-  --     ["dockerfile"] = true,
-  --     ["go"] = true,
-  --     ["javascript"] = true,
-  --     ["lua"] = true,
-  --     ["python"] = true,
-  --     ["sh"] = true,
-  --     ["rust"] = true,
-  --     ["terraform"] = true,
-  --     ["typescript"] = true,
-  --     ["vim"] = true,
-  --     ["vimscript"] = true,
-  --     ["yaml"] = true,
-  --   },
-  -- })
-  --
 }
 
 -- vim.g.copilot_assume_mapped = true
@@ -361,8 +324,8 @@ lvim.builtin.which_key.mappings["G"] = {
   name = "Git",
   o = { "<cmd>!open_github.sh<CR>", "Open on GitHub", mode = { "n" } },
   s = { "<cmd>Git status<CR>", "status", mode = { "n" } },
-  d = { "<cmd>Git diff<CR>", "diff", mode = { "n" } },
-  D = { "<cmd>Git diff HEAD<CR>", "diff HEAD", mode = { "n" } },
+  d = { "<cmd>Gvdiff<CR>", "diff", mode = { "n" } },
+  D = { "<cmd>Gvdiff HEAD<CR>", "diff HEAD", mode = { "n" } },
   l = { "<cmd>Git log<CR>", "log", mode = { "n" } },
   L = { "<cmd>Git logg<CR>", "log --graph", mode = { "n" } },
 }
