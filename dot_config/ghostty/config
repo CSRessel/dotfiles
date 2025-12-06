@@ -54,5 +54,7 @@ keybind = alt+four=unbind
 #keybind = shift+enter=text:\x1b\r
 #keybind = shift+enter=csi:27;2;13~
 keybind = shift+enter=csi:13;2u
+keybind = shift+space=text:\x20
+keybind = shift+`=text:~
 
 window-decoration = none
