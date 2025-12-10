@@ -148,6 +148,9 @@ export PATH=/home/clifford/.opencode/bin:$PATH
 {{ if (stat (joinPath .chezmoi.homeDir ".cargo")) -}}
 # rust
 . "$HOME/.cargo/env"
+
+# Faster rust builds
+export RUSTC_WRAPPER=/home/clifford/.cargo/bin/sccache
 {{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".nvm")) -}}
