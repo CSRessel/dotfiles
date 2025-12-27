@@ -56,3 +56,86 @@ alias codex="bunx @openai/codex"
 alias claude="bunx @anthropic-ai/claude-code"
 alias mitm="uvx mitmproxy"
 alias ai="bunx opencode -m 'grok-code' -p" # currently free, and very fast
+
+{{- /* Trash directory support for safe rm */ -}}
+{{ $hasTrash := false }}
+{{ $trashCommand := "" }}
+{{ $trashDir := joinPath .chezmoi.homeDir ".local/share/Trash" }}
+
+{{- if lookPath "gio" -}}
+{{ $hasTrash = true }}
+{{ $trashCommand = "gio trash" }}
+{{- else if lookPath "trash-put" -}}
+{{ $hasTrash = true }}
+{{ $trashCommand = "trash-put" }}
+{{- else if stat $trashDir -}}
+{{ $hasTrash = true }}
+{{ $trashCommand = "custom_trash" }}
+{{- end }}
+
+{{ if $hasTrash }}
+# Safe rm wrapper - moves files to trash instead of permanent deletion
+TRASH_DIR="{{ $trashDir }}"
+
+{{ if eq $trashCommand "custom_trash" }}
+# Custom trash implementation for systems without gio/trash-cli
+custom_trash() {
+    local trash_files="$TRASH_DIR/files"
+    local trash_info="$TRASH_DIR/info"
+    
+    mkdir -p "$trash_files" "$trash_info"
+    
+    for file in "$@"; do
+        if [ ! -e "$file" ]; then
+            echo "trash: cannot trash '$file': No such file or directory" >&2
+            continue
+        fi
+        
+        local basename=$(basename "$file")
+        local timestamp=$(date +%Y-%m-%dT%H:%M:%S)
+        local abs_path=$(realpath "$file")
+        
+        # Handle name collisions
+        local dest_name="$basename"
+        local counter=1
+        while [ -e "$trash_files/$dest_name" ]; do
+            dest_name="${basename}.${counter}"
+            counter=$((counter + 1))
+        done
+        
+        # Move file to trash
+        mv "$file" "$trash_files/$dest_name"
+        
+        # Create .trashinfo metadata
+        cat > "$trash_info/${dest_name}.trashinfo" <<EOF
+[Trash Info]
+Path=$abs_path
+DeletionDate=$timestamp
+EOF
+    done
+}
+{{ end }}
+
+safe_rm() {
+    local force_delete=0
+    local trash_args=()
+    
+    # Check for --really-delete flag to bypass trash
+    for arg in "$@"; do
+        if [ "$arg" = "--really-delete" ] || [ "$arg" = "--force-delete" ]; then
+            force_delete=1
+        else
+            trash_args+=("$arg")
+        fi
+    done
+    
+    if [ $force_delete -eq 1 ]; then
+        command rm "${trash_args[@]}"
+    else
+        {{ $trashCommand }} "${trash_args[@]}"
+    fi
+}
+
+# Alias rm to safe_rm (users can still use \rm or command rm to bypass)
+alias rm='safe_rm'
+{{ end }}
