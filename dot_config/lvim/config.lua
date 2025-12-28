@@ -298,12 +298,6 @@ lvim.plugins = {
   --   lazy = false,   -- This plugin is already lazy
   --   -- opt = {},
   -- },
-  {
-    "swaits/universal-clipboard.nvim",
-    -- opts = {
-    --   verbose = true, -- optional: set true to log detection details
-    -- },
-  },
 }
 
 -- vim.g.copilot_assume_mapped = true

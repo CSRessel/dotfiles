@@ -1,0 +1,202 @@
+{
+  "shortcuts": [
+    {
+      "id": "key_selectLastTab",
+      "key": "9",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab8",
+      "key": "8",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab7",
+      "key": "7",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab6",
+      "key": "6",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab5",
+      "key": "5",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab4",
+      "key": "4",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab3",
+      "key": "3",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab2",
+      "key": "2",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "key_selectTab1",
+      "key": "1",
+      "keycode": "",
+      "group": "windowAndTabManagement",
+      "l10nId": null,
+      "modifiers": {
+        "control": false,
+        "alt": false,
+        "shift": false,
+        "meta": false,
+        "accel": true
+      },
+      "action": null,
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "zen-workspace-forward",
+      "key": ".",
+      "keycode": "",
+      "group": "zen-workspace",
+      "l10nId": "zen-workspace-shortcut-forward",
+      "modifiers": {
+        "control": false,
+        "alt": true,
+        "shift": false,
+        "meta": false,
+        "accel": false
+      },
+      "action": "cmd_zenWorkspaceForward",
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    },
+    {
+      "id": "zen-workspace-backward",
+      "key": ",",
+      "keycode": "",
+      "group": "zen-workspace",
+      "l10nId": "zen-workspace-shortcut-backward",
+      "modifiers": {
+        "control": false,
+        "alt": true,
+        "shift": false,
+        "meta": false,
+        "accel": false
+      },
+      "action": "cmd_zenWorkspaceBackward",
+      "disabled": false,
+      "reserved": false,
+      "internal": false
+    }
+  ]
+}
