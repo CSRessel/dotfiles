@@ -35,6 +35,8 @@
 
 unbindurl youtube.com <<
 unbindurl youtube.com >>
+unbindurl youtube.com ,
+unbindurl youtube.com .
 
 blacklistadd monkeytype.com
 blacklistadd colab.research.google.com
