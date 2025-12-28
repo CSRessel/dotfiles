@@ -183,7 +183,7 @@ lvim.builtin.treesitter.textobjects.select = {
 -- })
 lvim.autocommands = {
   {
-    "BufEnter",     -- see `:h autocmd-events`
+    "BufEnter", -- see `:h autocmd-events`
     {
       pattern = { "*.rs" },
       callback = function()
@@ -254,7 +254,7 @@ lvim.plugins = {
         -- Separators for different filetypes.
         -- You can add your own or oberwrite existing ones.
         -- Note: separators are lua patterns, not regexes.
-        markdown = "^##? ",         -- overridden to limit at h2
+        markdown = "^##? ", -- overridden to limit at h2
         -- org = "^*+ ",
         -- adoc = "^==+ ",
         -- asciidoctor = "^==+ ",
@@ -268,9 +268,9 @@ lvim.plugins = {
         -- Add your own keymaps as you desire.
         -- ["n"] = function() Presenting.next() end,
         -- ["p"] = function() Presenting.prev() end,
-        ["q"] = nil,         -- function() Presenting.quit() end,
-        ["f"] = nil,         -- function() Presenting.first() end,
-        ["l"] = nil,         -- function() Presenting.last() end,
+        ["q"] = nil, -- function() Presenting.quit() end,
+        ["f"] = nil, -- function() Presenting.first() end,
+        ["l"] = nil, -- function() Presenting.last() end,
         -- ["<CR>"] = function() Presenting.next() end,
         -- ["<BS>"] = function() Presenting.prev() end,
       },
@@ -298,6 +298,12 @@ lvim.plugins = {
   --   lazy = false,   -- This plugin is already lazy
   --   -- opt = {},
   -- },
+  {
+    "swaits/universal-clipboard.nvim",
+    -- opts = {
+    --   verbose = true, -- optional: set true to log detection details
+    -- },
+  },
 }
 
 -- vim.g.copilot_assume_mapped = true
