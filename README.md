@@ -15,23 +15,27 @@ Tools that will be configured by chezmoi below:
   - oh-my-zsh
   - zsh-kubectl-prompt
 - tmux
-- Tridactyl
+  - tmux-catpuccin
 
 Tools needed for my aliases and vim to work:
 
 - lang and toolchains
   - rustup
   - uv
-  - node (through bun)
+  - bun
 
 Other tools, useful but not blocking install:
 
-- fzf
+- nix
 - gh
 - jq
 - yq
 - direnv
+- podman
 - kubectl
+- mold
+- fzf
+- Tridactyl
 
 ## Getting Started
 
