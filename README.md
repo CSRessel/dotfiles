@@ -9,33 +9,41 @@
 Tools that will be configured by chezmoi below:
 
 - git
-- neovim
-  - LunarVim
-- zsh
-  - oh-my-zsh
-  - zsh-kubectl-prompt
-- tmux
-  - tmux-catpuccin
+- neovim (LunarVim)
+- zsh (oh-my-zsh, zsh-kubectl-prompt)
+- tmux (tmux-catpuccin)
 
-Tools needed for my aliases and vim to work:
+Toolchains needed (for aliases, vim, development):
 
-- lang and toolchains
-  - rustup
-  - uv
-  - bun
+- nix
+- rustup
+- uv
+- bun
 
 Other tools, useful but not blocking install:
 
-- nix
-- gh
-- jq
-- yq
-- direnv
-- podman
-- kubectl
-- mold
-- fzf
-- Tridactyl
+- utilities
+  - gh
+  - jq
+  - yq
+  - direnv
+  - fzf
+  - sccache
+- replacements
+  - btop
+  - mold
+  - bat
+  - fdfind
+  - git-delta
+- infra
+  - tailscale
+  - podman
+  - kubectl
+- apps
+  - Ghostty
+  - Zen Browser
+  - Tridactyl
+  - Obsidian
 
 ## Getting Started
 
