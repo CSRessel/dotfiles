@@ -6,7 +6,7 @@ use anyhow::Result;
 
 #[derive(Debug, Clone, Copy, Default, ValueEnum)]
 enum ColorMode {
-    /// Use foreground colored blocks on black background
+    /// Use foreground colored blocks
     #[default]
     Tile,
     /// Use background colored cells
@@ -27,6 +27,10 @@ struct Args {
     /// Show all day-of-week labels (default shows only Mon/Wed/Fri)
     #[arg(short = 'a', long)]
     all_labels: bool,
+
+    /// Use black background (default uses terminal background)
+    #[arg(short = 'b', long)]
+    black_background: bool,
 }
 
 fn main() -> Result<()> {
@@ -34,7 +38,7 @@ fn main() -> Result<()> {
 
     let data = data::get_contributions(args.weeks)?;
     let tile_mode = matches!(args.color, ColorMode::Tile);
-    display::print_graph(&data, args.weeks, tile_mode, args.all_labels)?;
+    display::print_graph(&data, args.weeks, tile_mode, args.all_labels, args.black_background)?;
 
     Ok(())
 }

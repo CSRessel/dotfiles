@@ -7,6 +7,7 @@ pub fn print_graph(
     weeks: usize,
     tile_mode: bool,
     all_labels: bool,
+    black_background: bool,
 ) -> Result<()> {
     // Background colors
     let bg_rgb = (13, 17, 23);    // #0d1117 - Surround background
@@ -74,10 +75,14 @@ pub fn print_graph(
 
             let ansi_code = rgb_to_ansi256(color_rgb.0, color_rgb.1, color_rgb.2);
             grid[d][w] = if tile_mode {
-                // Tile mode: single block with black space after
-                format!("\x1b[48;5;16;38;5;{}m■ ", ansi_code)
+                // Tile mode: single block with space after
+                if black_background {
+                    format!("\x1b[48;5;16;38;5;{}m■ ", ansi_code)
+                } else {
+                    format!("\x1b[38;5;{}m■ ", ansi_code)
+                }
             } else {
-                // Normal mode: colored background with spaces
+                // Background mode: colored background with spaces
                 format!("\x1b[48;5;{}m  ", ansi_code)
             };
         }
@@ -94,21 +99,34 @@ pub fn print_graph(
     let right_pad = "  ";
     let total_content_width = left_pad.len() + 4 + (weeks * 2) + right_pad.len();
 
-    // In tile mode, use pure black background; otherwise use the GitHub dark background
-    let print_bg = if tile_mode { 16 } else { bg_ansi }; // ANSI 16 = black
+    // Determine background: black if requested or background mode, otherwise no background
+    let use_bg = black_background || !tile_mode;
+    let print_bg = if !tile_mode { bg_ansi } else { 16 }; // GitHub dark or black
 
     let bg_line = |width: usize| {
-        format!("\x1b[48;5;{}m{}\x1b[0m", print_bg, " ".repeat(width))
+        if use_bg {
+            format!("\x1b[48;5;{}m{}\x1b[0m", print_bg, " ".repeat(width))
+        } else {
+            format!("{}\x1b[0m", " ".repeat(width))
+        }
     };
 
     println!("{}", bg_line(total_content_width));
     for (i, row) in grid.iter().enumerate() {
-        print!("\x1b[48;5;{}m{}", print_bg, left_pad);
+        if use_bg {
+            print!("\x1b[48;5;{}m{}", print_bg, left_pad);
+        } else {
+            print!("{}", left_pad);
+        }
         print!("\x1b[38;5;{}m{: <4}", text_ansi, days[i]);
         for cell in row {
             print!("{}", cell);
         }
-        println!("\x1b[48;5;{}m{}\x1b[0m", print_bg, right_pad);
+        if use_bg {
+            println!("\x1b[48;5;{}m{}\x1b[0m", print_bg, right_pad);
+        } else {
+            println!("{}\x1b[0m", right_pad);
+        }
     }
     println!("{}", bg_line(total_content_width));
 
