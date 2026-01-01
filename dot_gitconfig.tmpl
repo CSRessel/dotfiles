@@ -59,10 +59,8 @@
   co = commit
   ch = checkout
   di = diff
-  re = restore
   st = status
-  logg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit
-  logp = log -p
+  lo = log --graph --pretty=format:'%C(red)%h%C(reset) -%C(yellow)%d%C(green)(%cr)%C(reset)%C(reset) %s %C(blue)<%an>%C(reset)' --abbrev-commit
   pushf = push --force-with-lease
 {{ if (lookPath "git-lfs") -}}
 [filter "lfs"]

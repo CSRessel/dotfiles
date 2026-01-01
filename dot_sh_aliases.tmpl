@@ -23,7 +23,6 @@ chezmoiAliased() {
     fi
 }
 alias ch=chezmoiAliased
-alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
 
 alias cp="cp -i" # confirm before overwriting something
 alias df="df -h" # human-readable sizes
@@ -139,3 +138,22 @@ safe_rm() {
 # Alias rm to safe_rm (users can still use \rm or command rm to bypass)
 alias rm='safe_rm'
 {{ end }}
+
+# Fuzzy finders (fzf vim, fzf make, fzf git log)
+alias fvim="fd --type f --hidden --exclude .git --print0 | fzf-tmux -p -- --read0 --print0 --exit-0 | xargs -r -0 lvim"
+fmake() {
+  local target=$(make -qp | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ {split($1,A,/ /);for(i in A)print A[i]}' | sort -u | fzf --header="Select Makefile Target")
+  [ -n "$target" ] && make "$target"
+}
+flog() {
+    local selection=$(
+      git lo --color=always "$@" | \
+        fzf --no-multi --ansi --no-sort --no-height \
+            --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
+                       xargs -I@ sh -c 'git show --color=always @'"
+    )
+    if [[ -n $selection ]]; then
+        local commit=$(echo "$selection" | sed 's/^[* |]*//' | awk '{print $1}' | tr -d '\n')
+        git show $commit
+    fi
+}
