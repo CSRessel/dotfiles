@@ -4,10 +4,13 @@ use std::collections::HashMap;
 
 pub fn print_graph(
     data: &HashMap<NaiveDate, usize>,
+    start_date: NaiveDate,
     weeks: usize,
     tile_mode: bool,
     all_labels: bool,
     black_background: bool,
+    all_squares: bool,
+    month_labels: bool,
 ) -> Result<()> {
     // Background colors
     let bg_rgb = (13, 17, 23);    // #0d1117 - Surround background
@@ -48,30 +51,39 @@ pub fn print_graph(
 
     // 4. Setup Grid
     let today = Local::now().date_naive();
-    let days_from_sun = today.weekday().num_days_from_sunday();
-    let start_date = today - chrono::Duration::days(days_from_sun as i64) - chrono::Duration::weeks((weeks - 1) as i64);
 
     let mut grid: Vec<Vec<String>> = vec![vec![String::new(); weeks]; 7];
 
     for w in 0..weeks {
         for d in 0..7 {
             let date = start_date + chrono::Duration::weeks(w as i64) + chrono::Duration::days(d as i64);
-            
-            let color_rgb = if date > today {
-                bg_rgb
-            } else {
-                let count = *data.get(&date).unwrap_or(&0);
-                let level = if count == 0 {
-                    0
+
+            // For future dates, show empty space unless all_squares is set
+            let is_future = date > today;
+            if is_future && !all_squares {
+                grid[d][w] = if tile_mode {
+                    if black_background {
+                        "\x1b[48;5;16m  ".to_string()
+                    } else {
+                        "  ".to_string()
+                    }
                 } else {
-                    let c = count as f64;
-                    if c <= t25 { 1 }
-                    else if c <= t50 { 2 }
-                    else if c <= t75 { 3 }
-                    else { 4 }
+                    format!("\x1b[48;5;{}m  ", bg_ansi)
                 };
-                palette[level]
+                continue;
+            }
+
+            let count = *data.get(&date).unwrap_or(&0);
+            let level = if count == 0 {
+                0
+            } else {
+                let c = count as f64;
+                if c <= t25 { 1 }
+                else if c <= t50 { 2 }
+                else if c <= t75 { 3 }
+                else { 4 }
             };
+            let color_rgb = palette[level];
 
             let ansi_code = rgb_to_ansi256(color_rgb.0, color_rgb.1, color_rgb.2);
             grid[d][w] = if tile_mode {
@@ -111,7 +123,52 @@ pub fn print_graph(
         }
     };
 
-    println!("{}", bg_line(total_content_width));
+    // Build month header if enabled
+    if month_labels {
+        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Find which column each month starts in (column where 1st of month appears)
+        let mut month_positions: Vec<(usize, &str)> = Vec::new();
+        for w in 0..weeks {
+            for d in 0..7 {
+                let date = start_date + chrono::Duration::weeks(w as i64)
+                                      + chrono::Duration::days(d as i64);
+                if date.day() == 1 {
+                    month_positions.push((w, months[date.month0() as usize]));
+                    break; // Only need first day of week containing the 1st
+                }
+            }
+        }
+
+        // Build the header line
+        let mut header = String::new();
+        let mut last_col = 0;
+        for (col, month) in &month_positions {
+            // Add spaces to reach this column (each column is 2 chars wide)
+            let spaces_needed = (col * 2).saturating_sub(last_col);
+            header.push_str(&" ".repeat(spaces_needed));
+            header.push_str(month);
+            last_col = col * 2 + month.len();
+        }
+
+        // Print month header row
+        if use_bg {
+            print!("\x1b[48;5;{}m{}", print_bg, left_pad);
+        } else {
+            print!("{}", left_pad);
+        }
+        print!("\x1b[38;5;{}m{: <4}", text_ansi, ""); // Empty space for day label column
+        print!("\x1b[38;5;{}m{}", text_ansi, header);
+        let remaining = (weeks * 2).saturating_sub(last_col);
+        if use_bg {
+            println!("\x1b[48;5;{}m{}{}\x1b[0m", print_bg, " ".repeat(remaining), right_pad);
+        } else {
+            println!("{}{}\x1b[0m", " ".repeat(remaining), right_pad);
+        }
+    } else {
+        println!("{}", bg_line(total_content_width));
+    }
     for (i, row) in grid.iter().enumerate() {
         if use_bg {
             print!("\x1b[48;5;{}m{}", print_bg, left_pad);
