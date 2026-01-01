@@ -230,8 +230,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "git-contribution-graph"
-version = "0.1.0"
+name = "githubgraph"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "chrono",
