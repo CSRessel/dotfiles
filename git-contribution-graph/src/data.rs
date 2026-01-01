@@ -5,7 +5,10 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
+use std::time::SystemTime;
 use which::which;
+
+const CACHE_MAX_AGE_SECS: u64 = 3600; // 1 hour
 
 pub fn get_contributions(weeks: usize) -> Result<HashMap<NaiveDate, usize>> {
     // Try GH CLI first
@@ -59,19 +62,58 @@ struct GhResponse {
     data: GhData,
 }
 
-fn get_contributions_from_gh() -> Result<HashMap<NaiveDate, usize>> {
-    let query = "query { viewer { contributionsCollection { contributionCalendar { weeks { contributionDays { date contributionCount } } } } } }";
+fn get_cache_path() -> Option<std::path::PathBuf> {
+    let home = dirs::home_dir()?;
+    Some(home.join(".cache").join("githubgraph").join("contributions.json"))
+}
 
-    let output = Command::new("gh")
-        .args(&["api", "graphql", "-f", &format!("query={}", query)])
-        .output()
-        .context("Failed to execute gh api")?;
-
-    if !output.status.success() {
-        anyhow::bail!("gh api failed");
+fn read_cached_response() -> Option<Vec<u8>> {
+    let cache_path = get_cache_path()?;
+    if !cache_path.exists() {
+        return None;
     }
 
-    let response: GhResponse = serde_json::from_slice(&output.stdout)?;
+    let metadata = fs::metadata(&cache_path).ok()?;
+    let modified = metadata.modified().ok()?;
+    let age = SystemTime::now().duration_since(modified).ok()?;
+
+    if age.as_secs() > CACHE_MAX_AGE_SECS {
+        return None;
+    }
+
+    fs::read(&cache_path).ok()
+}
+
+fn write_cache(data: &[u8]) {
+    if let Some(cache_path) = get_cache_path() {
+        if let Some(parent) = cache_path.parent() {
+            let _ = fs::create_dir_all(parent);
+        }
+        let _ = fs::write(&cache_path, data);
+    }
+}
+
+fn get_contributions_from_gh() -> Result<HashMap<NaiveDate, usize>> {
+    // Try cached response first
+    let response_bytes = if let Some(cached) = read_cached_response() {
+        cached
+    } else {
+        let query = "query { viewer { contributionsCollection { contributionCalendar { weeks { contributionDays { date contributionCount } } } } } }";
+
+        let output = Command::new("gh")
+            .args(["api", "graphql", "-f", &format!("query={}", query)])
+            .output()
+            .context("Failed to execute gh api")?;
+
+        if !output.status.success() {
+            anyhow::bail!("gh api failed");
+        }
+
+        write_cache(&output.stdout);
+        output.stdout
+    };
+
+    let response: GhResponse = serde_json::from_slice(&response_bytes)?;
     let mut map = HashMap::new();
 
     for week in response.data.viewer.contributions_collection.contribution_calendar.weeks {
