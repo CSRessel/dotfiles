@@ -23,6 +23,10 @@ struct Args {
     /// Color rendering mode
     #[arg(short, long, value_enum, default_value_t = ColorMode::Tile)]
     color: ColorMode,
+
+    /// Show all day-of-week labels (default shows only Mon/Wed/Fri)
+    #[arg(short = 'a', long)]
+    all_labels: bool,
 }
 
 fn main() -> Result<()> {
@@ -30,7 +34,7 @@ fn main() -> Result<()> {
 
     let data = data::get_contributions(args.weeks)?;
     let tile_mode = matches!(args.color, ColorMode::Tile);
-    display::print_graph(&data, args.weeks, tile_mode)?;
+    display::print_graph(&data, args.weeks, tile_mode, args.all_labels)?;
 
     Ok(())
 }

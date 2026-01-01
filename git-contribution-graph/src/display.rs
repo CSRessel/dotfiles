@@ -6,6 +6,7 @@ pub fn print_graph(
     data: &HashMap<NaiveDate, usize>,
     weeks: usize,
     tile_mode: bool,
+    all_labels: bool,
 ) -> Result<()> {
     // Background colors
     let bg_rgb = (13, 17, 23);    // #0d1117 - Surround background
@@ -83,7 +84,12 @@ pub fn print_graph(
     }
 
     // 5. Print
-    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    // By default only show Mon/Wed/Fri; with all_labels show all days
+    let days: [&str; 7] = if all_labels {
+        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    } else {
+        ["", "Mon", "", "Wed", "", "Fri", ""]
+    };
     let left_pad = "  ";
     let right_pad = "  ";
     let total_content_width = left_pad.len() + 4 + (weeks * 2) + right_pad.len();
