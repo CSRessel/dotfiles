@@ -1,8 +1,17 @@
 mod data;
 mod display;
 
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use anyhow::Result;
+
+#[derive(Debug, Clone, Copy, Default, ValueEnum)]
+enum ColorMode {
+    /// Use foreground colored blocks on black background
+    #[default]
+    Tile,
+    /// Use background colored cells
+    Background,
+}
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -11,16 +20,17 @@ struct Args {
     #[arg(short, long, default_value_t = 4)]
     weeks: usize,
 
-    /// Hex color for the most active tile
-    #[arg(short, long, default_value = "#56d364")]
-    color: String,
+    /// Color rendering mode
+    #[arg(short, long, value_enum, default_value_t = ColorMode::Tile)]
+    color: ColorMode,
 }
 
 fn main() -> Result<()> {
     let args = Args::parse();
 
     let data = data::get_contributions(args.weeks)?;
-    display::print_graph(&data, args.weeks, &args.color)?;
+    let tile_mode = matches!(args.color, ColorMode::Tile);
+    display::print_graph(&data, args.weeks, tile_mode)?;
 
     Ok(())
 }

@@ -1,16 +1,12 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use chrono::{Datelike, Local, NaiveDate};
 use std::collections::HashMap;
 
 pub fn print_graph(
     data: &HashMap<NaiveDate, usize>,
     weeks: usize,
-    color_hex: &str,
+    tile_mode: bool,
 ) -> Result<()> {
-    // 1. Parse color
-    // We parse it to validate input, but we use a hardcoded palette as requested.
-    let _ = parse_hex(color_hex).context("Invalid hex color")?;
-    
     // Background colors
     let bg_rgb = (13, 17, 23);    // #0d1117 - Surround background
     let bg_ansi = rgb_to_ansi256(bg_rgb.0, bg_rgb.1, bg_rgb.2);
@@ -76,7 +72,13 @@ pub fn print_graph(
             };
 
             let ansi_code = rgb_to_ansi256(color_rgb.0, color_rgb.1, color_rgb.2);
-            grid[d][w] = format!("\x1b[48;5;{}m  ", ansi_code);
+            grid[d][w] = if tile_mode {
+                // Tile mode: single block with black space after
+                format!("\x1b[48;5;16;38;5;{}m■ ", ansi_code)
+            } else {
+                // Normal mode: colored background with spaces
+                format!("\x1b[48;5;{}m  ", ansi_code)
+            };
         }
     }
 
@@ -85,34 +87,26 @@ pub fn print_graph(
     let left_pad = "  ";
     let right_pad = "  ";
     let total_content_width = left_pad.len() + 4 + (weeks * 2) + right_pad.len();
-    
+
+    // In tile mode, use pure black background; otherwise use the GitHub dark background
+    let print_bg = if tile_mode { 16 } else { bg_ansi }; // ANSI 16 = black
+
     let bg_line = |width: usize| {
-        format!("\x1b[48;5;{}m{}\x1b[0m", bg_ansi, " ".repeat(width))
+        format!("\x1b[48;5;{}m{}\x1b[0m", print_bg, " ".repeat(width))
     };
 
     println!("{}", bg_line(total_content_width));
     for (i, row) in grid.iter().enumerate() {
-        print!("\x1b[48;5;{}m{}", bg_ansi, left_pad);
+        print!("\x1b[48;5;{}m{}", print_bg, left_pad);
         print!("\x1b[38;5;{}m{: <4}", text_ansi, days[i]);
         for cell in row {
             print!("{}", cell);
         }
-        println!("\x1b[48;5;{}m{}\x1b[0m", bg_ansi, right_pad);
+        println!("\x1b[48;5;{}m{}\x1b[0m", print_bg, right_pad);
     }
     println!("{}", bg_line(total_content_width));
 
     Ok(())
-}
-
-fn parse_hex(hex: &str) -> Result<(u8, u8, u8)> {
-    let hex = hex.trim_start_matches('#');
-    if hex.len() != 6 {
-        anyhow::bail!("Hex color must be 6 chars");
-    }
-    let r = u8::from_str_radix(&hex[0..2], 16)?;
-    let g = u8::from_str_radix(&hex[2..4], 16)?;
-    let b = u8::from_str_radix(&hex[4..6], 16)?;
-    Ok((r, g, b))
 }
 
 fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
