@@ -1,0 +1,15 @@
+#!/bin/bash
+# {{ include "git-contribution-graph/Cargo.toml" | sha256sum }}
+# {{ include "git-contribution-graph/src/main.rs" | sha256sum }}
+# {{ include "git-contribution-graph/src/data.rs" | sha256sum }}
+# {{ include "git-contribution-graph/src/display.rs" | sha256sum }}
+set -euxo pipefail
+
+if type "cargo" > /dev/null 2>&1; then
+  cd "{{ .chezmoi.sourceDir }}/git-contribution-graph"
+  cargo build --release
+  cp target/release/githubgraph "$HOME/.local/bin/"
+  echo "githubgraph installed to ~/.local/bin/"
+else
+  echo "cargo not found, skipping githubgraph build"
+fi

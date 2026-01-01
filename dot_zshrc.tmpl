@@ -186,3 +186,15 @@ export ANDROID_STUDIO="/home/clifford/Android"
 {{- end }}
 
 {{- end }}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".lmstudio/bin")) -}}
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/clifford/.lmstudio/bin"
+# End of LM Studio CLI section
+{{- end }}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".local/bin/githubgraph")) -}}
+# GitHub contribution graph on login
+githubgraph -w 12 --month-labels
+{{- end }}
+

@@ -1,5 +1,8 @@
 README.md
 
+# git-contribution-graph build artifacts
+git-contribution-graph/
+
 .vim
 # .vim/plugged/*
 # .vim/.git/*
