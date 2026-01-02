@@ -4,6 +4,7 @@ mod display;
 use anyhow::{Context, Result};
 use chrono::{Datelike, Local, NaiveDate};
 use clap::{Parser, ValueEnum};
+use display::DisplayConfig;
 
 #[derive(Debug, Clone, Copy, Default, ValueEnum)]
 enum ColorMode {
@@ -108,31 +109,29 @@ fn main() -> Result<()> {
 
     let dir = args.dir.map(std::path::PathBuf::from);
     let data = data::get_contributions(start_date, dir)?;
-    let tile_mode = matches!(args.mode, ColorMode::Tile);
 
     let total_count = if args.count {
         let end_date = start_date + chrono::Duration::days(weeks as i64 * 7);
-        let total: usize = data
-            .iter()
-            .filter(|&(&date, _)| date >= start_date && date < end_date)
-            .map(|(_, &count)| count)
-            .sum();
-        Some(total)
+        Some(
+            data.iter()
+                .filter(|&(&date, _)| date >= start_date && date < end_date)
+                .map(|(_, &count)| count)
+                .sum(),
+        )
     } else {
         None
     };
 
-    display::print_graph(
-        &data,
+    let config = DisplayConfig {
         start_date,
         weeks,
-        tile_mode,
-        args.all_labels,
-        args.black_background,
-        args.all_squares,
-        args.labels,
+        tile_mode: matches!(args.mode, ColorMode::Tile),
+        all_labels: args.all_labels,
+        black_background: args.black_background,
+        all_squares: args.all_squares,
+        month_labels: args.labels,
         total_count,
-    )?;
+    };
 
-    Ok(())
+    display::print_graph(&data, &config)
 }

@@ -20,9 +20,10 @@ pub fn get_contributions(
 
     // Try GH CLI first
     if which("gh").is_ok()
-        && let Ok(data) = get_contributions_from_gh() {
-            return Ok(data);
-        }
+        && let Ok(data) = get_contributions_from_gh()
+    {
+        return Ok(data);
+    }
 
     // Fallback to local scan
     let home = dirs::home_dir().context("Could not find home directory")?;
@@ -225,27 +226,28 @@ fn process_repo(
             .output();
 
         if let Ok(output) = check_branch
-            && output.status.success() {
-                let log_output = Command::new("git")
-                    .current_dir(repo_path)
-                    .args([
-                        "log",
-                        branch,
-                        &format!("--author={}", email),
-                        &format!("--since={}", start_date.format("%Y-%m-%d")),
-                        "--format=%as", // YYYY-MM-DD
-                    ])
-                    .output();
+            && output.status.success()
+        {
+            let log_output = Command::new("git")
+                .current_dir(repo_path)
+                .args([
+                    "log",
+                    branch,
+                    &format!("--author={}", email),
+                    &format!("--since={}", start_date.format("%Y-%m-%d")),
+                    "--format=%as", // YYYY-MM-DD
+                ])
+                .output();
 
-                if let Ok(output) = log_output {
-                    let stdout = String::from_utf8_lossy(&output.stdout);
-                    for line in stdout.lines() {
-                        if let Ok(date) = NaiveDate::parse_from_str(line, "%Y-%m-%d") {
-                            *map.entry(date).or_insert(0) += 1;
-                        }
+            if let Ok(output) = log_output {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                for line in stdout.lines() {
+                    if let Ok(date) = NaiveDate::parse_from_str(line, "%Y-%m-%d") {
+                        *map.entry(date).or_insert(0) += 1;
                     }
                 }
             }
+        }
     }
     Ok(())
 }
