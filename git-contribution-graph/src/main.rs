@@ -1,9 +1,9 @@
 mod data;
 mod display;
 
+use anyhow::Result;
 use chrono::{Datelike, Local, NaiveDate};
 use clap::{Parser, ValueEnum};
-use anyhow::Result;
 
 #[derive(Debug, Clone, Copy, Default, ValueEnum)]
 enum ColorMode {
@@ -70,8 +70,9 @@ fn main() -> Result<()> {
         (start, weeks)
     } else {
         let days_from_sun = today.weekday().num_days_from_sunday();
-        let start = today - chrono::Duration::days(days_from_sun as i64)
-                         - chrono::Duration::weeks((args.weeks - 1) as i64);
+        let start = today
+            - chrono::Duration::days(days_from_sun as i64)
+            - chrono::Duration::weeks((args.weeks - 1) as i64);
         (start, args.weeks)
     };
 

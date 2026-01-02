@@ -10,7 +10,10 @@ use which::which;
 
 const CACHE_MAX_AGE_SECS: u64 = 3600; // 1 hour
 
-pub fn get_contributions(weeks: usize, dir: Option<std::path::PathBuf>) -> Result<HashMap<NaiveDate, usize>> {
+pub fn get_contributions(
+    weeks: usize,
+    dir: Option<std::path::PathBuf>,
+) -> Result<HashMap<NaiveDate, usize>> {
     if let Some(d) = dir {
         return get_contributions_from_local(weeks, &d);
     }
@@ -70,7 +73,11 @@ struct GhResponse {
 
 fn get_cache_path() -> Option<std::path::PathBuf> {
     let home = dirs::home_dir()?;
-    Some(home.join(".cache").join("githubgraph").join("contributions.json"))
+    Some(
+        home.join(".cache")
+            .join("githubgraph")
+            .join("contributions.json"),
+    )
 }
 
 fn read_cached_response() -> Option<Vec<u8>> {
@@ -122,7 +129,13 @@ fn get_contributions_from_gh() -> Result<HashMap<NaiveDate, usize>> {
     let response: GhResponse = serde_json::from_slice(&response_bytes)?;
     let mut map = HashMap::new();
 
-    for week in response.data.viewer.contributions_collection.contribution_calendar.weeks {
+    for week in response
+        .data
+        .viewer
+        .contributions_collection
+        .contribution_calendar
+        .weeks
+    {
         for day in week.contribution_days {
             if let Ok(date) = NaiveDate::parse_from_str(&day.date, "%Y-%m-%d") {
                 map.insert(date, day.contribution_count);
@@ -143,11 +156,13 @@ fn get_contributions_from_local(weeks: usize, path: &Path) -> Result<HashMap<Nai
 
     // Get user email
     let email_output = Command::new("git")
-        .args(&["config", "--get", "user.email"])
+        .args(["config", "--get", "user.email"])
         .output()
         .context("Failed to get git user.email")?;
 
-    let email = String::from_utf8_lossy(&email_output.stdout).trim().to_string();
+    let email = String::from_utf8_lossy(&email_output.stdout)
+        .trim()
+        .to_string();
     if email.is_empty() {
         // If no email configured, we can't reliably filter, but we'll try to proceed or return empty
         // Or we could list all commits, but contribution graph is usually per user.
@@ -163,7 +178,13 @@ fn get_contributions_from_local(weeks: usize, path: &Path) -> Result<HashMap<Nai
     Ok(map)
 }
 
-fn visit_dirs(dir: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap<NaiveDate, usize>, depth: usize) -> Result<()> {
+fn visit_dirs(
+    dir: &Path,
+    email: &str,
+    start_date: &NaiveDate,
+    map: &mut HashMap<NaiveDate, usize>,
+    depth: usize,
+) -> Result<()> {
     if depth > 6 {
         return Ok(());
     }
@@ -189,26 +210,31 @@ fn visit_dirs(dir: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap
     Ok(())
 }
 
-fn process_repo(repo_path: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap<NaiveDate, usize>) -> Result<()> {
+fn process_repo(
+    repo_path: &Path,
+    email: &str,
+    start_date: &NaiveDate,
+    map: &mut HashMap<NaiveDate, usize>,
+) -> Result<()> {
     let branches = ["main", "master", "dev"];
 
     for branch in branches {
         // Check if branch exists
         let check_branch = Command::new("git")
             .current_dir(repo_path)
-            .args(&["rev-parse", "--verify", branch])
+            .args(["rev-parse", "--verify", branch])
             .output();
 
         if let Ok(output) = check_branch {
             if output.status.success() {
-                 let log_output = Command::new("git")
+                let log_output = Command::new("git")
                     .current_dir(repo_path)
-                    .args(&[
+                    .args([
                         "log",
                         branch,
                         &format!("--author={}", email),
                         &format!("--since={}", start_date.format("%Y-%m-%d")),
-                        "--format=%as" // YYYY-MM-DD
+                        "--format=%as", // YYYY-MM-DD
                     ])
                     .output();
 
