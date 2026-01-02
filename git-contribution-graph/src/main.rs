@@ -1,7 +1,7 @@
 mod data;
 mod display;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use chrono::{Datelike, Local, NaiveDate};
 use clap::{Parser, ValueEnum};
 
@@ -24,6 +24,10 @@ struct Args {
     /// Show contributions for a specific year (e.g., 2024)
     #[arg(short, long)]
     year: Option<i32>,
+
+    /// Show contributions for a specific month (1-12)
+    #[arg(long)]
+    month: Option<u32>,
 
     /// Color rendering mode
     #[arg(short, long, value_enum, default_value_t = ColorMode::Tile)]
@@ -55,7 +59,29 @@ fn main() -> Result<()> {
     let today = Local::now().date_naive();
 
     // Calculate start_date and weeks based on year or weeks argument
-    let (start_date, weeks) = if let Some(year) = args.year {
+    let (start_date, weeks) = if let Some(month) = args.month {
+        let year = args.year.unwrap_or_else(|| today.year());
+        let start_of_month = NaiveDate::from_ymd_opt(year, month, 1).context("Invalid date")?;
+
+        // Find end of month
+        let (next_year, next_month) = if month == 12 {
+            (year + 1, 1)
+        } else {
+            (year, month + 1)
+        };
+        let end_of_month =
+            NaiveDate::from_ymd_opt(next_year, next_month, 1).unwrap() - chrono::Duration::days(1);
+
+        // Start from the Sunday of the week containing start_of_month
+        let days_from_sun = start_of_month.weekday().num_days_from_sunday();
+        let start = start_of_month - chrono::Duration::days(days_from_sun as i64);
+
+        // Calculate weeks needed to cover the month
+        let days_to_cover = (end_of_month - start).num_days() + 1;
+        let weeks = ((days_to_cover + 6) / 7) as usize;
+
+        (start, weeks)
+    } else if let Some(year) = args.year {
         let jan1 = NaiveDate::from_ymd_opt(year, 1, 1).unwrap();
         let dec31 = NaiveDate::from_ymd_opt(year, 12, 31).unwrap();
 
@@ -77,7 +103,7 @@ fn main() -> Result<()> {
     };
 
     let dir = args.dir.map(std::path::PathBuf::from);
-    let data = data::get_contributions(weeks, dir)?;
+    let data = data::get_contributions(start_date, dir)?;
     let tile_mode = matches!(args.color, ColorMode::Tile);
     display::print_graph(
         &data,

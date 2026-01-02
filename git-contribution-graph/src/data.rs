@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use chrono::{Duration, Local, NaiveDate};
+use chrono::NaiveDate;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs;
@@ -11,11 +11,11 @@ use which::which;
 const CACHE_MAX_AGE_SECS: u64 = 3600; // 1 hour
 
 pub fn get_contributions(
-    weeks: usize,
+    start_date: NaiveDate,
     dir: Option<std::path::PathBuf>,
 ) -> Result<HashMap<NaiveDate, usize>> {
     if let Some(d) = dir {
-        return get_contributions_from_local(weeks, &d);
+        return get_contributions_from_local(start_date, &d);
     }
 
     // Try GH CLI first
@@ -28,7 +28,7 @@ pub fn get_contributions(
     // Fallback to local scan
     let home = dirs::home_dir().context("Could not find home directory")?;
     let docs = home.join("Documents");
-    get_contributions_from_local(weeks, &docs)
+    get_contributions_from_local(start_date, &docs)
 }
 
 #[derive(Deserialize)]
@@ -146,7 +146,10 @@ fn get_contributions_from_gh() -> Result<HashMap<NaiveDate, usize>> {
     Ok(map)
 }
 
-fn get_contributions_from_local(weeks: usize, path: &Path) -> Result<HashMap<NaiveDate, usize>> {
+fn get_contributions_from_local(
+    start_date: NaiveDate,
+    path: &Path,
+) -> Result<HashMap<NaiveDate, usize>> {
     let mut map = HashMap::new();
 
     // Check if path exists
@@ -169,9 +172,6 @@ fn get_contributions_from_local(weeks: usize, path: &Path) -> Result<HashMap<Nai
         // Let's assume we need an email.
         return Ok(map);
     }
-
-    // Calculate start date
-    let start_date = Local::now().date_naive() - Duration::weeks(weeks as i64 + 1); // +1 buffer
 
     visit_dirs(path, &email, &start_date, &mut map, 0)?;
 
