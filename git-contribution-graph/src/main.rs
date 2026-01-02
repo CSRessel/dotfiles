@@ -17,7 +17,7 @@ enum ColorMode {
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// Number of weeks to display (ignored if --year is set)
+    /// Number of weeks to display (ignored if --year or --month is set)
     #[arg(short, long, default_value_t = 4)]
     weeks: usize,
 
@@ -26,12 +26,12 @@ struct Args {
     year: Option<i32>,
 
     /// Show contributions for a specific month (1-12)
-    #[arg(long)]
+    #[arg(short, long)]
     month: Option<u32>,
 
     /// Color rendering mode
-    #[arg(short, long, value_enum, default_value_t = ColorMode::Tile)]
-    color: ColorMode,
+    #[arg(long, value_enum, default_value_t = ColorMode::Tile)]
+    mode: ColorMode,
 
     /// Show all day-of-week labels (default shows only Mon/Wed/Fri)
     #[arg(short = 'a', long)]
@@ -46,11 +46,11 @@ struct Args {
     all_squares: bool,
 
     /// Show month labels above columns
-    #[arg(short = 'm', long)]
-    month_labels: bool,
+    #[arg(short, long)]
+    labels: bool,
 
     /// Show total contribution count
-    #[arg(short = 'C', long)]
+    #[arg(short, long)]
     count: bool,
 
     /// Directory to scan for git repositories (overrides default behavior)
@@ -108,13 +108,13 @@ fn main() -> Result<()> {
 
     let dir = args.dir.map(std::path::PathBuf::from);
     let data = data::get_contributions(start_date, dir)?;
-    let tile_mode = matches!(args.color, ColorMode::Tile);
+    let tile_mode = matches!(args.mode, ColorMode::Tile);
 
     let total_count = if args.count {
         let end_date = start_date + chrono::Duration::days(weeks as i64 * 7);
         let total: usize = data
             .iter()
-            .filter(|(&date, _)| date >= start_date && date < end_date)
+            .filter(|&(&date, _)| date >= start_date && date < end_date)
             .map(|(_, &count)| count)
             .sum();
         Some(total)
@@ -130,7 +130,7 @@ fn main() -> Result<()> {
         args.all_labels,
         args.black_background,
         args.all_squares,
-        args.month_labels,
+        args.labels,
         total_count,
     )?;
 

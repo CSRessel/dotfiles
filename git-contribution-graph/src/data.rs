@@ -19,11 +19,10 @@ pub fn get_contributions(
     }
 
     // Try GH CLI first
-    if which("gh").is_ok() {
-        if let Ok(data) = get_contributions_from_gh() {
+    if which("gh").is_ok()
+        && let Ok(data) = get_contributions_from_gh() {
             return Ok(data);
         }
-    }
 
     // Fallback to local scan
     let home = dirs::home_dir().context("Could not find home directory")?;
@@ -225,8 +224,8 @@ fn process_repo(
             .args(["rev-parse", "--verify", branch])
             .output();
 
-        if let Ok(output) = check_branch {
-            if output.status.success() {
+        if let Ok(output) = check_branch
+            && output.status.success() {
                 let log_output = Command::new("git")
                     .current_dir(repo_path)
                     .args([
@@ -247,7 +246,6 @@ fn process_repo(
                     }
                 }
             }
-        }
     }
     Ok(())
 }
