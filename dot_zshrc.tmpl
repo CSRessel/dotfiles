@@ -195,6 +195,6 @@ export PATH="$PATH:/home/clifford/.lmstudio/bin"
 
 {{ if (stat (joinPath .chezmoi.homeDir ".local/bin/githubgraph")) -}}
 # GitHub contribution graph on login
-githubgraph -w 12 --month-labels
+githubgraph -w 12 -l -c
 {{- end }}
 
