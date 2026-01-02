@@ -47,8 +47,20 @@ lvim.format_on_save.enabled = true
 -- ----------------------------------------------------------------
 -- Filetype and language configurations
 
--- lvim.lsp.installer.setup.automatic_installation = true -- outdated flag now?
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
+-- Mason doesn't setup rust-analyzer by default
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
+local opts = {
+  -- Your custom rust-analyzer settings here
+  settings = {
+    ["rust-analyzer"] = {
+      -- checkOnSave = {
+      --   command = "clippy",
+      -- },
+    },
+  },
+}
+-- Use the built-in lvim lsp manager to setup the server
+require("lvim.lsp.manager").setup("rust_analyzer", opts)
 
 local formatters = require "lvim.lsp.null-ls.formatters"
 local linters = require "lvim.lsp.null-ls.linters"
@@ -73,7 +85,11 @@ linters.setup {
       -- "--max-line-length", "120",
       "--ignore", "E203,E501,W503",
     },
-  }
+  },
+  {
+    name = "stylua",
+    args = { "--indent-width", "2", "--indent-type", "Spaces" },
+  },
 }
 code_actions.setup {}
 
