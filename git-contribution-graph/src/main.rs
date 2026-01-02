@@ -44,6 +44,10 @@ struct Args {
     /// Show month labels above columns
     #[arg(short = 'm', long)]
     month_labels: bool,
+
+    /// Directory to scan for git repositories (overrides default behavior)
+    #[arg(short, long)]
+    dir: Option<String>,
 }
 
 fn main() -> Result<()> {
@@ -71,7 +75,8 @@ fn main() -> Result<()> {
         (start, args.weeks)
     };
 
-    let data = data::get_contributions(weeks)?;
+    let dir = args.dir.map(std::path::PathBuf::from);
+    let data = data::get_contributions(weeks, dir)?;
     let tile_mode = matches!(args.color, ColorMode::Tile);
     display::print_graph(
         &data,

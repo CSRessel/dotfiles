@@ -10,7 +10,11 @@ use which::which;
 
 const CACHE_MAX_AGE_SECS: u64 = 3600; // 1 hour
 
-pub fn get_contributions(weeks: usize) -> Result<HashMap<NaiveDate, usize>> {
+pub fn get_contributions(weeks: usize, dir: Option<std::path::PathBuf>) -> Result<HashMap<NaiveDate, usize>> {
+    if let Some(d) = dir {
+        return get_contributions_from_local(weeks, &d);
+    }
+
     // Try GH CLI first
     if which("gh").is_ok() {
         if let Ok(data) = get_contributions_from_gh() {
@@ -19,7 +23,9 @@ pub fn get_contributions(weeks: usize) -> Result<HashMap<NaiveDate, usize>> {
     }
 
     // Fallback to local scan
-    get_contributions_from_local(weeks)
+    let home = dirs::home_dir().context("Could not find home directory")?;
+    let docs = home.join("Documents");
+    get_contributions_from_local(weeks, &docs)
 }
 
 #[derive(Deserialize)]
@@ -127,14 +133,11 @@ fn get_contributions_from_gh() -> Result<HashMap<NaiveDate, usize>> {
     Ok(map)
 }
 
-fn get_contributions_from_local(weeks: usize) -> Result<HashMap<NaiveDate, usize>> {
-    let home = dirs::home_dir().context("Could not find home directory")?;
-    let docs = home.join("Documents");
-
+fn get_contributions_from_local(weeks: usize, path: &Path) -> Result<HashMap<NaiveDate, usize>> {
     let mut map = HashMap::new();
 
-    // Check if Documents exists
-    if !docs.exists() {
+    // Check if path exists
+    if !path.exists() {
         return Ok(map);
     }
 
@@ -155,12 +158,16 @@ fn get_contributions_from_local(weeks: usize) -> Result<HashMap<NaiveDate, usize
     // Calculate start date
     let start_date = Local::now().date_naive() - Duration::weeks(weeks as i64 + 1); // +1 buffer
 
-    visit_dirs(&docs, &email, &start_date, &mut map)?;
+    visit_dirs(path, &email, &start_date, &mut map, 0)?;
 
     Ok(map)
 }
 
-fn visit_dirs(dir: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap<NaiveDate, usize>) -> Result<()> {
+fn visit_dirs(dir: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap<NaiveDate, usize>, depth: usize) -> Result<()> {
+    if depth > 6 {
+        return Ok(());
+    }
+
     if dir.is_dir() {
         if dir.join(".git").exists() {
             process_repo(dir, email, start_date, map)?;
@@ -175,7 +182,7 @@ fn visit_dirs(dir: &Path, email: &str, start_date: &NaiveDate, map: &mut HashMap
             let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                visit_dirs(&path, email, start_date, map)?;
+                visit_dirs(&path, email, start_date, map, depth + 1)?;
             }
         }
     }
