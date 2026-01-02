@@ -49,6 +49,10 @@ struct Args {
     #[arg(short = 'm', long)]
     month_labels: bool,
 
+    /// Show total contribution count
+    #[arg(short = 'C', long)]
+    count: bool,
+
     /// Directory to scan for git repositories (overrides default behavior)
     #[arg(short, long)]
     dir: Option<String>,
@@ -105,6 +109,19 @@ fn main() -> Result<()> {
     let dir = args.dir.map(std::path::PathBuf::from);
     let data = data::get_contributions(start_date, dir)?;
     let tile_mode = matches!(args.color, ColorMode::Tile);
+
+    let total_count = if args.count {
+        let end_date = start_date + chrono::Duration::days(weeks as i64 * 7);
+        let total: usize = data
+            .iter()
+            .filter(|(&date, _)| date >= start_date && date < end_date)
+            .map(|(_, &count)| count)
+            .sum();
+        Some(total)
+    } else {
+        None
+    };
+
     display::print_graph(
         &data,
         start_date,
@@ -114,6 +131,7 @@ fn main() -> Result<()> {
         args.black_background,
         args.all_squares,
         args.month_labels,
+        total_count,
     )?;
 
     Ok(())

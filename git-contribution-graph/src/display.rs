@@ -12,6 +12,7 @@ pub fn print_graph(
     black_background: bool,
     all_squares: bool,
     month_labels: bool,
+    total_count: Option<usize>,
 ) -> Result<()> {
     // Background colors
     let bg_rgb = (13, 17, 23); // #0d1117 - Surround background
@@ -131,6 +132,7 @@ pub fn print_graph(
     };
 
     // Build month header if enabled
+    let count_str = total_count.map(|c| c.to_string()).unwrap_or_default();
     if month_labels {
         let months = [
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
@@ -167,9 +169,27 @@ pub fn print_graph(
         } else {
             print!("{}", left_pad);
         }
-        print!("\x1b[38;5;{}m{: <4}", text_ansi, ""); // Empty space for day label column
+        print!("\x1b[38;5;{}m{: <4}", text_ansi, count_str); // Show count if present
         print!("\x1b[38;5;{}m{}", text_ansi, header);
         let remaining = (weeks * 2).saturating_sub(last_col);
+        if use_bg {
+            println!(
+                "\x1b[48;5;{}m{}{}\x1b[0m",
+                print_bg,
+                " ".repeat(remaining),
+                right_pad
+            );
+        } else {
+            println!("{}{}\x1b[0m", " ".repeat(remaining), right_pad);
+        }
+    } else if total_count.is_some() {
+        if use_bg {
+            print!("\x1b[48;5;{}m{}", print_bg, left_pad);
+        } else {
+            print!("{}", left_pad);
+        }
+        print!("\x1b[38;5;{}m{: <4}", text_ansi, count_str);
+        let remaining = weeks * 2;
         if use_bg {
             println!(
                 "\x1b[48;5;{}m{}{}\x1b[0m",
