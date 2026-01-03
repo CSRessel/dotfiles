@@ -3,6 +3,10 @@ lvim is the global options object
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
 
+-- lvim.colorscheme = "oxocarbon" -- the best color scheme, except I can't stand having diffs without red/green colros
+-- lvim.colorscheme = "catppuccin-mocha"
+lvim.colorscheme = "tokyonight-moon"
+
 -- general
 lvim.log.level = "warn"
 -- to disable icons and use a minimalist setup, uncomment the following
@@ -86,10 +90,10 @@ linters.setup {
       "--ignore", "E203,E501,W503",
     },
   },
-  {
-    name = "stylua",
-    args = { "--indent-width", "2", "--indent-type", "Spaces" },
-  },
+  -- {
+  --   name = "stylua",
+  --   args = { "--indent-width", "2", "--indent-type", "Spaces" },
+  -- },
 }
 code_actions.setup {}
 
@@ -215,29 +219,10 @@ lvim.autocommands = {
 -- ----------------------------------------------------------------
 -- Plugins and their specific config
 lvim.plugins = {
+
+  -- --------------------------------------------------------------
+  -- TOOLS
   { "tpope/vim-fugitive" },
-  { "nyoom-engineering/oxocarbon.nvim" },
-  { "catppuccin/nvim" },
-  { "folke/tokyonight.nvim" },
-  {
-    "alexghergh/nvim-tmux-navigation",
-    config = function()
-      require 'nvim-tmux-navigation'.setup {
-        -- disable_when_zoomed = true, -- defaults to false
-        keybindings = {
-          left = "<C-h>",
-          down = "<C-j>",
-          up = "<C-k>",
-          right = "<C-l>",
-          -- last_active = "<C-\\>",
-          -- next = "<C-Space>",
-        }
-      }
-    end,
-  },
-  -- {
-  --     "github/copilot.vim"
-  -- },
   {
     "epwalsh/obsidian.nvim",
     dependencies = {
@@ -258,82 +243,44 @@ lvim.plugins = {
     end,
   },
   {
-    'sotte/Presenting.nvim',
+    "folke/zen-mode.nvim",
     opts = {
-      -- fill in your options here
-      -- see :help Presenting.config
-      options = {
-        -- The width of the slide buffer.
-        width = 80,
-      },
-      separator = {
-        -- Separators for different filetypes.
-        -- You can add your own or oberwrite existing ones.
-        -- Note: separators are lua patterns, not regexes.
-        markdown = "^##? ", -- overridden to limit at h2
-        -- org = "^*+ ",
-        -- adoc = "^==+ ",
-        -- asciidoctor = "^==+ ",
-      },
-      -- Keep the separator, useful if you're parsing based on headings.
-      -- If you want to parse on a non-heading separator, e.g. `---` set this to false.
-      -- keep_separator = true,
-      keymaps = {
-        -- These are local mappings for the open slide buffer.
-        -- Disable existing keymaps by setting them to `nil`.
-        -- Add your own keymaps as you desire.
-        -- ["n"] = function() Presenting.next() end,
-        -- ["p"] = function() Presenting.prev() end,
-        ["q"] = nil, -- function() Presenting.quit() end,
-        ["f"] = nil, -- function() Presenting.first() end,
-        ["l"] = nil, -- function() Presenting.last() end,
-        -- ["<CR>"] = function() Presenting.next() end,
-        -- ["<BS>"] = function() Presenting.prev() end,
-      },
-      -- -- A function that configures the slide buffer.
-      -- -- If you want custom settings write your own function that accepts a buffer id as argument.
-      -- configure_slide_buffer = function(buf) H.configure_slide_buffer(buf) end,
-    },
-    cmd = { "Presenting" },
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    }
   },
-  -- { "NoahTheDuke/vim-just" },
-  -- { "IndianBoy42/tree-sitter-just" },
-  -- {
-  --   "ThePrimeagen/refactoring.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  --   config = function()
-  --     require("refactoring").setup()
-  --   end,
-  -- },
+
+  -- --------------------------------------------------------------
+  -- THEMING AND ERGONOMICS
+  { "nyoom-engineering/oxocarbon.nvim" },
+  { "catppuccin/nvim" },
+  { "folke/tokyonight.nvim" },
+  {
+    "alexghergh/nvim-tmux-navigation",
+    config = function()
+      require 'nvim-tmux-navigation'.setup {
+        -- disable_when_zoomed = true, -- defaults to false
+        keybindings = {
+          left = "<C-h>",
+          down = "<C-j>",
+          up = "<C-k>",
+          right = "<C-l>",
+          -- last_active = "<C-\\>",
+          -- next = "<C-Space>",
+        }
+      }
+    end,
+  },
+
+  -- --------------------------------------------------------------
+  -- LANGUAGES
   -- {
   --   'mrcjkb/rustaceanvim',
   --   version = '^6', -- Recommended
   --   lazy = false,   -- This plugin is already lazy
   --   -- opt = {},
   -- },
-}
-
--- vim.g.copilot_assume_mapped = true
--- vim.g.copilot_no_tab_map = true
--- vim.api.nvim_set_keymap("n", "<c-s>", "<cmd>lua require('copilot.suggestion').toggle_auto_trigger()<CR>", opts)
-vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
-vim.api.nvim_set_keymap("i", "<C-S-j>", 'copilot#Next("<CR>")', { silent = true, expr = true })
-vim.api.nvim_set_keymap("i", "<C-S-k>", 'copilot#Prev("<CR>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<Tab>", 'copilot#Accept("<Tab>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<C-.>", 'copilot#Next("<C-.>")', { silent = true, expr = true })
--- vim.api.nvim_set_keymap("i", "<C-Space>", 'copilot#Next("<C-Space>")', { silent = true, expr = true })
-
--- lvim.colorscheme = "oxocarbon" -- the best color scheme, except I can't stand having diffs without red/green colros
--- lvim.colorscheme = "catppuccin-mocha"
-lvim.colorscheme = "tokyonight-moon"
-
-lvim.builtin.which_key.mappings["L"]["p"] = {
-  name = "Presenting",
-  p = { "<cmd>Presenting<CR>", "Start Presenting" },
-  q = { "<cmd>lua Presenting.quit()<CR>", "Quit Presenting" },
 }
 
 lvim.builtin.which_key.mappings["G"] = {
@@ -344,24 +291,6 @@ lvim.builtin.which_key.mappings["G"] = {
   D = { "<cmd>Gvdiff HEAD<CR>", "diff HEAD", mode = { "n" } },
   l = { "<cmd>Git log<CR>", "log", mode = { "n" } },
   L = { "<cmd>Git logg<CR>", "log --graph", mode = { "n" } },
-}
-
-lvim.builtin.which_key.mappings["a"] = {
-  name = "AI (ChatGPT)",
-  a = { "<cmd>ChatGPTCompleteCode<CR>", "Complete Code" },
-  c = { "<cmd>ChatGPT<CR>", "ChatGPT Prompt" },
-  e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
-  g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-  t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-  k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-  d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-  u = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-  o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-  s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-  f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-  x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-  r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-  l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
 }
 
 lvim.builtin.which_key.mappings["r"] = {
@@ -379,13 +308,3 @@ lvim.builtin.which_key.mappings["r"] = {
   r = { "<cmd>!cargo run<CR>", "Run" },
   t = { "<cmd>!cargo test<CR>", "Test" },
 }
-
--- lvim.builtin.which_key.mappings["r"] = {
---   name = "Refactoring",
---   e = { "<cmd>Refactor extract<CR>", "Extract", mode = { "v" } },
---   f = { "<cmd>Refactor extract_to_file<CR>", "Extract to File", mode = { "v" } },
---   v = { "<cmd>Refactor extract_var<CR>", "Extract Variable", mode = { "x" } },
---   i = { "<cmd>Refactor inline_var<CR>", "Inline Variable", mode = { "n", "v" } },
---   I = { "<cmd>Refactor inline_func<CR>", "Inline Function", mode = { "n" } },
---   b = { "<cmd>Refactor extract_block<CR>", "Extract Block", mode = { "n" } },
--- }
