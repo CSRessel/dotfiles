@@ -315,3 +315,40 @@ lvim.builtin.which_key.mappings["r"] = {
   r = { "<cmd>!cargo run<CR>", "Run" },
   t = { "<cmd>!cargo test<CR>", "Test" },
 }
+
+local presentation_mode = false
+local function toggle_presentation()
+  presentation_mode = not presentation_mode
+  -- Toggle ZenMode (Requires 'folke/zen-mode.nvim')
+  local status_ok, zen_mode = pcall(require, "zen-mode")
+  if status_ok then
+    zen_mode.toggle()
+  else
+    vim.notify("ZenMode plugin not found", vim.log.levels.WARN)
+  end
+
+  if presentation_mode then
+    -- UI Cleanup
+    vim.opt.number = false
+    vim.opt.relativenumber = false
+    vim.opt.laststatus = 0
+
+    -- Navigation
+    vim.keymap.set('n', '<Right>', ':bnext<CR>', { noremap = true, silent = true })
+    vim.keymap.set('n', '<Left>', ':bprev<CR>', { noremap = true, silent = true })
+    print("Presentation Mode: ON")
+  else
+    -- Restore Defaults
+    vim.opt.number = true
+    vim.opt.relativenumber = true
+    vim.opt.laststatus = 3
+
+    vim.keymap.del('n', '<Right>')
+    vim.keymap.del('n', '<Left>')
+    print("Presentation Mode: OFF")
+  end
+end
+lvim.builtin.which_key.mappings["P"] = {
+  name = "Presentation",
+  t = { function() toggle_presentation() end, "Toggle Presentation Mode" },
+}
