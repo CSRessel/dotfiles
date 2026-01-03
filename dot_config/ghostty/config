@@ -20,7 +20,12 @@
 # # The config file consists of simple key-value pairs,
 # # separated by equals signs.
 # font-family = Iosevka
+
+# https://www.dafont.com/verily-serif-mono.font (Serif for presentation or similar)
+# font-family = Verily Serif Mono
+# https://www.nerdfonts.com/font-downloads (daily driver)
 font-family = FiraCode Nerd Font
+
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.
