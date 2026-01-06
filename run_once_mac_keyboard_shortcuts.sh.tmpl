@@ -72,6 +72,10 @@ if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Reopen Closed Tab"* ]];then
   echo "Adding Reopen Closed Tab to NSGlobalDomain"
   defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Reopen Closed Tab" "^\$t"
 fi
+if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Reload This Page"* ]];then
+  echo "Adding Reload This Page to NSGlobalDomain"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Reload This Page" "^r"
+fi
 # iTerm2
 CUSTOM_ITERM_SHORTCUTS=$(defaults read com.googlecode.iterm2 NSUserKeyEquivalents)
 if [[ $CUSTOM_ITERM_SHORTCUTS != *"Copy"* ]];then
@@ -85,6 +89,48 @@ fi
 if [[ $CUSTOM_ITERM_SHORTCUTS != *"Paste"* ]];then
   echo "Adding Paste to com.googlecode.iterm2"
   defaults write com.googlecode.iterm2 NSUserKeyEquivalents -dict-add "Paste" "^\$v"
+fi
+
+# Word navigation with Control key (instead of Option)
+# This requires modifying ~/Library/KeyBindings/DefaultKeyBinding.dict
+KEYBINDINGS_DIR="$HOME/Library/KeyBindings"
+KEYBINDINGS_FILE="$KEYBINDINGS_DIR/DefaultKeyBinding.dict"
+
+if [[ ! -d "$KEYBINDINGS_DIR" ]]; then
+  echo "Creating KeyBindings directory"
+  mkdir -p "$KEYBINDINGS_DIR"
+fi
+
+if [[ ! -f "$KEYBINDINGS_FILE" ]]; then
+  echo "Creating DefaultKeyBinding.dict with word navigation shortcuts"
+  cat > "$KEYBINDINGS_FILE" << 'EOF'
+{
+    /* Word navigation with Control key */
+    "^\UF702" = "moveWordLeft:";              /* Ctrl+Left */
+    "^\UF703" = "moveWordRight:";             /* Ctrl+Right */
+    "^$\UF702" = "moveWordLeftAndModifySelection:";   /* Ctrl+Shift+Left */
+    "^$\UF703" = "moveWordRightAndModifySelection:";  /* Ctrl+Shift+Right */
+    "^\U007F" = "deleteWordBackward:";        /* Ctrl+Backspace */
+    "^\UF728" = "deleteWordForward:";         /* Ctrl+Delete (Fn+Backspace) */
+}
+EOF
+else
+  # Check if word navigation bindings already exist
+  if ! grep -q 'moveWordLeft' "$KEYBINDINGS_FILE"; then
+    echo "Adding word navigation shortcuts to existing DefaultKeyBinding.dict"
+    # Remove closing brace, add new bindings, add closing brace back
+    sed -i '' 's/}$//' "$KEYBINDINGS_FILE"
+    cat >> "$KEYBINDINGS_FILE" << 'EOF'
+    /* Word navigation with Control key */
+    "^\UF702" = "moveWordLeft:";              /* Ctrl+Left */
+    "^\UF703" = "moveWordRight:";             /* Ctrl+Right */
+    "^$\UF702" = "moveWordLeftAndModifySelection:";   /* Ctrl+Shift+Left */
+    "^$\UF703" = "moveWordRightAndModifySelection:";  /* Ctrl+Shift+Right */
+    "^\U007F" = "deleteWordBackward:";        /* Ctrl+Backspace */
+    "^\UF728" = "deleteWordForward:";         /* Ctrl+Delete (Fn+Backspace) */
+}
+EOF
+  fi
 fi
 
 {{ end -}}
