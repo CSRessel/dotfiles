@@ -51,9 +51,8 @@ lvim.format_on_save.enabled = true
 -- ----------------------------------------------------------------
 -- Filetype and language configurations
 
--- Mason doesn't setup rust-analyzer by default
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
-local opts = {
+local rust_opts = {
   -- Your custom rust-analyzer settings here
   settings = {
     ["rust-analyzer"] = {
@@ -63,8 +62,21 @@ local opts = {
     },
   },
 }
--- Use the built-in lvim lsp manager to setup the server
-require("lvim.lsp.manager").setup("rust_analyzer", opts)
+require("lvim.lsp.manager").setup("rust_analyzer", rust_opts)
+
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
+local pyright_opts = {
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "standard",  -- or "strict"
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+      },
+    },
+  },
+}
+require("lvim.lsp.manager").setup("pyright", rust_opts)
 
 local formatters = require "lvim.lsp.null-ls.formatters"
 local linters = require "lvim.lsp.null-ls.linters"
@@ -281,6 +293,10 @@ lvim.plugins = {
   },
 
   -- --------------------------------------------------------------
+  {
+    "NoahTheDuke/vim-just",
+    ft = { "just" },
+  },
   -- LANGUAGES
   -- {
   --   'mrcjkb/rustaceanvim',
