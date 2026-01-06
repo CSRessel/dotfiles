@@ -165,6 +165,10 @@ export PYENV_ROOT="$HOME/.pyenv"
 eval "$(pyenv init - zsh)"
 {{- end }}
 
+{{ if (stat (joinPath .chezmoi.homeDir ".local/share/bob")) -}}
+export PATH="$PATH:$HOME/.local/share/bob/v0.10.4/bin"
+{{- end -}}
+
 {{- if eq .chezmoi.username "clifford" -}}
 {{- /****************************/ -}}
 {{- /* only personal machine    */ -}}
