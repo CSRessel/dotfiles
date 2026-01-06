@@ -23,7 +23,7 @@ fi
 # Adding shortcuts via command line: https://superuser.com/a/545221
 # Current shortcuts can be viewed with:
 # $ defaults read com.apple.universalaccess  com.apple.custommenu.apps
-# $ defaults read NSGlobalDomain NSUserKeyEquivalents                                                                                  (ppac-dev-us-east-2/default)
+# $ defaults read NSGlobalDomain NSUserKeyEquivalents
 # $ defaults read com.googlecode.iterm2 NSUserKeyEquivalents
 #
 # Output looks like:
@@ -66,7 +66,7 @@ if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"New Tab"* ]];then
 fi
 if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"New Window"* ]];then
   echo "Adding New Window to NSGlobalDomain"
-  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "Close Tab" "^n"
+  defaults write NSGlobalDomain NSUserKeyEquivalents -dict-add "New Window" "^n"
 fi
 if [[ $CUSTOM_GLOBAL_SHORTCUTS != *"Reopen Closed Tab"* ]];then
   echo "Adding Reopen Closed Tab to NSGlobalDomain"

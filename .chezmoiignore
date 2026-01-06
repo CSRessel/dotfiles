@@ -30,17 +30,22 @@ dot_config/private_Code/User
 .nethackrc
 .vim
 .config/k9s
+.config/kitty
+.config/nix
 
+.zen_config/configure-zen.sh
 .zen_config
 .zen_config/added-extension-settings.json
 .zen_config/added-zen-keyboard-shortcuts.json
 .zen_config/update_zen_prefs.py
+
 build_githubgraph.sh
 catpuccin_tmux.sh
-mac_keyboard_shortcuts.sh
 rust_and_tools.sh
+
 .config/my_gnome_settings.sh
-.zen_config/configure-zen.sh
-{{- else if ne .chezmoi.username "clifford.ressel" }}
+
+{{- else if ne .chezmoi.username "cressel" }}
 # only access these on work machines
+mac_keyboard_shortcuts.sh
 {{- end }}
