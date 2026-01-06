@@ -75,8 +75,7 @@ plugins=(
     vi-mode
     asdf
     kubectl
-{{- if eq .chezmoi.username "clifford.ressel" }}
-    zsh-kubectl-prompt
+{{- if eq .chezmoi.username "cressel" }}
     poetry
 {{ else if eq .chezmoi.username "clifford" }}
 {{- end }}
@@ -121,36 +120,26 @@ RPROMPT='%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}'
 # enable vim bindings
 bindkey -v
 
-export VISUAL=lvim
+export VISUAL=vim
 export EDITOR="$VISUAL"
-
-if [ -f ~/.sh_aliases ]; then
-    source ~/.sh_aliases
-fi
 
 # --------------------------------
 # Language support and PATH additions
 
 # local
-export PATH="$PATH:/home/{{ .chezmoi.username }}/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # direnv
 eval "$(direnv hook zsh)"
-
-{{ if eq .chezmoi.username "clifford" }}
-{{- /* only on personal machine */ -}}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".opencode")) -}}
-# opencode
-export PATH=/home/clifford/.opencode/bin:$PATH
-{{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".cargo")) -}}
 # rust
 . "$HOME/.cargo/env"
 
+{{ if (stat (joinPath .chezmoi.homeDir ".cargo/bin/sccache")) -}}
 # Faster rust builds
-export RUSTC_WRAPPER=/home/clifford/.cargo/bin/sccache
+export RUSTC_WRAPPER=$HOME/.cargo/bin/sccache
+{{- end -}}
 {{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".nvm")) -}}
@@ -163,10 +152,26 @@ export NVM_DIR="${HOME}/.nvm"
 {{ if (stat (joinPath .chezmoi.homeDir ".bun")) -}}
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+{{- end }}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".pyenv")) -}}
+# pyenv
+alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+{{- end }}
+
+{{- if eq .chezmoi.username "clifford" -}}
+{{- /****************************/ -}}
+{{- /* only personal machine    */ -}}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".opencode")) -}}
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
 {{- end }}
 
 if [[ "$ARGV0" =~ .*cursor$ ]]; then
@@ -177,20 +182,12 @@ fi
 
 {{ if (stat (joinPath .chezmoi.homeDir "Documents/builds/platform-tools")) -}}
 # AOSP tools
-export PATH="$PATH:/home/clifford/Documents/builds/platform-tools"
+export PATH="$PATH:$HOME/Documents/builds/platform-tools"
 {{- end }}
 {{ if (stat (joinPath .chezmoi.homeDir "Android/Sdk")) -}}
 # Android SDK
-export ANDROID_HOME="/home/clifford/Android/Sdk"
-export ANDROID_STUDIO="/home/clifford/Android"
-{{- end }}
-
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".lmstudio/bin")) -}}
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/clifford/.lmstudio/bin"
-# End of LM Studio CLI section
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_STUDIO="$HOME/Android"
 {{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".local/bin/githubgraph")) -}}
@@ -198,3 +195,30 @@ export PATH="$PATH:/home/clifford/.lmstudio/bin"
 githubgraph -w 12 -l -c
 {{- end }}
 
+{{ if (stat (joinPath .chezmoi.homeDir ".lmstudio/bin")) -}}
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
+{{- end -}}
+
+{{- /* end personal configs     */ -}}
+{{- /****************************/ -}}
+{{- end }}
+
+# --------------------------------
+# Other configs at the end
+# (in case they rely on tools added in above PATH)
+
+if [ -f ~/.sh_aliases ]; then
+    source ~/.sh_aliases
+fi
+
+{{ if eq .chezmoi.username "cressel" -}}
+{{- /****************************/ -}}
+{{- /* only work machine        */ -}}
+if [ -f ~/.sh_work ]; then
+    source ~/.sh_work
+fi
+{{- /* end work configs         */ -}}
+{{- /****************************/ -}}
+{{- end }}
