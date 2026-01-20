@@ -4,11 +4,14 @@
 .vscode
 .DS_Store
 .envrc
-.prompts.md
+
+.worktree
+.worktrees
+
+/.nori/
+/.prompts.md
 .nori-config.json
 settings.local.json
 CLAUDE.local.md
 AGENTS.override.md
 
-.worktree
-.worktrees
