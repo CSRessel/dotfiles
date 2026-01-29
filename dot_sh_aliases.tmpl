@@ -51,8 +51,6 @@ watchpytest () {
     fdfind . -e py "$GLOB" | entr -d -s "pytest $GLOB"
 }
 
-alias codex="bunx @openai/codex"
-alias claude="bunx @anthropic-ai/claude-code"
 alias mitm="uvx mitmproxy"
 alias ai="bunx opencode-ai run -m 'opencode/grok-code'" # currently free, and very fast
 
