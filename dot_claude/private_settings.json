@@ -1,0 +1,126 @@
+{
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "includeCoAuthoredBy": false,
+  "hooks": {
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/statistics-notification.js",
+            "description": "Notify user that statistics are being calculated"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/statistics.js",
+            "description": "Calculate and display session usage statistics"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/autoupdate.js",
+            "description": "Check for Nori Profiles updates on session start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/nested-install-warning.js",
+            "description": "Warn about Nori installations in ancestor directories on session start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
+            "description": "Warn about excessive context usage from permissions on session start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/worktree-cleanup.js",
+            "description": "Warn about excessive git worktree disk usage on session start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/onboarding-wizard-welcome.js",
+            "description": "Welcome users when onboarding-wizard profile is active"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
+            "description": "Send desktop notification when Claude needs input"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/slash-command-intercept.js",
+            "description": "Intercept slash commands for instant execution"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/Documents/source/nori/skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
+            "description": "Replace Claude Code co-author attribution with Nori in git commits"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/home/clifford/.claude/nori-statusline.sh",
+    "padding": 0
+  },
+  "companyAnnouncements": [
+    "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
+  ]
+}

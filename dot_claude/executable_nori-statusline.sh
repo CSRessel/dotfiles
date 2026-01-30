@@ -13,7 +13,7 @@ if ! command -v jq >/dev/null 2>&1; then
     NC='\033[0m'
 
     echo -e "${YELLOW}⚠️  Nori statusline requires jq. Install: brew install jq (macOS) or apt install jq (Linux)${NC}"
-    echo -e "${YELLOW}Augmented with Nori v19.1.5${NC}"
+    echo -e "${YELLOW}Augmented with Nori v19.1.6${NC}"
     exit 0
 fi
 
@@ -196,9 +196,9 @@ PROFILE_NAME=$(echo "$INPUT" | jq -r '.profile_name // ""')
 # Build branding message with upgrade link for free tier
 if [ "$CONFIG_TIER" = "free" ]; then
     # OSC 8 hyperlink format: \033]8;;URL\033\\TEXT\033]8;;\033\\
-    BRANDING="${YELLOW}Augmented with Nori v19.1.5 (\033]8;;https://tilework.tech\033\\upgrade\033]8;;\033\\)${NC}"
+    BRANDING="${YELLOW}Augmented with Nori v19.1.6 (\033]8;;https://tilework.tech\033\\upgrade\033]8;;\033\\)${NC}"
 else
-    BRANDING="${YELLOW}Augmented with Nori v19.1.5 ${NC}"
+    BRANDING="${YELLOW}Augmented with Nori v19.1.6 ${NC}"
 fi
 
 # Array of rotating tips about Nori features
@@ -215,7 +215,7 @@ TIPS=(
     "Nori Tip: Keep an eye on your total context usage. Start new conversations regularly!"
     "Nori Tip: Agents love tests! Use Nori's built-in Test Driven Development to never have a regression."
     "Nori Tip: Switch workflows with /nori-switch-skillset - try documenter, senior-swe, or product-manager"
-    "Nori Tip: Use /sync-noridocs to bulk upload all your local docs.md files to the server (paid)"
+    "Nori Tip: Use /write-noridoc to save documentation to the Nori server (paid)"
     "Nori Tip: The nori-change-documenter subagent automatically updates docs when you make code changes"
     "Nori Tip: Use the systematic-debugging skill when bugs occur - it ensures root cause analysis"
     "Nori Tip: The root-cause-tracing skill helps trace errors backward through the call stack"
