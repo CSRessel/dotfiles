@@ -13,7 +13,7 @@ if ! command -v jq >/dev/null 2>&1; then
     NC='\033[0m'
 
     echo -e "${YELLOW}⚠️  Nori statusline requires jq. Install: brew install jq (macOS) or apt install jq (Linux)${NC}"
-    echo -e "${YELLOW}Augmented with Nori v19.1.6${NC}"
+    echo -e "${YELLOW}Augmented with Nori v19.1.8${NC}"
     exit 0
 fi
 
@@ -63,31 +63,8 @@ if [ -z "$INSTALL_DIR" ]; then
     INSTALL_DIR="${CWD_FROM_JSON:-$(pwd)}"
 fi
 
-# === CONFIG TIER ENRICHMENT ===
-# Get config tier from install directory config
-CONFIG_TIER="unknown"
+# === CONFIG FILE LOCATION ===
 CONFIG_FILE="$INSTALL_DIR/.nori-config.json"
-
-if [ -f "$CONFIG_FILE" ]; then
-    # Check if auth credentials exist in config
-    # Support both nested auth format (v19+) and legacy flat format
-    HAS_AUTH=$(jq -r '
-      if (.auth.username != null and (.auth.password != null or .auth.refreshToken != null) and .auth.organizationUrl != null) then "true"
-      elif (.username != null and (.password != null or .refreshToken != null) and .organizationUrl != null) then "true"
-      else "false" end
-    ' "$CONFIG_FILE" 2>/dev/null)
-
-    if [ "$HAS_AUTH" = "true" ]; then
-        CONFIG_TIER="paid"
-    else
-        CONFIG_TIER="free"
-    fi
-else
-    CONFIG_TIER="free"
-fi
-
-# Inject config_tier into the JSON
-INPUT=$(echo "$INPUT" | jq --arg tier "$CONFIG_TIER" '. + {config_tier: $tier}')
 
 # === PROFILE ENRICHMENT ===
 # Get profile name from ~/nori-config.json
@@ -187,19 +164,11 @@ LINES_ADDED=$(echo "$INPUT" | jq -r '.cost.total_lines_added // 0')
 LINES_REMOVED=$(echo "$INPUT" | jq -r '.cost.total_lines_removed // 0')
 LINES_FORMATTED="+${LINES_ADDED}/-${LINES_REMOVED}"
 
-# Extract config tier (passed from installer)
-CONFIG_TIER=$(echo "$INPUT" | jq -r '.config_tier // "unknown"')
-
 # Extract profile name (passed from enrichment)
 PROFILE_NAME=$(echo "$INPUT" | jq -r '.profile_name // ""')
 
-# Build branding message with upgrade link for free tier
-if [ "$CONFIG_TIER" = "free" ]; then
-    # OSC 8 hyperlink format: \033]8;;URL\033\\TEXT\033]8;;\033\\
-    BRANDING="${YELLOW}Augmented with Nori v19.1.6 (\033]8;;https://tilework.tech\033\\upgrade\033]8;;\033\\)${NC}"
-else
-    BRANDING="${YELLOW}Augmented with Nori v19.1.6 ${NC}"
-fi
+# Build branding message
+BRANDING="${YELLOW}Augmented with Nori v19.1.8 ${NC}"
 
 # Array of rotating tips about Nori features
 TIPS=(
@@ -211,11 +180,9 @@ TIPS=(
     "Nori Tip: Run /nori-init-docs to create docs. Nori keeps them updated."
     "Nori Tip: Want to skip the standard flow? Just tell Nori to skip the checklist"
     "Nori Tip: Try running Nori in parallel with git worktrees and multiple sessions"
-    "Nori Tip: Leverage your whole team's knowledge with the paid Nori server"
     "Nori Tip: Keep an eye on your total context usage. Start new conversations regularly!"
     "Nori Tip: Agents love tests! Use Nori's built-in Test Driven Development to never have a regression."
     "Nori Tip: Switch workflows with /nori-switch-skillset - try documenter, senior-swe, or product-manager"
-    "Nori Tip: Use /write-noridoc to save documentation to the Nori server (paid)"
     "Nori Tip: The nori-change-documenter subagent automatically updates docs when you make code changes"
     "Nori Tip: Use the systematic-debugging skill when bugs occur - it ensures root cause analysis"
     "Nori Tip: The root-cause-tracing skill helps trace errors backward through the call stack"
