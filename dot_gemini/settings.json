@@ -5,10 +5,20 @@
     }
   },
   "general": {
+    "vimMode": true,
     "previewFeatures": true,
-    "vimMode": false
+    "preferredEditor": "neovim"
   },
   "ui": {
+    "useAlternateBuffer": false,
+    "footer": {
+      "hideContextPercentage": false,
+      "hideSandboxStatus": false
+    },
+    "showLineNumbers": true,
     "theme": "Shades Of Purple"
+  },
+  "output": {
+    "format": "text"
   }
 }
