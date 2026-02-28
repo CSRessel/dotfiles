@@ -13,70 +13,29 @@ if ! command -v jq >/dev/null 2>&1; then
     NC='\033[0m'
 
     echo -e "${YELLOW}⚠️  Nori statusline requires jq. Install: brew install jq (macOS) or apt install jq (Linux)${NC}"
-    echo -e "${YELLOW}Augmented with Nori v19.1.8${NC}"
+    echo -e "${YELLOW}Augmented with Nori${NC}"
     exit 0
 fi
 
-# === FIND INSTALL DIRECTORY ===
-# Search upward from CWD to find .nori-config.json
-find_install_dir() {
-    local current_dir="$1"
-    local max_depth=50
-    local depth=0
-
-    while [ "$depth" -lt "$max_depth" ]; do
-        # Check for new-style config
-        if [ -f "$current_dir/.nori-config.json" ]; then
-            echo "$current_dir"
-            return 0
-        fi
-
-        # Check for legacy config
-        if [ -f "$current_dir/nori-config.json" ]; then
-            echo "$current_dir"
-            return 0
-        fi
-
-        # Check if we've reached root
-        local parent_dir="$(dirname "$current_dir")"
-        if [ "$parent_dir" = "$current_dir" ]; then
-            break
-        fi
-
-        current_dir="$parent_dir"
-        depth=$((depth + 1))
-    done
-
-    return 1
-}
-
-# Extract CWD from JSON input
-CWD_FROM_JSON=$(echo "$INPUT" | jq -r '.cwd // empty')
-
-# Find install directory by searching upward from CWD
-if [ -n "$CWD_FROM_JSON" ] && [ -d "$CWD_FROM_JSON" ]; then
-    INSTALL_DIR=$(find_install_dir "$CWD_FROM_JSON")
-fi
-
-# If we still don't have an install dir, use CWD as fallback
-if [ -z "$INSTALL_DIR" ]; then
-    INSTALL_DIR="${CWD_FROM_JSON:-$(pwd)}"
-fi
-
 # === CONFIG FILE LOCATION ===
-CONFIG_FILE="$INSTALL_DIR/.nori-config.json"
+# Config is always at ~/.nori-config.json
+INSTALL_DIR="$HOME"
+CONFIG_FILE="$HOME/.nori-config.json"
 
-# === PROFILE ENRICHMENT ===
-# Get profile name from ~/nori-config.json
-PROFILE_NAME=""  # default to empty (don't show if not set)
+# === SKILLSET ENRICHMENT ===
+# Get skillset name from ~/.nori-config.json
+SKILLSET_NAME=""  # default to empty (don't show if not set)
 
 if [ -f "$CONFIG_FILE" ]; then
-    # Read profile from agents.claude-code first (new format), fall back to legacy profile
-    PROFILE_NAME=$(jq -r '.agents["claude-code"].profile.baseProfile // .profile.baseProfile // ""' "$CONFIG_FILE" 2>/dev/null)
+    # Read skillset from activeSkillset field
+    SKILLSET_NAME=$(jq -r '.activeSkillset // ""' "$CONFIG_FILE" 2>/dev/null)
+
+    # Read version from config
+    NORI_VERSION=$(jq -r '.version // ""' "$CONFIG_FILE" 2>/dev/null)
 fi
 
-# Inject profile into the JSON (can be empty string)
-INPUT=$(echo "$INPUT" | jq --arg profile "$PROFILE_NAME" '. + {profile_name: $profile}')
+# Inject skillset into the JSON (can be empty string)
+INPUT=$(echo "$INPUT" | jq --arg skillset "$SKILLSET_NAME" '. + {skillset_name: $skillset}')
 
 # ANSI color codes
 MAGENTA='\033[0;35m'
@@ -164,34 +123,19 @@ LINES_ADDED=$(echo "$INPUT" | jq -r '.cost.total_lines_added // 0')
 LINES_REMOVED=$(echo "$INPUT" | jq -r '.cost.total_lines_removed // 0')
 LINES_FORMATTED="+${LINES_ADDED}/-${LINES_REMOVED}"
 
-# Extract profile name (passed from enrichment)
-PROFILE_NAME=$(echo "$INPUT" | jq -r '.profile_name // ""')
+# Extract skillset name (passed from enrichment)
+SKILLSET_NAME=$(echo "$INPUT" | jq -r '.skillset_name // ""')
 
 # Build branding message
-BRANDING="${YELLOW}Augmented with Nori v19.1.8 ${NC}"
+if [ -n "$NORI_VERSION" ]; then
+    BRANDING="${YELLOW}Augmented with Nori v${NORI_VERSION} ${NC}"
+else
+    BRANDING="${YELLOW}Augmented with Nori ${NC}"
+fi
 
-# Array of rotating tips about Nori features
+# Single promotional tip
 TIPS=(
-    "Nori Tip: Use the webapp-testing skill to write Playwright tests for your web UIs"
-    "Nori Tip: You can tell Nori to run any skill by name. Just ask Nori what skills it has"
-    "Nori Tip: Want to learn more about Nori? Run /nori-info"
-    "Nori Tip: Use the building-ui-ux skill to speed up your UI/UX iteration process"
-    "Nori Tip: Nori can write PRs and get review using the github CLI"
-    "Nori Tip: Run /nori-init-docs to create docs. Nori keeps them updated."
-    "Nori Tip: Want to skip the standard flow? Just tell Nori to skip the checklist"
-    "Nori Tip: Try running Nori in parallel with git worktrees and multiple sessions"
-    "Nori Tip: Keep an eye on your total context usage. Start new conversations regularly!"
-    "Nori Tip: Agents love tests! Use Nori's built-in Test Driven Development to never have a regression."
-    "Nori Tip: Switch workflows with /nori-switch-skillset - try documenter, senior-swe, or product-manager"
-    "Nori Tip: The nori-change-documenter subagent automatically updates docs when you make code changes"
-    "Nori Tip: Use the systematic-debugging skill when bugs occur - it ensures root cause analysis"
-    "Nori Tip: The root-cause-tracing skill helps trace errors backward through the call stack"
-    "Nori Tip: Try using the webapp-testing skill to debug UI/UX failures"
-    "Nori Tip: Create custom skillsets with /nori-create-skillset - clone and customize to your workflow"
-    "Nori Tip: Nori can take screenshots - ask it to analyze your screen for visual UI debugging"
-    "Nori Tip: Get automated code review before PRs with the nori-code-reviewer subagent"
-    "Nori Tip: Use the handle-large-tasks skill to split complex work for better context management"
-    "Nori Tip: Control automatic updates with /nori-toggle-autoupdate"
+    "Try the nori cli for the best agentic ai cli! Just run \`npm install -g nori-skillsets\`"
 )
 
 # Check for install-in-progress marker
@@ -216,23 +160,43 @@ if [ -f "$INSTALL_MARKER" ]; then
     fi
     STATUS_TIP="${INSTALL_MESSAGE}"
 else
-    # No install issues - show rotating tip
-    DAY_OF_YEAR=$(date +%j)
-    HOUR=$(date +%H)
-    TIP_SEED=$((DAY_OF_YEAR * 24 + HOUR))
-    TIP_INDEX=$((TIP_SEED % ${#TIPS[@]}))
-    SELECTED_TIP="${TIPS[$TIP_INDEX]}"
-    STATUS_TIP="${DIM_WHITE}${SELECTED_TIP}${NC}"
+    # Check for available updates from version cache
+    VERSION_CACHE="$HOME/.nori/profiles/nori-skillsets-version.json"
+    UPDATE_MESSAGE=""
+    if [ -f "$VERSION_CACHE" ]; then
+        LATEST_VERSION=$(jq -r '.latest_version // empty' "$VERSION_CACHE" 2>/dev/null)
+        DISMISSED_VERSION=$(jq -r '.dismissed_version // empty' "$VERSION_CACHE" 2>/dev/null)
+        if [ -n "$LATEST_VERSION" ] && [ -n "$NORI_VERSION" ] && [ "$LATEST_VERSION" != "$NORI_VERSION" ] && [ "$LATEST_VERSION" != "$DISMISSED_VERSION" ]; then
+            # Compare versions: check if latest is newer than current
+            # Strip -next.* suffix: -next versions are ahead of their base release
+            CURRENT_SEMVER=$(echo "$NORI_VERSION" | sed 's/-next.*//')
+            if [ -n "$CURRENT_SEMVER" ] && [ "$CURRENT_SEMVER" != "0.0.0" ]; then
+                # Cross-platform version comparison using node (sort -V not available on macOS)
+                IS_NEWER=$(node -e "const [a,b]=['$CURRENT_SEMVER','$LATEST_VERSION'].map(v=>v.split('.').map(Number));process.stdout.write(a[0]<b[0]||(a[0]===b[0]&&a[1]<b[1])||(a[0]===b[0]&&a[1]===b[1]&&a[2]<b[2])?'1':'0')" 2>/dev/null || echo "0")
+                if [ "$IS_NEWER" = "1" ]; then
+                    UPDATE_MESSAGE="🍙 Update available: ${NORI_VERSION} → ${LATEST_VERSION}. Run: npm install -g nori-skillsets@latest"
+                fi
+            fi
+        fi
+    fi
+
+    if [ -n "$UPDATE_MESSAGE" ]; then
+        STATUS_TIP="${YELLOW}${UPDATE_MESSAGE}${NC}"
+    else
+        # No install issues, no updates - show promotional tip
+        SELECTED_TIP="${TIPS[0]}"
+        STATUS_TIP="${DIM_WHITE}${SELECTED_TIP}${NC}"
+    fi
 fi
 
 # Build status line with colors - split into three lines
 # Line 1: Main metrics (git, [skillset if set], cost, tokens, context, lines)
-if [ -n "$PROFILE_NAME" ]; then
-    echo -e "${MAGENTA}⎇ ${BRANCH}${NC} | ${YELLOW}Skillset: ${PROFILE_NAME}${NC} | ${GREEN}Cost: \$${COST_FORMATTED}${NC} | ${CYAN}Tokens: ${TOKENS_FORMATTED}${NC} | Context: ${CONTEXT_FORMATTED} | Lines: ${LINES_FORMATTED}"
+if [ -n "$SKILLSET_NAME" ]; then
+    echo -e "${MAGENTA}⎇ ${BRANCH}${NC} | ${YELLOW}Skillset: ${SKILLSET_NAME}${NC} | ${GREEN}Cost: \$${COST_FORMATTED}${NC} | ${CYAN}Tokens: ${TOKENS_FORMATTED}${NC} | Context: ${CONTEXT_FORMATTED} | Lines: ${LINES_FORMATTED}"
 else
     echo -e "${MAGENTA}⎇ ${BRANCH}${NC} | ${GREEN}Cost: \$${COST_FORMATTED}${NC} | ${CYAN}Tokens: ${TOKENS_FORMATTED}${NC} | Context: ${CONTEXT_FORMATTED} | Lines: ${LINES_FORMATTED}"
 fi
 # Line 2: Branding
 echo -e "${BRANDING}"
-# Line 3: Status message (rotating tip or install error)
+# Line 3: Status message (promotional tip or install error)
 echo -e "${STATUS_TIP}"

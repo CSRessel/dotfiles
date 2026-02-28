@@ -205,8 +205,6 @@ export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 {{- end -}}
 
-SNACKS_GHOSTTY=true
-
 {{- /* end personal configs     */ -}}
 {{- /****************************/ -}}
 {{- end }}
@@ -228,3 +226,18 @@ fi
 {{- /* end work configs         */ -}}
 {{- /****************************/ -}}
 {{- end }}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) -}}
+# Added by Nori
+# nori-handroll
+export PATH="$PATH:$HOME/.nori/handroll/bin"
+alias claude="nori-handroll claude"
+alias codex="nori-handroll codex"
+# End of Nori section
+{{- end }}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".fly")) -}}
+# Added by flyctl installer
+export FLYCTL_INSTALL="/home/clifford/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+{{- end -}}
