@@ -5,15 +5,14 @@
   excludesfile = ~/.gitignore_global
   editor = vim
   # pager = delta
-{{ if eq .chezmoi.username "clifford.ressel" }}
-{{- /* only on work machine */ -}}
+[credential]
+  helper = store
 [credential "https://github.com"]
   helper = 
   helper = !/usr/bin/gh auth git-credential
-{{- else }}
-[credential]
-  helper = store
-{{- end }}
+[credential "https://gist.github.com"]
+  helper = 
+  helper = !/usr/bin/gh auth git-credential
 [init]
   defaultBranch = main
 [user]
