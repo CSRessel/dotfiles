@@ -1,1 +1,0 @@
-/home/clifford/.AGENTS.md
