@@ -3,6 +3,11 @@ if [[ "$TERM" == "xterm" ]]; then
   export TERM=xterm-256color
 fi
 
+# Mosh supports truecolor but doesn't advertise it
+if [[ -n "$MOSH_CONNECTION" ]]; then
+  export COLORTERM=truecolor
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -236,8 +241,9 @@ fi
 # Added by Nori
 # nori-handroll
 export PATH="$PATH:$HOME/.nori/handroll/bin"
-alias claude="nori-handroll claude"
 alias codex="nori-handroll codex"
+alias claude="nori-handroll claude --dangerously-skip-permissions"
+alias nori="nori-handroll nori --yolo"
 # End of Nori section
 {{- end }}
 
