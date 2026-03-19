@@ -1,13 +1,3 @@
-# Fix mosh advertising TERM=xterm instead of xterm-256color
-if [[ "$TERM" == "xterm" ]]; then
-  export TERM=xterm-256color
-fi
-
-# Mosh supports truecolor but doesn't advertise it
-if [[ -n "$MOSH_CONNECTION" ]]; then
-  export COLORTERM=truecolor
-fi
-
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -240,15 +230,28 @@ fi
 {{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) -}}
 # Added by Nori
 # nori-handroll
-export PATH="$PATH:$HOME/.nori/handroll/bin"
-alias codex="nori-handroll codex"
-alias claude="nori-handroll claude --dangerously-skip-permissions"
-alias nori="nori-handroll nori --yolo"
+export PATH="$HOME/.nori/handroll/bin:$PATH"
+alias claude="nori-handroll --skip-menu-exit claude"
+alias codex="nori-handroll --skip-menu-exit codex"
+alias nori="nori-handroll --skip-menu-exit nori"
 # End of Nori section
 {{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".fly")) -}}
 # Added by flyctl installer
-export FLYCTL_INSTALL="/home/clifford/.fly"
+export FLYCTL_INSTALL="$HOME/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
-{{- end -}}
+{{- end }}
+
+# Fix mosh advertising TERM=xterm instead of xterm-256color
+if [[ "$TERM" == "xterm" ]] || [[ "$TERM" == xterm-* ]]; then
+  export TERM="xterm-256color"
+fi
+
+# Set COLORTERM if not already set and terminal supports it
+if [[ -z "$COLORTERM" ]]; then
+  if [[ -n "$MOSH_CONNECTION" ]] || [[ "$TERM" == *-256color ]] || [[ "$TERM" == xterm-kitty ]] || [[ "$TERM" == alacritty ]]; then
+    export COLORTERM="truecolor"
+  fi
+fi
+
