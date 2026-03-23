@@ -1,11 +1,5 @@
 {
   "includeCoAuthoredBy": false,
-  "permissions": {
-    "additionalDirectories": [
-      "/home/clifford/.nori/profiles",
-      "/home/clifford/.claude/skills"
-    ]
-  },
   "hooks": {
     "SessionStart": [
       {
@@ -54,16 +48,19 @@
       }
     ]
   },
+  "permissions": {
+    "additionalDirectories": [
+      "/home/clifford/.nori/profiles",
+      "/home/clifford/.claude/skills"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "/home/clifford/.claude/nori-statusline.sh",
     "padding": 0
   },
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
   "companyAnnouncements": [
-    "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
+    "🍙 Powered by Nori 🍙"
   ],
   "skipDangerousModePermissionPrompt": true
 }
