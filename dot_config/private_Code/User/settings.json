@@ -82,7 +82,7 @@
   "terminal.integrated.allowChords": false,
   "terminal.integrated.confirmOnExit": "hasChildProcesses",
   "terminal.integrated.fontWeight": "normal",
-  "workbench.colorCustomizations": {},
+  "workbench.colorCustomizations": null,
   "SQL-Formatter-VSCode.expressionWidth": 80,
   "cSpell.minWordLength": 5,
   "workbench.startupEditor": "none",
@@ -126,6 +126,5 @@
   "window.commandCenter": false,
   "python.terminal.activateEnvironment": false,
   "editor.fontFamily": "FiraCode Nerd Font Retina, FiraCode Nerd Font, Consolas, monospace",
-  "workbench.colorTheme": "Catppuccin Macchiato",
   "vscode-neovim.neovimExecutablePaths.linux": "/home/clifford/.local/bin/nvim"
 }
