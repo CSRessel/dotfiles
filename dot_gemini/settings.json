@@ -1,16 +1,64 @@
 {
+  "general": {
+    "preferredEditor": "neovim",
+    "previewFeatures": true,
+    "vimMode": true
+  },
+  "hooks": {
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/gemini-cli.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/gemini-cli.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/gemini-cli.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/gemini-cli.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
+  "output": {
+    "format": "text"
+  },
   "security": {
     "auth": {
       "selectedType": "oauth-personal"
     }
   },
-  "general": {
-    "vimMode": true,
-    "previewFeatures": true,
-    "preferredEditor": "neovim"
-  },
   "ui": {
-    "useAlternateBuffer": false,
     "footer": {
       "hideContextPercentage": false,
       "hideSandboxStatus": false,
@@ -23,9 +71,7 @@
       ]
     },
     "showLineNumbers": true,
-    "theme": "Shades Of Purple"
-  },
-  "output": {
-    "format": "text"
+    "theme": "Shades Of Purple",
+    "useAlternateBuffer": false
   }
 }

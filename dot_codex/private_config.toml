@@ -1,0 +1,31 @@
+personality = "friendly"
+model = "gpt-5.4"
+notify = ["/home/clifford/.nori/handroll/bin/../scripts/session-hooks/codex-cli.sh"]
+model_reasoning_effort = "high"
+service_tier = "fast"
+
+[model_providers.lms]
+name = "LM Studio"
+base_url = "http://127.0.0.1:1234/v1"
+wire_api = "responses"
+
+[profiles.local-coding-mistral]
+model_provider = "lms"
+model = "mistralai/codestral-22b-v0.1"
+
+[profiles.local-coding-qwen]
+model_provider = "lms"
+model = "qwen/qwen2.5-coder-14b"
+
+[profiles.local-coding]
+model_provider = "lms"
+model = "openai/gpt-oss-20b"
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[features]
+use_linux_sandbox_bwrap = true
+
+[plugins."github@openai-curated"]
+enabled = true

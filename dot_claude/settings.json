@@ -7,50 +7,118 @@
     "rust-analyzer-lsp@claude-plugins-official": true
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
-            "description": "Warn about excessive context usage from permissions on session start"
-          }
-        ]
-      },
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
-            "description": "Check for nori-skillsets updates and notify if available"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
-        "matcher": "",
         "hooks": [
           {
-            "type": "command",
             "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
-            "description": "Send desktop notification when Claude needs input"
+            "description": "Send desktop notification when Claude needs input",
+            "type": "command"
           }
-        ]
+        ],
+        "matcher": ""
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "permission_prompt|elicitation_dialog"
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash",
         "hooks": [
           {
-            "type": "command",
             "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
-            "description": "Replace Claude Code co-author attribution with Nori in git commits"
+            "description": "Replace Claude Code co-author attribution with Nori in git commits",
+            "type": "command"
           }
-        ]
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
+            "description": "Warn about excessive context usage from permissions on session start",
+            "type": "command"
+          }
+        ],
+        "matcher": "startup"
+      },
+      {
+        "hooks": [
+          {
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
+            "description": "Check for nori-skillsets updates and notify if available",
+            "type": "command"
+          }
+        ],
+        "matcher": "startup"
+      },
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": ""
       }
     ]
   },
@@ -63,8 +131,8 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "statusLine": {
-    "type": "command",
     "command": "/home/clifford/.claude/nori-statusline.sh",
-    "padding": 0
+    "padding": 0,
+    "type": "command"
   }
 }
