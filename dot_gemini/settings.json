@@ -13,7 +13,14 @@
     "useAlternateBuffer": false,
     "footer": {
       "hideContextPercentage": false,
-      "hideSandboxStatus": false
+      "hideSandboxStatus": false,
+      "items": [
+        "workspace",
+        "sandbox",
+        "model-name",
+        "context-used",
+        "quota"
+      ]
     },
     "showLineNumbers": true,
     "theme": "Shades Of Purple"
