@@ -42,10 +42,13 @@ catpuccin_tmux.sh
 rust_and_tools.sh
 
 .config/my_gnome_settings.sh
+.config/my-gnome-keybindings.conf
+.config/my-gnome-settings.conf
 
 {{- else if ne .chezmoi.os "darwin" }}
 # darwin (macOS) only
 .packages_mac.md
 run_once_mac_keyboard_shortcuts.sh.tmpl
 mac_keyboard_shortcuts.sh
+.warp
 {{- end }}
