@@ -11,16 +11,14 @@ git-contribution-graph/
 # .vim/.gitignore
 
 .packages.md
-.packages_mac.md
-run_once_mac_keyboard_shortcuts.sh.tmpl
 
 24-bit-color.sh
 
 # backup only, not to be applied
 dot_config/private_Code/User
 
-{{ if ne .chezmoi.username "clifford" }}
-# only access these on personal machines
+{{ if ne .chezmoi.os "linux" }}
+# linux-only
 .bashrc
 .config/input-remapper
 .config/tridactyl
@@ -45,7 +43,9 @@ rust_and_tools.sh
 
 .config/my_gnome_settings.sh
 
-{{- else if ne .chezmoi.username "cressel" }}
-# only access these on work machines
+{{- else if ne .chezmoi.os "darwin" }}
+# darwin (macOS) only
+.packages_mac.md
+run_once_mac_keyboard_shortcuts.sh.tmpl
 mac_keyboard_shortcuts.sh
 {{- end }}
