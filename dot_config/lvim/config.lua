@@ -12,6 +12,24 @@ lvim.log.level = "warn"
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
 
+-- clipboard over ssh
+if vim.env.SSH_CONNECTION ~= nil and vim.env.TMUX ~= nil then
+  -- Prefer tmux/OSC52 over local Wayland/X clipboard providers when editing
+  -- through SSH in tmux.
+  vim.g.clipboard = {
+    name = "tmux",
+    copy = {
+      ["+"] = { "tmux", "load-buffer", "-w", "-" },
+      ["*"] = { "tmux", "load-buffer", "-w", "-" },
+    },
+    paste = {
+      ["+"] = { "tmux", "save-buffer", "-" },
+      ["*"] = { "tmux", "save-buffer", "-" },
+    },
+    cache_enabled = 0,
+  }
+end
+
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
