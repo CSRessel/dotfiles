@@ -1,7 +1,9 @@
 personality = "friendly"
-model = "gpt-5.4"
-notify = ["/home/clifford/.nori/handroll/bin/../scripts/session-hooks/codex-cli.sh"]
+model = "gpt-5.5"
 model_reasoning_effort = "high"
+approvals_reviewer = "user"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
 service_tier = "fast"
 
 [model_providers.lms]
@@ -23,9 +25,22 @@ model = "openai/gpt-oss-20b"
 
 [notice]
 hide_rate_limit_model_nudge = true
+fast_default_opt_out = true
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+"gpt-5.3-codex" = "gpt-5.4"
 
 [features]
 use_linux_sandbox_bwrap = true
+hooks = true
+guardian_approval = true
 
 [plugins."github@openai-curated"]
-enabled = true
+enabled = false
+
+[tui]
+status_line = ["model-with-reasoning", "context-used", "weekly-limit"]
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
