@@ -29,10 +29,11 @@ SKILLSET_NAME=""  # default to empty (don't show if not set)
 if [ -f "$CONFIG_FILE" ]; then
     # Read skillset from activeSkillset field
     SKILLSET_NAME=$(jq -r '.activeSkillset // ""' "$CONFIG_FILE" 2>/dev/null)
-
-    # Read version from config
-    NORI_VERSION=$(jq -r '.version // ""' "$CONFIG_FILE" 2>/dev/null)
 fi
+
+# Resolve the running CLI version from the binary itself.
+# Empty string when sks is not on PATH or fails for any reason.
+NORI_VERSION=$(sks --version 2>/dev/null || true)
 
 # Inject skillset into the JSON (can be empty string)
 INPUT=$(echo "$INPUT" | jq --arg skillset "$SKILLSET_NAME" '. + {skillset_name: $skillset}')
@@ -58,58 +59,90 @@ if [ -z "$BRANCH" ]; then
     BRANCH="no git"
 fi
 
-# Extract session cost
+# === COST AND LINES (cumulative per process, no reset on /clear) ===
 COST=$(echo "$INPUT" | jq -r '.cost.total_cost_usd // 0')
 COST_FORMATTED=$(printf "%.2f" "$COST")
+LINES_ADDED=$(echo "$INPUT" | jq -r '.cost.total_lines_added // 0')
+LINES_REMOVED=$(echo "$INPUT" | jq -r '.cost.total_lines_removed // 0')
 
-# Extract transcript path for token parsing
-TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
-
-# Parse transcript file to calculate actual token usage
-if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
-    # Regular input tokens (not cached)
-    INPUT_TOKENS=$(jq -r 'select(.message.usage != null) | .message.usage.input_tokens // 0' "$TRANSCRIPT_PATH" 2>/dev/null | awk '{sum+=$1} END {print sum+0}')
-
-    # Cache creation tokens (charged at full input token rate)
-    CACHE_CREATION_TOKENS=$(jq -r 'select(.message.usage != null) | .message.usage.cache_creation_input_tokens // 0' "$TRANSCRIPT_PATH" 2>/dev/null | awk '{sum+=$1} END {print sum+0}')
-
-    # Cache read tokens (charged at ~10% of input token rate)
-    CACHE_READ_TOKENS=$(jq -r 'select(.message.usage != null) | .message.usage.cache_read_input_tokens // 0' "$TRANSCRIPT_PATH" 2>/dev/null | awk '{sum+=$1} END {print sum+0}')
-
-    # Output tokens
-    OUTPUT_TOKENS=$(jq -r 'select(.message.usage != null) | .message.usage.output_tokens // 0' "$TRANSCRIPT_PATH" 2>/dev/null | awk '{sum+=$1} END {print sum+0}')
-
-    # Context length: get most recent main chain entry's input token count (matches ccstatusline)
-    # Context length = input_tokens + cache_read + cache_creation from the MOST RECENT message
-    CONTEXT_LENGTH=$(jq -r 'select(.message.usage != null and .isSidechain != true and .isApiErrorMessage != true) |
-        (.message.usage.input_tokens // 0) +
-        (.message.usage.cache_read_input_tokens // 0) +
-        (.message.usage.cache_creation_input_tokens // 0)' "$TRANSCRIPT_PATH" 2>/dev/null |
-        tail -1)
-
-    # Default to 0 if no valid context length found
-    if [ -z "$CONTEXT_LENGTH" ]; then
-        CONTEXT_LENGTH=0
-    fi
+# === TOKEN TRACKING (cumulative across user session, including cached tokens) ===
+# Deterministic session file based on cwd to avoid conflicts between projects
+if command -v md5sum >/dev/null 2>&1; then
+    SESSION_HASH=$(echo "$CWD" | md5sum | cut -d' ' -f1)
+elif command -v md5 >/dev/null 2>&1; then
+    SESSION_HASH=$(echo "$CWD" | md5 | cut -d' ' -f1)
 else
-    INPUT_TOKENS=0
-    CACHE_CREATION_TOKENS=0
-    CACHE_READ_TOKENS=0
-    OUTPUT_TOKENS=0
-    CONTEXT_LENGTH=0
+    SESSION_HASH="default"
+fi
+SESSION_FILE="/tmp/nori-statusline-session-${SESSION_HASH}"
+
+# Extract raw non-cached cumulative totals (used as "new API call" signal)
+RAW_INPUT=$(echo "$INPUT" | jq -r '.context_window.total_input_tokens // 0')
+RAW_OUTPUT=$(echo "$INPUT" | jq -r '.context_window.total_output_tokens // 0')
+RAW_TOTAL=$((RAW_INPUT + RAW_OUTPUT))
+
+# Extract per-call usage (includes cached tokens)
+CALL_INPUT=$(echo "$INPUT" | jq -r '.context_window.current_usage.input_tokens // 0')
+CALL_CACHE_READ=$(echo "$INPUT" | jq -r '.context_window.current_usage.cache_read_input_tokens // 0')
+CALL_CACHE_CREATE=$(echo "$INPUT" | jq -r '.context_window.current_usage.cache_creation_input_tokens // 0')
+CALL_OUTPUT=$(echo "$INPUT" | jq -r '.context_window.current_usage.output_tokens // 0')
+CALL_TOTAL=$((CALL_INPUT + CALL_CACHE_READ + CALL_CACHE_CREATE + CALL_OUTPUT))
+
+# Read previous token tracking state
+PREV_SESSION_ID=""
+PREV_RAW_TOTAL="0"
+ACCUMULATED_TOKENS="0"
+PREV_RAW_COST="0"
+if [ -f "$SESSION_FILE" ]; then
+    PREV_SESSION_ID=$(sed -n '1p' "$SESSION_FILE" 2>/dev/null || echo "")
+    PREV_RAW_TOTAL=$(sed -n '2p' "$SESSION_FILE" 2>/dev/null || echo "0")
+    ACCUMULATED_TOKENS=$(sed -n '3p' "$SESSION_FILE" 2>/dev/null || echo "0")
+    PREV_RAW_COST=$(sed -n '4p' "$SESSION_FILE" 2>/dev/null || echo "0")
 fi
 
-# Calculate total tokens (raw count)
-TOTAL_TOKENS=$((INPUT_TOKENS + CACHE_CREATION_TOKENS + CACHE_READ_TOKENS + OUTPUT_TOKENS))
+# Detect process restart: cost decreased from previous invocation
+SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
+IS_RESTART="0"
+if [ -n "$PREV_RAW_COST" ] && [ "$PREV_RAW_COST" != "0" ]; then
+    IS_RESTART=$(jq -n --argjson a "$COST" --argjson b "$PREV_RAW_COST" 'if $a < $b then 1 else 0 end' 2>/dev/null || echo "0")
+fi
+if [ "$IS_RESTART" = "1" ]; then
+    ACCUMULATED_TOKENS=0
+    PREV_RAW_TOTAL=0
+fi
 
+# Detect /clear (session_id changed): reset raw tracking baseline
+if [ -n "$SESSION_ID" ] && [ "$SESSION_ID" != "$PREV_SESSION_ID" ]; then
+    PREV_RAW_TOTAL=0
+fi
+
+# Detect new API call(s) and accumulate tokens
+if [ "$RAW_TOTAL" -ne "$PREV_RAW_TOTAL" ] 2>/dev/null; then
+    RAW_DELTA=$((RAW_TOTAL - PREV_RAW_TOTAL))
+    CALL_NON_CACHED=$((CALL_INPUT + CALL_OUTPUT))
+    EXTRA=0
+    if [ "$RAW_DELTA" -gt "$CALL_NON_CACHED" ] && [ "$CALL_NON_CACHED" -gt 0 ]; then
+        EXTRA=$((RAW_DELTA - CALL_NON_CACHED))
+    fi
+    ACCUMULATED_TOKENS=$((ACCUMULATED_TOKENS + CALL_TOTAL + EXTRA))
+    PREV_RAW_TOTAL=$RAW_TOTAL
+fi
+
+TOTAL_TOKENS=$ACCUMULATED_TOKENS
+
+# Save token tracking state
+printf '%s\n%s\n%s\n%s\n' "$SESSION_ID" "$PREV_RAW_TOTAL" "$ACCUMULATED_TOKENS" "$COST" > "$SESSION_FILE" 2>/dev/null
+
+# Context length from current_usage (most recent message's context size)
+CONTEXT_LENGTH=$((CALL_INPUT + CALL_CACHE_READ + CALL_CACHE_CREATE))
 
 # Format tokens (k for thousands, M for millions)
 format_tokens() {
     local count=$1
     if [ "$count" -ge 1000000 ]; then
-        echo "scale=1; $count / 1000000" | bc | sed 's/$/M/'
+        awk "BEGIN { printf \"%.1fM\\n\", $count / 1000000 }"
     elif [ "$count" -ge 1000 ]; then
-        echo "scale=1; $count / 1000" | bc | sed 's/$/k/'
+        awk "BEGIN { printf \"%.1fk\\n\", $count / 1000 }"
     else
         echo "$count"
     fi
@@ -118,9 +151,6 @@ format_tokens() {
 TOKENS_FORMATTED=$(format_tokens "$TOTAL_TOKENS")
 CONTEXT_FORMATTED=$(format_tokens "$CONTEXT_LENGTH")
 
-# Extract lines added/removed
-LINES_ADDED=$(echo "$INPUT" | jq -r '.cost.total_lines_added // 0')
-LINES_REMOVED=$(echo "$INPUT" | jq -r '.cost.total_lines_removed // 0')
 LINES_FORMATTED="+${LINES_ADDED}/-${LINES_REMOVED}"
 
 # Extract skillset name (passed from enrichment)

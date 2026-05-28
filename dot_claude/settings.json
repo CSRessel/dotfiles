@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "companyAnnouncements": [
     "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
   ],
@@ -12,7 +13,6 @@
         "hooks": [
           {
             "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
-            "description": "Send desktop notification when Claude needs input",
             "type": "command"
           }
         ],
@@ -46,7 +46,6 @@
         "hooks": [
           {
             "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
-            "description": "Replace Claude Code co-author attribution with Nori in git commits",
             "type": "command"
           }
         ],
@@ -70,7 +69,6 @@
         "hooks": [
           {
             "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
-            "description": "Warn about excessive context usage from permissions on session start",
             "type": "command"
           }
         ],
@@ -80,7 +78,6 @@
         "hooks": [
           {
             "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
-            "description": "Check for nori-skillsets updates and notify if available",
             "type": "command"
           }
         ],
@@ -123,6 +120,7 @@
     ]
   },
   "includeCoAuthoredBy": false,
+  "model": "claude-opus-4-6",
   "permissions": {
     "additionalDirectories": [
       "/home/clifford/.nori/profiles",
