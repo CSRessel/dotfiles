@@ -1,136 +1,129 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "companyAnnouncements": [
-    "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
-  ],
-  "effortLevel": "high",
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
-  "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      },
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": "permission_prompt|elicitation_dialog"
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
-            "type": "command"
-          }
-        ],
-        "matcher": "Bash"
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
-            "type": "command"
-          }
-        ],
-        "matcher": "startup"
-      },
-      {
-        "hooks": [
-          {
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
-            "type": "command"
-          }
-        ],
-        "matcher": "startup"
-      },
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "async": true,
-            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
-            "type": "command"
-          }
-        ],
-        "matcher": ""
-      }
-    ]
-  },
   "includeCoAuthoredBy": false,
-  "model": "claude-opus-4-6",
   "permissions": {
     "additionalDirectories": [
       "/home/clifford/.nori/profiles",
       "/home/clifford/.claude/skills"
     ]
   },
-  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js"
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
+    "type": "command",
     "command": "/home/clifford/.claude/nori-statusline.sh",
-    "padding": 0,
-    "type": "command"
-  }
+    "padding": 0
+  },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true
 }
