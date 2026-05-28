@@ -158,3 +158,14 @@ flog() {
         git show $commit
     fi
 }
+
+{{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) -}}
+# Added by Nori
+# nori-handroll
+export PATH="$HOME/.nori/handroll/bin:$PATH"
+alias claude="nori-handroll --skip-menu-exit claude"
+alias codex="nori-handroll --skip-menu-exit codex"
+alias nori="nori-handroll --skip-menu-exit nori"
+alias pi="nori-handroll --skip-menu-exit pi"
+# End of Nori section
+{{- end }}

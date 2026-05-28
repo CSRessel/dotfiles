@@ -227,15 +227,9 @@ fi
 {{- /****************************/ -}}
 {{- end }}
 
-{{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) -}}
 # Added by Nori
-# nori-handroll
-export PATH="$HOME/.nori/handroll/bin:$PATH"
-alias claude="nori-handroll --skip-menu-exit claude"
-alias codex="nori-handroll --skip-menu-exit codex"
-alias nori="nori-handroll --skip-menu-exit nori"
+# nori-handroll (actually in aliases file!)
 # End of Nori section
-{{- end }}
 
 {{ if (stat (joinPath .chezmoi.homeDir ".fly")) -}}
 # Added by flyctl installer

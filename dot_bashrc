@@ -143,9 +143,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Added by Nori
-# nori-handroll
-export PATH="$HOME/.nori/handroll/bin:$PATH"
-alias claude="nori-handroll --skip-menu-exit claude"
-alias codex="nori-handroll --skip-menu-exit codex"
-alias nori="nori-handroll --skip-menu-exit nori"
+# nori-handroll (actually in aliases file!)
 # End of Nori section
