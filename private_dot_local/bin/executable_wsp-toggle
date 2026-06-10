@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Toggle whisper.cpp dictation: 1st press starts recording, 2nd press stops + copies to clipboard.
+set -u
+
+pidfile=/tmp/wsp.pid
+recfile=/tmp/wsp.wav
+whisper="$HOME/Documents/builds/whisper.cpp/build-vulkan/bin/whisper-cli"
+model="$HOME/Documents/builds/whisper.cpp/models/ggml-base.en.bin"
+
+copy() {
+    if command -v wl-copy >/dev/null; then
+        wl-copy
+    else
+        xclip -selection clipboard
+    fi
+}
+
+if [ -f "$pidfile" ]; then
+    pid=$(cat "$pidfile")
+    rm -f "$pidfile"
+    kill -INT "$pid" 2>/dev/null
+    while kill -0 "$pid" 2>/dev/null; do sleep 0.05; done  # let WAV header flush
+    notify-send -t 1500 "Transcribing..."
+    text=$("$whisper" -m "$model" -f "$recfile" -nt -np 2>/dev/null \
+            | sed 's/^ *//;s/ *$//' | tr '\n' ' ' | sed 's/ *$//')
+    printf '%s' "$text" | copy
+    notify-send -t 5000 "Copied to clipboard" "$text"
+    rm -f "$recfile"
+else
+    notify-send -t 2000 "Recording..." "Press shortcut again to stop"
+    setsid parecord --channels=1 --rate=16000 --file-format=wav "$recfile" \
+        >/dev/null 2>&1 &
+    echo $! > "$pidfile"
+fi
