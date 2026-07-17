@@ -7,17 +7,9 @@
       "/home/clifford/.claude/skills"
     ]
   },
+  "model": "claude-fable-5",
   "hooks": {
     "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh"
-          }
-        ]
-      },
       {
         "matcher": "permission_prompt|elicitation_dialog",
         "hooks": [
@@ -25,6 +17,16 @@
             "type": "command",
             "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
             "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
+            "description": "Send desktop notification when Claude needs input"
           }
         ]
       }
@@ -37,17 +39,6 @@
             "type": "command",
             "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
             "async": true
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js"
           }
         ]
       }
@@ -66,30 +57,32 @@
     ],
     "SessionStart": [
       {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js"
-          }
-        ]
-      },
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js"
-          }
-        ]
-      },
-      {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
             "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
             "async": true
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
+            "description": "Warn about excessive context usage from permissions on session start"
+          }
+        ]
+      },
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
+            "description": "Check for nori-skillsets updates and notify if available"
           }
         ]
       }
@@ -117,6 +110,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
+            "description": "Replace Claude Code co-author attribution with Nori in git commits"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -124,6 +129,12 @@
     "command": "/home/clifford/.claude/nori-statusline.sh",
     "padding": 0
   },
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
   "effortLevel": "high",
+  "companyAnnouncements": [
+    "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
+  ],
   "skipDangerousModePermissionPrompt": true
 }
