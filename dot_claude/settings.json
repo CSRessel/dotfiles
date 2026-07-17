@@ -152,9 +152,6 @@
     "command": "/home/clifford/.claude/nori-statusline.sh",
     "padding": 0
   },
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
   "effortLevel": "high",
   "companyAnnouncements": [
     "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
