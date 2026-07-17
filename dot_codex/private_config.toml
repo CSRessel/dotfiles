@@ -1,10 +1,10 @@
 personality = "friendly"
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
 approvals_reviewer = "user"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-service_tier = "fast"
+service_tier = "default"
 
 [model_providers.lms]
 name = "LM Studio"
@@ -30,13 +30,19 @@ fast_default_opt_out = true
 [notice.model_migrations]
 "gpt-5.2-codex" = "gpt-5.3-codex"
 "gpt-5.3-codex" = "gpt-5.4"
+"gpt-5.4" = "gpt-5.5"
+"gpt-5.5" = "gpt-5.6-sol"
 
 [features]
 use_linux_sandbox_bwrap = true
 hooks = true
 guardian_approval = true
+apps = false
 
 [plugins."github@openai-curated"]
+enabled = false
+
+[plugins."github@openai-curated-remote"]
 enabled = false
 
 [tui]
@@ -44,3 +50,4 @@ status_line = ["model-with-reasoning", "context-used", "weekly-limit"]
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
+"gpt-5.6-sol" = 2
