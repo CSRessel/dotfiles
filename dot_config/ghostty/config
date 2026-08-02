@@ -3,7 +3,7 @@
 # https://www.nerdfonts.com/font-downloads (daily driver)
 font-family = FiraCode Nerd Font
 
-theme = Catppuccin Mocha
+theme = catppuccin-mocha
 
 # Clashes with lunarvim terminals:
 keybind = alt+one=unbind
