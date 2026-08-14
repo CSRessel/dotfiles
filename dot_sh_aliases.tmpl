@@ -31,6 +31,7 @@ alias cp="cp -i" # confirm before overwriting something
 alias df="df -h" # human-readable sizes
 alias more="less"
 alias k9s="k9s --logoless"
+alias buni="bun i -g --ignore-scripts"
 
 {{ if eq .chezmoi.username "clifford" }}
 {{- /* only on personal machine */ -}}
@@ -197,9 +198,12 @@ flog() {
 # Added by Nori
 # nori-handroll
 export PATH="$HOME/.nori/handroll/bin:$PATH"
-alias claude="nori-handroll --skip-menu-exit claude"
-alias codex="nori-handroll --skip-menu-exit codex"
-alias nori="nori-handroll --skip-menu-exit nori"
+alias claude="nori-handroll --skip-menu-exit claude --dangerously-skip-permissions"
+alias codex="nori-handroll --skip-menu-exit codex --dangerously-bypass-approvals-and-sandbox"
+alias gemini="nori-handroll --skip-menu-exit gemini --yolo"
+alias nori="nori-handroll --skip-menu-exit nori --yolo"
 alias pi="nori-handroll --skip-menu-exit pi"
 # End of Nori section
+
+alias hdr="nori-handroll"
 {{- end }}
