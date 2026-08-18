@@ -62,7 +62,7 @@
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.ink" "#f8f8f2" -}}
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.opaqueWindows" true -}}
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.surface" "#282a36" -}}
-{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.fonts.ui" "Inter" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.fonts.ui" "Fira Sans" -}}
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.diffAdded" "#50fa7b" -}}
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.diffRemoved" "#ff5555" -}}
 {{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.skill" "#ff79c6" -}}
