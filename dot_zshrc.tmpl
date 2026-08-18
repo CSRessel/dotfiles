@@ -138,7 +138,12 @@ eval "$(direnv hook zsh)"
 
 {{ if (stat (joinPath .chezmoi.homeDir ".cargo/bin/sccache")) -}}
 # Faster rust builds
-export RUSTC_WRAPPER=$HOME/.cargo/bin/sccache
+export RUSTC_WRAPPER="$HOME/.cargo/bin/sccache"
+{{ if eq .chezmoi.os "linux" -}}
+if [[ -n "${CODEX_THREAD_ID:-}" ]]; then
+  export SCCACHE_SERVER_UDS="/tmp/sccache-${CODEX_THREAD_ID}.sock"
+fi
+{{- end }}
 {{- end -}}
 {{- end }}
 
@@ -248,4 +253,3 @@ if [[ -z "$COLORTERM" ]]; then
     export COLORTERM="truecolor"
   fi
 fi
-

@@ -1,0 +1,97 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := .chezmoi.stdin | fromToml -}}
+{{- $os := .chezmoi.os -}}
+{{- if env "CHEZMOI_CODEX_CONFIG_OS" -}}
+{{-   $os = env "CHEZMOI_CODEX_CONFIG_OS" -}}
+{{- end -}}
+{{- if not (or (eq $os "linux") (eq $os "darwin")) -}}
+{{-   fail (printf "unsupported Codex config operating system: %s" $os) -}}
+{{- end -}}
+{{- $home := env "HOME" -}}
+{{- if not $home -}}
+{{-   fail "HOME must be set to merge the Codex config" -}}
+{{- end -}}
+
+{{- $config = $config | setValueAtPath "personality" "pragmatic" -}}
+{{- $config = $config | setValueAtPath "model" "gpt-5.6-sol" -}}
+{{- $config = $config | setValueAtPath "model_reasoning_effort" "medium" -}}
+{{- $config = $config | setValueAtPath "approvals_reviewer" "auto_review" -}}
+{{- $config = $config | setValueAtPath "approval_policy" "on-request" -}}
+{{- $config = $config | setValueAtPath "service_tier" "default" -}}
+
+{{- $config = $config | setValueAtPath "features.hooks" true -}}
+{{- $config = $config | setValueAtPath "features.guardian_approval" true -}}
+{{- $config = $config | setValueAtPath "features.js_repl" false -}}
+{{- $config = $config | setValueAtPath "tui.status_line" (list "model-with-reasoning" "context-used" "weekly-limit") -}}
+
+{{- $config = $config | setValueAtPath "plugins.github@openai-curated.enabled" false -}}
+{{- $config = $config | setValueAtPath "plugins.github@openai-curated-remote.enabled" false -}}
+{{- $config = $config | setValueAtPath "plugins.sites@openai-bundled.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.browser@openai-bundled.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.visualize@openai-bundled.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.documents@openai-primary-runtime.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.pdf@openai-primary-runtime.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.spreadsheets@openai-primary-runtime.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.presentations@openai-primary-runtime.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.template-creator@openai-primary-runtime.enabled" true -}}
+{{- $config = $config | setValueAtPath "plugins.chrome@openai-bundled.enabled" true -}}
+
+{{- if eq $os "linux" -}}
+{{-   $cache := printf "%s/.cache/sccache" $home -}}
+{{-   $profile := dict
+        "description" "Workspace access with a shared sccache artifact cache."
+        "extends" ":workspace"
+        "filesystem" (dict $cache "write")
+        "network" (dict "enabled" true)
+      -}}
+{{-   $config = $config | deleteValueAtPath "sandbox_mode" -}}
+{{-   $config = $config | setValueAtPath "default_permissions" "sccache-workspace" -}}
+{{-   $config = $config | setValueAtPath "permissions.sccache-workspace" $profile -}}
+{{-   $config = $config | setValueAtPath "features.use_linux_sandbox_bwrap" true -}}
+{{-   $config = $config | setValueAtPath "desktop.external-agent-import-sync-enabled" true -}}
+{{-   $config = $config | setValueAtPath "desktop.preventSleepWhileRunning" true -}}
+{{-   $config = $config | setValueAtPath "desktop.show-context-window-usage" true -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceTheme" "dark" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkCodeThemeId" "dracula" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDiffMarkerStyle" "color" -}}
+{{-   $config = $config | setValueAtPath "desktop.keepRemoteControlAwakeWhilePluggedIn" true -}}
+{{-   $config = $config | setValueAtPath "desktop.followUpQueueMode" "queue" -}}
+{{-   $config = $config | setValueAtPath "desktop.open-in-target-preferences.global" "zed" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.accent" "#ff79c6" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.contrast" 60 -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.ink" "#f8f8f2" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.opaqueWindows" true -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.surface" "#282a36" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.fonts.ui" "Inter" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.diffAdded" "#50fa7b" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.diffRemoved" "#ff5555" -}}
+{{-   $config = $config | setValueAtPath "desktop.appearanceDarkChromeTheme.semanticColors.skill" "#ff79c6" -}}
+{{- else -}}
+{{-   $notifier := printf "%s/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient" $home -}}
+{{-   $config = $config | deleteValueAtPath "default_permissions" -}}
+{{-   $config = $config | setValueAtPath "sandbox_mode" "workspace-write" -}}
+{{-   $config = $config | deleteValueAtPath "permissions.sccache-workspace" -}}
+{{-   if and (hasKey $config "permissions") (eq (len (get $config "permissions")) 0) -}}
+{{-     $config = $config | deleteValueAtPath "permissions" -}}
+{{-   end -}}
+{{-   $config = $config | setValueAtPath "notify" (list $notifier "turn-ended") -}}
+{{-   $config = $config | setValueAtPath "plugins.computer-use@openai-bundled.enabled" true -}}
+{{-   $config = $config | setValueAtPath "tui.session_picker_view" "dense" -}}
+{{-   $config = $config | setValueAtPath "desktop.keepRemoteControlAwakeWhilePluggedIn" true -}}
+{{-   $config = $config | setValueAtPath "desktop.followUpQueueMode" "queue" -}}
+{{-   $config = $config | setValueAtPath "desktop.dock-icon-preference" "codex-system" -}}
+{{-   $config = $config | setValueAtPath "desktop.open-in-target-preferences.global" "ghostty" -}}
+{{-   $config = $config | setValueAtPath "mcp_servers.computer-use.command" "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient" -}}
+{{-   $config = $config | setValueAtPath "mcp_servers.computer-use.args" (list "mcp") -}}
+{{-   $config = $config | setValueAtPath "mcp_servers.computer-use.cwd" "." -}}
+{{-   $config = $config | setValueAtPath "mcp_servers.computer-use.enabled" false -}}
+{{- end -}}
+{{- $hasProjects := hasKey $config "projects" -}}
+{{- $projects := get $config "projects" -}}
+{{- if $hasProjects -}}
+{{-   $config = $config | deleteValueAtPath "projects" -}}
+{{- end -}}
+{{ $config | toToml -}}
+{{- if $hasProjects }}
+{{ dict "projects" $projects | toToml -}}
+{{- end }}
