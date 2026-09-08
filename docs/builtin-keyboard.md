@@ -3,7 +3,8 @@
 The Linux-only `builtin-keyboard` module stages a udev hwdb file under
 `~/.config/builtin-keyboard/`. A chezmoi after-script installs and activates it
 through sudo only when the hwdb tools, matching model, and internal AT keyboard
-are present. Missing prerequisites skip with a message and are retried next apply.
+are present. It runs once per script/rule version. Missing prerequisites skip
+with a message; a successful skip is also remembered by chezmoi.
 It matches the internal AT keyboard on the Framework Laptop 13 Pro (Intel Core
 Ultra Series 3), using its DMI model. USB and Bluetooth keyboards do not match.
 Other laptop models need their own verified match and scan codes.
@@ -32,8 +33,9 @@ chezmoi diff
 chezmoi apply
 ```
 
-Enter your sudo password if prompted. Each apply rebuilds the hwdb and triggers
-only the internal keyboard, also recovering from an interrupted previous apply.
+Enter your sudo password if prompted. The first apply rebuilds the hwdb and triggers
+only the internal keyboard. Unchanged successful scripts disappear from subsequent
+diffs; script/rule changes run again. Failed runs retry on the next apply.
 The script checks that udev imported every mapping before reporting success.
 The hwdb match uses udev's sanitized DMI model (parentheses become underscores),
 while the installation guard checks the raw model in sysfs.
@@ -46,6 +48,12 @@ recognize a newly available key, reboot and retest.
 The abandoned global COSMIC/XKB files were never applied in this setup. If you
 applied them independently, restore your previous COSMIC `xkb_config` before
 installing this rule to avoid remapping twice.
+
+To retry a skipped version or reapply after another tool changed the mapping:
+
+```sh
+chezmoi execute-template --file "$(chezmoi source-path)/run_once_after_builtin_keyboard.sh.tmpl" | sh
+```
 
 ## Rollback
 

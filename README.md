@@ -43,7 +43,7 @@ Add `"builtin-keyboard"` to your modules with `chezmoi edit-config`, then `chezm
 Follow the [install/rollback runbook](docs/builtin-keyboard.md): Right Alt → Escape,
 Caps Lock → Control, Left Control → volume down, Escape → Caps Lock,
 Right Shift → Right Alt; Left Alt and Super stay normal.
-Run `chezmoi apply`; it installs and activates the native udev hwdb rule via sudo
+Run `chezmoi apply`; once per script/rule version, it installs and activates the native udev hwdb rule via sudo
 only when the required tools and matching internal keyboard are present.
 It targets this Framework model's internal keyboard, leaving external keyboards alone.
 ## COSMIC desktop

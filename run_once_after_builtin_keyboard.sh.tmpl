@@ -1,5 +1,6 @@
 {{ if and (eq .chezmoi.os "linux") (has "builtin-keyboard" (get . "modules" | default (list))) -}}
 #!/bin/sh
+# Rule fingerprint: {{ include "dot_config/builtin-keyboard/90-builtin-keyboard.hwdb" | sha256sum }}
 set -eu
 
 skip() { printf 'builtin-keyboard: %s; skipping.\n' "$*"; exit 0; }
@@ -30,8 +31,7 @@ as_root() {
     if [ "$(id -u)" -eq 0 ]; then "$@"; else sudo "$@"; fi
 }
 
-# Run on every apply so missing hardware/tools and interrupted installs are retried.
-# Rebuilding and triggering also reapplies the rule if another tool changed the keymap.
+# Chezmoi runs this once per rendered script/rule version after a successful exit.
 if ! cmp -s "$source_file" "$target"; then
     as_root install -Dm644 "$source_file" "$target"
 fi
