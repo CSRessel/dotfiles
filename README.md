@@ -60,6 +60,23 @@ Enable `fonts` alongside `cosmic`, then `chezmoi diff` and `chezmoi apply`.
 Installs IBM Plex Sans with Noto fallback and FiraCode Nerd Font Mono, then sets
 desktop and generic font defaults. [Details](docs/fonts.md).
 
+## Boot appearance
+
+Artwork only; application comes later. Selected: coffee for boot splash, lock for
+disk encryption, key for COSMIC login. Login wallpaper support remains unresolved.
+
+[Cat assets](docs/assets/boot-cat/): `cat.txt`, `render.py`, and four emoji variants
+(coffee/key/laptop/lock), each white on black, transparent white (640 × 448), and
+left-offset on black (1920 × 1200). Based on [my website](https://clifford.ressel.fyi/)
+(CC BY-SA 4.0); fixed character spacing with FiraCode Nerd Font and Unicode fallback.
+
+To regenerate with the fonts module and `python3-gi-cairo`, `python3-cairo`, and
+`gir1.2-pango-1.0` installed:
+
+```sh
+python3 docs/assets/boot-cat/render.py
+```
+
 TODO: Development environment management and optional apps.
 
 [Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/codex.md)
