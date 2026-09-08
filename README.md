@@ -40,7 +40,7 @@ To make Zsh login shell after installing it: `chsh -s "$(command -v zsh)"`, then
 ## Built-in keyboard
 
 Add `"builtin-keyboard"` to your modules with `chezmoi edit-config`, then `chezmoi diff`.
-Follow the [install/rollback runbook](docs/builtin-keyboard.md): Right Alt → Escape,
+Follow the [install/rollback runbook](docs/mod_builtin-keyboard.md): Right Alt → Escape,
 Caps Lock → Control, Left Control → volume down, Escape → Caps Lock,
 Right Shift → Right Alt; Left Alt and Super stay normal.
 Run `chezmoi apply`; once per script/rule version, it installs and activates the native udev hwdb rule via sudo
@@ -52,19 +52,19 @@ Add `"cosmic"` to your modules with `chezmoi edit-config`, then `chezmoi diff` a
 `chezmoi apply`. Native RON files capture wallpaper, compact appearance, panel/dock,
 window/workspace preferences, pointer sensitivity, touchpad natural scrolling,
 clock, and suspend settings. See the
-[captured settings](docs/cosmic.md). Fonts will be a separate module.
+[captured settings](docs/mod_cosmic.md). Fonts will be a separate module.
 
 ## Fonts
 
 Enable `fonts` alongside `cosmic`, then `chezmoi diff` and `chezmoi apply`.
 Installs IBM Plex Sans with Noto fallback and FiraCode Nerd Font Mono, then sets
-desktop and generic font defaults. [Details](docs/fonts.md).
+desktop and generic font defaults. [Details](docs/mod_fonts.md).
 
 ## Boot appearance
 
 Enable `boot-theme`, then `chezmoi diff` and `chezmoi apply` when ready. Installs
 coffee for boot splash and lock for disk encryption via sudo, then rebuilds initramfs.
-[Install/rollback](docs/boot-theme.md). Key artwork for COSMIC login is staged only;
+[Install/rollback](docs/mod_boot-theme.md). Key artwork for COSMIC login is staged only;
 login wallpaper support remains unresolved.
 
 [Cat assets](docs/assets/boot-cat/): `cat.txt`, `render.py`, and four emoji variants
@@ -79,9 +79,13 @@ To regenerate with the fonts module and `python3-gi-cairo`, `python3-cairo`, and
 python3 docs/assets/boot-cat/render.py
 ```
 
-TODO: Development environment management and optional apps.
+[Expected packages and desktop defaults](docs/packages.md): apt/Flatpak commands
+and native installer links. Enable `desktop-apps` to manage Firefox, VLC and Zed
+defaults when installed.
 
-[Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/codex.md)
+TODO: Development environment management and additional apps.
+
+[Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/mod_codex.md)
 
 ### Philosophy
 

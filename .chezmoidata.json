@@ -73,6 +73,9 @@
     ],
     "boot-theme": [
       ".config/boot-theme"
+    ],
+    "desktop-apps": [
+      ".config/mimeapps.list"
     ]
   }
 }

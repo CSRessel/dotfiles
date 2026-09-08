@@ -27,5 +27,8 @@ set only for the touchpad; sensitivity comes from `input_default`.
 
 The wallpaper references Pop!OS's bundled
 `/usr/share/backgrounds/cosmic/phytoplankton_bloom_nasa_oli2_20240121.jpg`.
-Wallpaper-picker history is excluded. [Fonts](fonts.md) owns font selection;
-[builtin-keyboard](builtin-keyboard.md) owns hardware key remapping.
+Wallpaper-picker history is excluded. [Fonts](mod_fonts.md) owns font selection;
+[builtin-keyboard](mod_builtin-keyboard.md) owns hardware key remapping.
+
+[Desktop app defaults](packages.md#desktop-defaults) use XDG associations through
+the independent `desktop-apps` module.

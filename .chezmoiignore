@@ -24,6 +24,7 @@ git-contribution-graph/
 .config/cosmic
 .config/builtin-keyboard
 .config/boot-theme
+.config/mimeapps.list
 .config/systemd
 .local/bin/wsp-toggle
 {{ end }}

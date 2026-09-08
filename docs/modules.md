@@ -8,14 +8,15 @@ Toolchains and desktop preferences are opt-in.
 
 | Module | Opinion / purpose | Platform |
 | --- | --- | --- |
-| [builtin-keyboard](builtin-keyboard.md) | Native remapping of the matching Framework internal keyboard; external keyboards untouched | Linux |
-| [fonts](fonts.md) | IBM Plex Sans, Noto fallback, FiraCode Nerd Font Mono | Linux with apt |
-| [cosmic](cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
-| [boot-theme](boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
+| [builtin-keyboard](mod_builtin-keyboard.md) | Native remapping of the matching Framework internal keyboard; external keyboards untouched | Linux |
+| [fonts](mod_fonts.md) | IBM Plex Sans, Noto fallback, FiraCode Nerd Font Mono | Linux with apt |
+| [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC and Zed defaults when installed | Linux |
+| [cosmic](mod_cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
+| [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
 | `alacritty`, `ghostty`, `kitty` | Terminal preferences | Linux / macOS |
 | `warp` | Terminal preferences | macOS |
 | `lunarvim`, `vscode` | Editor preferences | App-dependent |
-| [codex](codex.md) | Shared settings merged with machine-local state | Linux / macOS |
+| [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
 | `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
 | `k9s`, `marimo`, `tridactyl`, `nethack` | Application preferences | App-dependent |
 | `nix`, `poetry` | Optional tool configs; no toolchain installation | Tool-dependent |

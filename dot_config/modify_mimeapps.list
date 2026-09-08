@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""Merge desktop-apps defaults; keep unrelated associations and skip absent apps."""
+import configparser
+import os
+from pathlib import Path
+import sys
+
+home = Path.home()
+data_home = Path(os.environ.get('XDG_DATA_HOME', home / '.local/share'))
+dirs = [data_home / 'applications']
+dirs += [Path(p) / 'applications' for p in os.environ.get('XDG_DATA_DIRS', '/usr/local/share:/usr/share').split(':') if p]
+dirs += [data_home / 'flatpak/exports/share/applications', Path('/var/lib/flatpak/exports/share/applications')]
+
+
+def desktop(ids):
+    for appid in ids:
+        for directory in dirs:
+            path = directory / appid
+            if path.is_file():
+                entry = configparser.ConfigParser(interpolation=None, strict=False)
+                entry.read(path)
+                if entry.has_section('Desktop Entry') and not entry.getboolean('Desktop Entry', 'Hidden', fallback=False):
+                    return appid
+                # A hidden higher-priority entry masks lower-priority entries.
+                break
+    return None
+
+
+config = configparser.ConfigParser(interpolation=None, strict=False, delimiters=('=',))
+config.optionxform = str
+original = sys.stdin.read()
+config.read_string(original)
+updates = {}
+browser = desktop(['firefox.desktop', 'org.mozilla.firefox.desktop'])
+if browser:
+    updates.update(dict.fromkeys(['text/html', 'application/xhtml+xml', 'x-scheme-handler/chrome', 'x-scheme-handler/http', 'x-scheme-handler/https', 'x-scheme-handler/about', 'x-scheme-handler/unknown'], browser + ';'))
+editor = desktop(['dev.zed.Zed.desktop', 'zed.desktop'])
+if editor:
+    updates.update(dict.fromkeys(['text/plain', 'application/x-zerosize'], editor + ';'))
+player = desktop(['vlc.desktop', 'org.videolan.VLC.desktop'])
+if player:
+    types = {'audio/mpeg', 'audio/mp3', 'audio/x-flac', 'application/ogg', 'application/x-ogg', 'application/x-cue', 'video/mp4', 'x-content/audio-cdda'}
+    for directory in [data_home] + [Path(p) for p in os.environ.get('XDG_DATA_DIRS', '/usr/local/share:/usr/share').split(':') if p]:
+        path = directory / 'mime/types'
+        if path.is_file():
+            types.update(t for t in path.read_text().splitlines() if t.startswith(('audio/', 'video/')))
+    updates.update(dict.fromkeys(sorted(types), player + ';'))
+if not updates:
+    sys.stdout.write(original)
+else:
+    if not config.has_section('Default Applications'):
+        config.add_section('Default Applications')
+    for mime, appid in updates.items():
+        config.set('Default Applications', mime, appid)
+    config.write(sys.stdout, space_around_delimiters=False)
