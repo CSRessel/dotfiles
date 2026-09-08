@@ -18,9 +18,9 @@ Encryption configuration is unchanged.
 - [Installer](../dot_config/boot-theme/executable_install.sh): copies the theme and installed Pop entry assets to `/usr/share/plymouth/themes/clifford-cat`, selects it through `update-alternatives`, and rebuilds initramfs through sudo. Pop's hooks refresh the EFI copy.
 - `/var/lib/dotfiles-boot-theme/`: saved previous theme and successful-install fingerprint.
 
-Missing prerequisites skip installation. Unchanged installs avoid sudo and
-rebuilds; changes or interrupted installs retry on apply. Disabling the module
-does not undo system changes.
+The after-script runs once per installer, theme or artwork version. Failed runs
+retry; successful prerequisite skips are remembered. The installer itself avoids
+rebuilding unchanged files. Disabling the module does not undo system changes.
 
 Rollback: `~/.config/boot-theme/install.sh rollback` restores the saved theme and
 rebuilds initramfs; disable the module to prevent reinstallation. Inert theme files

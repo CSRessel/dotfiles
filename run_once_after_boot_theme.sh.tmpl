@@ -1,0 +1,9 @@
+{{ if and (eq .chezmoi.os "linux") (has "boot-theme" (get . "modules" | default (list))) -}}
+#!/bin/sh
+# Installer: {{ include "dot_config/boot-theme/executable_install.sh" | sha256sum }}
+# Theme: {{ include "dot_config/boot-theme/plymouth/clifford-cat.plymouth" | sha256sum }}
+# Coffee: {{ include "docs/assets/boot-cat/coffee-plymouth.png" | sha256sum }}
+# Lock: {{ include "docs/assets/boot-cat/lock-plymouth.png" | sha256sum }}
+set -eu
+"$HOME/.config/boot-theme/install.sh" install
+{{ end -}}

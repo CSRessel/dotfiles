@@ -1,5 +1,0 @@
-{{ if and (eq .chezmoi.os "linux") (has "boot-theme" (get . "modules" | default (list))) -}}
-#!/bin/sh
-set -eu
-"$HOME/.config/boot-theme/install.sh" install
-{{ end -}}
