@@ -1,44 +1,22 @@
 # Fonts
 
-Enable `fonts` with `chezmoi edit-config`, then `chezmoi diff` and `chezmoi apply`.
-Keep `cosmic` enabled too for the COSMIC-specific font settings.
+IBM Plex Sans for interface text, Noto for broad character coverage, and FiraCode
+Nerd Font Mono for code and terminal symbols.
 
-On Pop!OS/Ubuntu the before-script installs IBM Plex and Noto core/CJK/emoji
-packages via apt (sudo only when packages are missing). It downloads Nerd Fonts
-3.5.1 FiraCode into your user font directory with a pinned SHA-256 checksum.
-Font preferences are written after installation succeeds. The installer runs once
-per script version; unchanged successful runs disappear from subsequent diffs.
-Script changes (including font version/checksum changes) run again, and failed
-runs retry on the next apply. This module targets Linux with apt; macOS support
-is deferred.
+| Default | Primary | Fallback |
+| --- | --- | --- |
+| Interface / sans-serif | IBM Plex Sans | Noto Sans |
+| Monospace | FiraCode Nerd Font Mono | Noto Sans Mono |
 
-- COSMIC interface: IBM Plex Sans, normal weight.
-- Generic sans-serif: IBM Plex Sans, then Noto Sans.
-- COSMIC/generic monospace: FiraCode Nerd Font Mono.
+Explicit app font settings take precedence. Fontconfig controls fallback in apps
+that use it; COSMIC selects a primary family and leaves fallback to its renderer.
+Noto CJK and emoji fonts provide additional coverage.
 
-Noto's script-specific families and emoji fonts remain available to the font
-renderer for missing characters. COSMIC's RON setting accepts a single primary
-family; Fontconfig fallback ordering applies to apps that use Fontconfig, and
-other renderers may choose their own fallback fonts.
+## Mechanism and ownership
 
-Restart existing apps or log out/in if they retain the old font list. Check:
+- [Installer](../run_once_before_install_fonts.sh.tmpl): Linux with apt; installs missing system font packages through sudo and checksum-pinned FiraCode into `~/.local/share/fonts/`. Runs once per script version; failures retry. Versions and checksums live in the script.
+- [Fontconfig](../dot_config/fontconfig/conf.d/60-dotfiles-fonts.conf): generic defaults under `~/.config/fontconfig/conf.d/`.
+- COSMIC [interface](../dot_config/cosmic/com.system76.CosmicTk/v1/interface_font) and [monospace](../dot_config/cosmic/com.system76.CosmicTk/v1/monospace_font) preferences: native RON under `~/.config/cosmic/`; require both `fonts` and `cosmic` modules.
 
-```sh
-fc-match sans-serif
-fc-match monospace
-fc-match -s 'IBM Plex Sans' | head
-```
-
-Editors/terminals with an explicit font setting override the generic default;
-choose `FiraCode Nerd Font Mono` there when configuring their optional modules.
-Disabling `fonts` stops management but does not uninstall fonts or remove applied
-preferences.
-
-To rerun the installer manually after removing installed fonts:
-
-```sh
-chezmoi execute-template --file "$(chezmoi source-path)/run_once_before_install_fonts.sh.tmpl" | sh
-```
-
-If the FiraCode directory is incomplete, remove its `.complete` marker first so
-the installer downloads and extracts it again.
+Fontconfig settings work independently of COSMIC. Disabling the module leaves
+installed fonts and applied preferences in place.

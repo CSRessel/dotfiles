@@ -1,44 +1,34 @@
 # Boot theme
 
-Enable `boot-theme` with `chezmoi edit-config`, review `chezmoi diff`, then apply
-when ready. This module is limited to Pop!OS 24.04; nothing installs on macOS.
+White cat artwork on black, using Pop!OS 24.04's native Plymouth `two-step` renderer.
 
-```sh
-chezmoi diff
-chezmoi apply
-```
+| Screen | Artwork |
+| --- | --- |
+| Boot, shutdown, reboot | Coffee cat |
+| Disk unlock | Lock cat beside the native password field |
+| COSMIC login | Key wallpaper staged only; no login override installed |
 
-Apply stages `~/.config/boot-theme`, then runs its `install.sh` with ordinary sudo
-prompts for system changes. It saves the previous theme, installs a separate
-`/usr/share/plymouth/themes/clifford-cat` theme, selects it through
-`update-alternatives`, and rebuilds all installed initramfs images. Pop's existing
-post-update hooks refresh the EFI copy. Verify at the next reboot; no live desktop
-or greeter restart is performed.
+The renderer retains native password handling, keyboard indicators and messages.
+Encryption configuration is unchanged.
 
-- Coffee cat: boot splash (also shutdown/reboot).
-- Lock cat: beside the native disk-password field. The native `two-step` renderer
-  retains entry, caps-lock/keymap indicators, messages and authentication behavior.
-- Key cat: staged as `~/.config/boot-theme/login-background.png` only. COSMIC's
-  wallpaper-loading issue remains unresolved, so no login override is installed.
+## Mechanism and ownership
 
-Artwork uses the renderer's 320 × 224 transparent Plymouth exports. The module
-includes PNGs directly from the repository assets; rendering tools are not needed
-on the target machine. Existing Pop password-entry assets are copied at install.
-Missing OS/tool/theme prerequisites skip installation with a message. Unchanged
-installs do not prompt or rebuild; changes and interrupted installs retry on apply.
-The module does not install packages or alter disk encryption itself.
+- [Artwork](assets/boot-cat/): text source, Python renderer and PNG variants. Plymouth uses 320 × 224 transparent exports; target machines need no rendering tools.
+- [Module files](../dot_config/boot-theme/): staged under `~/.config/boot-theme/`, including the login wallpaper.
+- [Installer](../dot_config/boot-theme/executable_install.sh): copies the theme and installed Pop entry assets to `/usr/share/plymouth/themes/clifford-cat`, selects it through `update-alternatives`, and rebuilds initramfs through sudo. Pop's hooks refresh the EFI copy.
+- `/var/lib/dotfiles-boot-theme/`: saved previous theme and successful-install fingerprint.
 
-## Rollback
+Missing prerequisites skip installation. Unchanged installs avoid sudo and
+rebuilds; changes or interrupted installs retry on apply. Disabling the module
+does not undo system changes.
 
-```sh
-~/.config/boot-theme/install.sh rollback
-chezmoi edit-config  # remove boot-theme from modules
-```
+Rollback: `~/.config/boot-theme/install.sh rollback` restores the saved theme and
+rebuilds initramfs; disable the module to prevent reinstallation. Inert theme files
+and rollback metadata remain on disk.
 
-Rollback selects the saved previous theme and rebuilds initramfs. It leaves inert
-theme files and rollback metadata on disk. Removing the module alone does not undo
-system changes. If the graphical theme fails, use Plymouth's Escape text view.
+## Activate
 
-Implementation reference: Pop's [two-step renderer](https://github.com/pop-os/plymouth/blob/master/src/plugins/splash/two-step/plugin.c)
-shows the header outside dialogs and the lock image inside them. The native layout
-places the lock image beside the entry, rather than above it.
+Enable `boot-theme` in your chezmoi modules, then run `chezmoi apply`.
+To install files staged without scripts, run `~/.config/boot-theme/install.sh install`
+in a terminal; sudo authenticates the system install and initramfs rebuild.
+The initial Framework firmware logo may still appear before Plymouth takes over.
