@@ -3,16 +3,18 @@
 
 [core]
   excludesfile = ~/.gitignore_global
+{{ if lookPath "vim" }}
   editor = vim
+{{ end }}
   # pager = delta
-[credential]
-  helper = store
+{{ if lookPath "gh" }}
 [credential "https://github.com"]
   helper = 
   helper = !{{ lookPath "gh" }} auth git-credential
 [credential "https://gist.github.com"]
   helper =
   helper = !{{ lookPath "gh" }} auth git-credential
+{{ end }}
 [init]
   defaultBranch = main
 [user]
@@ -39,6 +41,7 @@
 [diff]
   submodule = log
   colorMoved = default
+{{ if lookPath "delta" }}
 [interactive]
   diffFilter = delta --color-only --features=interactive
 [pager]
@@ -46,6 +49,7 @@
   diff   = delta
   reflog = delta
   show   = delta
+{{ end }}
 [merge]
   conflictstyle = diff3
 

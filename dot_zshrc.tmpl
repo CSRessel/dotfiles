@@ -81,7 +81,7 @@ plugins=(
 {{- end }}
 )
 
-source $ZSH/oh-my-zsh.sh
+[[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
 
@@ -120,8 +120,13 @@ RPROMPT='%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}'
 # enable vim bindings
 bindkey -v
 
-export VISUAL=vim
-export EDITOR="$VISUAL"
+for editor in vim nvim nano vi; do
+    if command -v "$editor" >/dev/null 2>&1; then
+        export VISUAL="$editor" EDITOR="$editor"
+        break
+    fi
+done
+unset editor
 
 # --------------------------------
 # Language support and PATH additions
@@ -130,11 +135,11 @@ export EDITOR="$VISUAL"
 export PATH="$PATH:$HOME/.local/bin"
 
 # direnv
-eval "$(direnv hook zsh)"
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
 
 {{ if (stat (joinPath .chezmoi.homeDir ".cargo")) -}}
 # rust
-. "$HOME/.cargo/env"
+[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
 {{ if (stat (joinPath .chezmoi.homeDir ".cargo/bin/sccache")) -}}
 # Faster rust builds

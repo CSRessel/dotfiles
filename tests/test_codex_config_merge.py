@@ -197,10 +197,13 @@ trust_level = "trusted"
             config["projects"],
             {"/home/tester/source/project": {"trust_level": "trusted"}},
         )
-        table_headers = [line for line in output.splitlines() if line.startswith("[")]
-        self.assertEqual(
-            table_headers[-2:],
-            ["[projects]", "[projects.'/home/tester/source/project']"],
+        table_headers = [
+            line.strip() for line in output.splitlines() if line.lstrip().startswith("[")
+        ]
+        self.assertEqual(table_headers[-2], "[projects]")
+        self.assertIn(
+            table_headers[-1],
+            ["[projects.'/home/tester/source/project']", '[projects."/home/tester/source/project"]'],
         )
 
     def test_macos_enforces_workspace_and_computer_use_while_preserving_app_state(
