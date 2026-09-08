@@ -92,7 +92,7 @@ zstyle ':omz:*' aliases no
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#   export EDITOR='nvim'
 # fi
 
 # Compilation flags
@@ -118,7 +118,7 @@ RPROMPT='%{$fg[blue]%}($ZSH_KUBECTL_PROMPT)%{$reset_color%}'
 # enable vim bindings
 bindkey -v
 
-for editor in vim nvim nano vi; do
+for editor in nvim vim nano vi; do
     if command -v "$editor" >/dev/null 2>&1; then
         export VISUAL="$editor" EDITOR="$editor"
         break
