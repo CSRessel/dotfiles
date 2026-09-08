@@ -31,6 +31,7 @@ Available modules are listed in [the catalog](../.chezmoidata.json):
 - AI tools: `claude`, `codex`, `gemini`, `opencode`.
 - Other apps: `k9s`, `marimo`, `tridactyl`, `nethack`.
 - Deferred toolchains: `nix`, `poetry`.
+- Desktop: `cosmic` (Linux; [native desktop settings](cosmic.md)).
 - Keyboard: `builtin-keyboard` (Linux; [hardware-specific remapping](builtin-keyboard.md), installs via sudo on matching hardware).
 - System/personal extras: `tmux-memory`, `user-oom-policy`, `mac-shortcuts`, `local-scripts`.
 

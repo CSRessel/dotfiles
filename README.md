@@ -1,6 +1,7 @@
 # dotfiles
 
 Personal configs. Linux and MacOS support.
+
 Generally biased for Pop!OS 24.04 / COSMIC (for code-as-config: settings, keybinds, and extras).
 
 ## Quickstart
@@ -22,15 +23,15 @@ The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chez
 
 ## Overview
 
-The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts, and `safe_rm`.
-It does not initialize language runtimes or development toolchain managers.
-Catppuccin loads if installed. The contribution graph builds on apply when Cargo exists
-and displays in Zsh login shells. Old launchers/icons and Obsidian sync aliases are removed.
+The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases. A series of composable modules support the other configs.
 
-For this existing checkout, select modules with `chezmoi init`, then review the diff.
+It does not currently handle language runtimes or development toolchains.
+(Extras: catppuccin loads if installed. The contribution graph builds on apply when Cargo exists and displays in Zsh login shells.)
+
+For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
 Change later selections with `chezmoi edit-config`; [module settings](docs/modules.md)
 include per-machine Linux memory limits and the shortcut names.
-To make Zsh your login shell after installing it: `chsh -s "$(command -v zsh)"`, then log out and back in.
+To make Zsh login shell after installing it: `chsh -s "$(command -v zsh)"`, then log out and back in.
 
 ```sh
 ~/.local/bin/chezmoi diff
@@ -45,7 +46,13 @@ Right Shift → Right Alt; Left Alt and Super stay normal.
 Run `chezmoi apply`; it installs and activates the native udev hwdb rule via sudo
 only when the required tools and matching internal keyboard are present.
 It targets this Framework model's internal keyboard, leaving external keyboards alone.
-COSMIC appearance and other desktop settings follow next.
+## COSMIC desktop
+
+Add `"cosmic"` to your modules with `chezmoi edit-config`, then `chezmoi diff` and
+`chezmoi apply`. Native RON files capture wallpaper, compact appearance, panel/dock,
+window/workspace preferences, pointer sensitivity, touchpad natural scrolling,
+clock, and suspend settings. See the
+[captured settings](docs/cosmic.md). Fonts will be a separate module.
 
 TODO: Development environment management and optional apps.
 

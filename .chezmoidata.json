@@ -1,5 +1,8 @@
 {
   "modulePaths": {
+    "cosmic": [
+      ".config/cosmic"
+    ],
     "builtin-keyboard": [
       ".config/builtin-keyboard"
     ],
