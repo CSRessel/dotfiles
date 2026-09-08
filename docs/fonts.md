@@ -6,8 +6,10 @@ Keep `cosmic` enabled too for the COSMIC-specific font settings.
 On Pop!OS/Ubuntu the before-script installs IBM Plex and Noto core/CJK/emoji
 packages via apt (sudo only when packages are missing). It downloads Nerd Fonts
 3.5.1 FiraCode into your user font directory with a pinned SHA-256 checksum.
-Font preferences are written after installation succeeds. Repeated applies reuse
-the installed fonts. This module currently targets Linux with apt; macOS support
+Font preferences are written after installation succeeds. The installer runs once
+per script version; unchanged successful runs disappear from subsequent diffs.
+Script changes (including font version/checksum changes) run again, and failed
+runs retry on the next apply. This module targets Linux with apt; macOS support
 is deferred.
 
 - COSMIC interface: IBM Plex Sans, normal weight.
@@ -31,3 +33,12 @@ Editors/terminals with an explicit font setting override the generic default;
 choose `FiraCode Nerd Font Mono` there when configuring their optional modules.
 Disabling `fonts` stops management but does not uninstall fonts or remove applied
 preferences.
+
+To rerun the installer manually after removing installed fonts:
+
+```sh
+chezmoi execute-template --file "$(chezmoi source-path)/run_once_before_install_fonts.sh.tmpl" | sh
+```
+
+If the FiraCode directory is incomplete, remove its `.complete` marker first so
+the installer downloads and extracts it again.
