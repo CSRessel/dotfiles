@@ -23,6 +23,7 @@ git-contribution-graph/
 .config/fontconfig/conf.d/60-dotfiles-fonts.conf
 .config/cosmic
 .config/builtin-keyboard
+.config/boot-theme
 .config/systemd
 .local/bin/wsp-toggle
 {{ end }}

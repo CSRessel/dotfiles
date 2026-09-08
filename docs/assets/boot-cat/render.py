@@ -85,3 +85,10 @@ for name, emoji in {"coffee": "☕", "key": "🔑", "laptop": "💻", "lock": "�
     img, ctx = surface(1920, 1200, True)
     place_cat(ctx, 340, 530, .9, artwork)
     img.write_to_png(str(ROOT / f"{name}-left.png"))
+
+    if name in ("coffee", "lock"):
+        img, ctx = surface(320, 224)
+        ctx.scale(.5, .5)
+        ctx.set_source_surface(artwork, 0, 0)
+        ctx.paint()
+        img.write_to_png(str(ROOT / f"{name}-plymouth.png"))

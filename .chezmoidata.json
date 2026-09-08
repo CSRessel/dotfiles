@@ -70,6 +70,9 @@
     ],
     "user-oom-policy": [
       ".config/systemd/user.conf.d"
+    ],
+    "boot-theme": [
+      ".config/boot-theme"
     ]
   }
 }

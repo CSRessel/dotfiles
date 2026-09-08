@@ -4,7 +4,8 @@ The base manages shell, Git, and tmux files on Linux and macOS. All app configs 
 opt-in via `data.modules` in `~/.config/chezmoi/chezmoi.toml`. Initialization prompts
 once; use `chezmoi edit-config` to change the selection, then `chezmoi diff`.
 Turning a module off stops managing its files; it does not delete files already applied.
-Modules configure existing tools; they do not install them.
+Most modules configure existing tools. `fonts` installs font packages;
+`builtin-keyboard` and `boot-theme` install system configuration via sudo.
 
 ```toml
 [data]
@@ -33,6 +34,7 @@ Available modules are listed in [the catalog](../.chezmoidata.json):
 - Deferred toolchains: `nix`, `poetry`.
 - Typography: `fonts` (Pop!OS/Ubuntu; [installation and defaults](fonts.md)).
 - Desktop: `cosmic` (Linux; [native desktop settings](cosmic.md)).
+- Boot: `boot-theme` (Pop!OS 24.04; [Plymouth install/rollback](boot-theme.md)); login artwork is staged only.
 - Keyboard: `builtin-keyboard` (Linux; [hardware-specific remapping](builtin-keyboard.md), installs via sudo on matching hardware).
 - System/personal extras: `tmux-memory`, `user-oom-policy`, `mac-shortcuts`, `local-scripts`.
 
