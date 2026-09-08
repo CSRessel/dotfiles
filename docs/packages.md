@@ -1,7 +1,7 @@
 # Expected packages
 
 Personal Pop!OS desktop baseline. Reference only: chezmoi does not install this
-list. Fonts belong to the [fonts module](mod_fonts.md); Ghostty will be added after installation.
+list. Fonts belong to the [fonts module](mod_fonts.md).
 
 ## Apt
 
@@ -27,6 +27,8 @@ flatpak install --user flathub app.zen_browser.zen com.bitwarden.desktop md.obsi
 Use upstream instructions; installer commands and versions are not copied here.
 Tailscale and ChatGPT use native installers, even when backed by apt packages.
 
+- [Ghostty — ghostty-ubuntu](https://github.com/mkasberg/ghostty-ubuntu): community native `.deb` for Pop!OS 24.04; updates use the same installer.
+- [Oh My Zsh](https://ohmyz.sh/#install)
 - [Tailscale](https://tailscale.com/docs/install/linux)
 - [ChatGPT desktop](https://learn.chatgpt.com/docs/linux/linux-app)
 - [Codex CLI](https://learn.chatgpt.com/docs/codex/cli)

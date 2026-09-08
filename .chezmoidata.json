@@ -14,9 +14,6 @@
     "alacritty": [
       ".config/alacritty"
     ],
-    "ghostty": [
-      ".config/ghostty"
-    ],
     "kitty": [
       ".config/kitty"
     ],

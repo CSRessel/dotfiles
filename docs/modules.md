@@ -2,7 +2,8 @@
 
 The shared base is Zsh, Bash, Git, tmux, and useful aliases on Linux and macOS.
 Original command names stay intact except `rm`, which uses recoverable trash.
-Toolchains and desktop preferences are opt-in.
+Toolchains and desktop preferences are opt-in. Ghostty config is managed
+unconditionally and is inert when Ghostty is absent.
 
 ## Catalog
 
@@ -13,7 +14,7 @@ Toolchains and desktop preferences are opt-in.
 | [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC and Zed defaults when installed | Linux |
 | [cosmic](mod_cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
-| `alacritty`, `ghostty`, `kitty` | Terminal preferences | Linux / macOS |
+| `alacritty`, `kitty` | Terminal preferences | Linux / macOS |
 | `warp` | Terminal preferences | macOS |
 | `lunarvim`, `vscode` | Editor preferences | App-dependent |
 | [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |

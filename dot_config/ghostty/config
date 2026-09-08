@@ -1,7 +1,4 @@
-# https://www.dafont.com/verily-serif-mono.font (Serif for presentation or similar)
-# font-family = Verily Serif Mono
-# https://www.nerdfonts.com/font-downloads (daily driver)
-font-family = FiraCode Nerd Font
+font-family = FiraCode Nerd Font Mono
 
 theme = Catppuccin Mocha
 
