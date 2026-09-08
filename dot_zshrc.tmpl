@@ -3,6 +3,7 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
+export PATH="$HOME/.local/bin:$PATH"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -73,14 +74,11 @@ ZSH_THEME="robbyrussell"
 plugins=(
     git
     vi-mode
-    asdf
     kubectl
-{{- if eq .chezmoi.username "cressel" }}
-    poetry
-{{ else if eq .chezmoi.username "clifford" }}
-{{- end }}
 )
 
+# Keep built-in command names intact when loading Oh My Zsh.
+zstyle ':omz:*' aliases no
 [[ -r "$ZSH/oh-my-zsh.sh" ]] && source "$ZSH/oh-my-zsh.sh"
 
 # User configuration
@@ -132,92 +130,10 @@ unset editor
 # Language support and PATH additions
 
 # local
-export PATH="$PATH:$HOME/.local/bin"
+
 
 # direnv
 command -v direnv >/dev/null 2>&1 && eval "$(direnv hook zsh)"
-
-{{ if (stat (joinPath .chezmoi.homeDir ".cargo")) -}}
-# rust
-[[ -r "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
-
-{{ if (stat (joinPath .chezmoi.homeDir ".cargo/bin/sccache")) -}}
-# Faster rust builds
-export RUSTC_WRAPPER="$HOME/.cargo/bin/sccache"
-{{ if eq .chezmoi.os "linux" -}}
-if [[ -n "${CODEX_THREAD_ID:-}" ]]; then
-  export SCCACHE_SERVER_UDS="/tmp/sccache-${CODEX_THREAD_ID}.sock"
-fi
-{{- end }}
-{{- end -}}
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".nvm")) -}}
-# nvm
-export NVM_DIR="${HOME}/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".bun")) -}}
-# bun completions
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".pyenv")) -}}
-# pyenv
-alias brew='env PATH="${PATH//$(pyenv root)\/shims:/}" brew'
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".local/share/bob")) -}}
-export PATH="$PATH:$HOME/.local/share/bob/v0.10.4/bin"
-{{- end -}}
-
-{{- if eq .chezmoi.username "clifford" -}}
-{{- /****************************/ -}}
-{{- /* only personal machine    */ -}}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".opencode")) -}}
-# opencode
-export PATH=$HOME/.opencode/bin:$PATH
-{{- end }}
-
-if [[ "$ARGV0" =~ .*cursor$ ]]; then
-  # cursor weirdness
-  # https://github.com/getcursor/cursor/issues/549
-  unset ARGV0
-fi
-
-{{ if (stat (joinPath .chezmoi.homeDir "Documents/builds/platform-tools")) -}}
-# AOSP tools
-export PATH="$PATH:$HOME/Documents/builds/platform-tools"
-{{- end }}
-{{ if (stat (joinPath .chezmoi.homeDir "Android/Sdk")) -}}
-# Android SDK
-export ANDROID_HOME="$HOME/Android/Sdk"
-export ANDROID_STUDIO="$HOME/Android"
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".local/bin/githubgraph")) -}}
-# GitHub contribution graph on login
-githubgraph -w 12 -l -c
-{{- end }}
-
-{{ if (stat (joinPath .chezmoi.homeDir ".lmstudio/bin")) -}}
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.lmstudio/bin"
-# End of LM Studio CLI section
-{{- end -}}
-
-{{- /* end personal configs     */ -}}
-{{- /****************************/ -}}
-{{- end }}
 
 # --------------------------------
 # Other configs at the end
@@ -237,16 +153,6 @@ fi
 {{- /****************************/ -}}
 {{- end }}
 
-# Added by Nori
-# nori-handroll (actually in aliases file!)
-# End of Nori section
-
-{{ if (stat (joinPath .chezmoi.homeDir ".fly")) -}}
-# Added by flyctl installer
-export FLYCTL_INSTALL="$HOME/.fly"
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
-{{- end }}
-
 # Fix mosh advertising TERM=xterm instead of xterm-256color
 if [[ "$TERM" == "xterm" ]] || [[ "$TERM" == xterm-* ]]; then
   export TERM="xterm-256color"
@@ -257,4 +163,9 @@ if [[ -z "$COLORTERM" ]]; then
   if [[ -n "$MOSH_CONNECTION" ]] || [[ "$TERM" == *-256color ]] || [[ "$TERM" == xterm-kitty ]] || [[ "$TERM" == alacritty ]]; then
     export COLORTERM="truecolor"
   fi
+fi
+
+# Contribution graph on interactive login, on either OS.
+if [[ -o login ]] && command -v githubgraph >/dev/null 2>&1; then
+    githubgraph -w 12 -l -c
 fi

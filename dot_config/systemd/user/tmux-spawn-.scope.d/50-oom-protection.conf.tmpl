@@ -9,8 +9,15 @@
 # in-cgroup OOM kill; MemorySwapMax keeps a capped scope from thrashing swap
 # instead of dying; OOMPolicy=continue means only the killed process dies,
 # not the pane.
+{{- $limits := get . "tmuxMemory" | default dict -}}
+{{- range $key := list "high" "max" "swap" -}}
+{{- $value := get $limits $key | default "" -}}
+{{- if not (regexMatch `^([0-9]+(\.[0-9]+)?[KMGTPE]?|[0-9]+(\.[0-9]+)?%)$` $value) -}}
+{{- fail (printf "Set data.tmuxMemory.%s to a size (e.g. 24G) or percentage before enabling tmux-memory" $key) -}}
+{{- end -}}
+{{- end }}
 [Scope]
-MemoryHigh=24G
-MemoryMax=32G
-MemorySwapMax=8G
+MemoryHigh={{ $limits.high }}
+MemoryMax={{ $limits.max }}
+MemorySwapMax={{ $limits.swap }}
 OOMPolicy=continue

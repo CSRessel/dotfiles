@@ -1,4 +1,4 @@
-overrideIfInstalled () {
+shortcutIfInstalled () {
     type "$2" >/dev/null 2>&1 && alias "$1"="$2"
 }
 
@@ -11,16 +11,16 @@ commandsAvailable() {
 }
 
 
-overrideIfInstalled vim lvim
-overrideIfInstalled kc kubectl
-overrideIfInstalled kx kubectx
+shortcutIfInstalled lv lvim
+shortcutIfInstalled kc kubectl
+shortcutIfInstalled kx kubectx
 if commandsAvailable bat; then
-    overrideIfInstalled cat bat
+    shortcutIfInstalled bcat bat
 else
-    overrideIfInstalled cat batcat
+    shortcutIfInstalled bcat batcat
 fi
-# overrideIfInstalled grep rg
-overrideIfInstalled fd fdfind
+# shortcutIfInstalled grep rg
+shortcutIfInstalled fdf fdfind
 
 chezmoiAliased() {
     if [ $# -eq 1 ]; then
@@ -37,26 +37,17 @@ chezmoiAliased() {
 }
 commandsAvailable chezmoi && alias ch=chezmoiAliased
 
-commandsAvailable tmux && alias tmux="tmux -L clifford-human-only"
-alias cp="cp -i" # confirm before overwriting something
-alias df="df -h" # human-readable sizes
-commandsAvailable less && alias more="less"
-commandsAvailable k9s && alias k9s="k9s --logoless"
+commandsAvailable tmux && alias tx="tmux -L clifford-human-only"
+alias cpi="cp -i" # confirm before overwriting something
+alias dfh="df -h" # human-readable sizes
+commandsAvailable less && alias lessmore="less"
+commandsAvailable k9s && alias k9="k9s --logoless"
 commandsAvailable bun && alias buni="bun i -g --ignore-scripts"
 
-{{ if eq .chezmoi.username "clifford" }}
-{{- /* only on personal machine */ -}}
+commandsAvailable minikube && alias mkc="minikube kubectl --"
+shortcutIfInstalled pd podman
+shortcutIfInstalled pdc podman-compose
 
-commandsAvailable minikube && alias kubectl="minikube kubectl --"
-commandsAvailable minikube && alias kc="minikube kubectl --"
-overrideIfInstalled docker podman
-overrideIfInstalled docker-compose podman-compose
-
-commandsAvailable rclone && alias obstatus="rclone check --filter '- .git/**' gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
-commandsAvailable rclone && alias obpull="rclone sync --filter '- .git/**' -i gdrive:/knowledgebase /home/clifford/Documents/knowledgebase/"
-commandsAvailable rclone && alias obpush="rclone sync --filter '- .git/**' -i /home/clifford/Documents/knowledgebase/ gdrive:/knowledgebase"
-
-{{- end }}
 
 commandsAvailable flatpak && alias network-displays="G_MESSAGES_DEBUG=all flatpak run org.gnome.NetworkDisplays"
 
@@ -107,88 +98,68 @@ wsp() {
 fi
 {{- end }}
 
-{{- /* Trash directory support for safe rm */ -}}
-{{ $hasTrash := false }}
-{{ $trashCommand := "" }}
-{{ $trashDir := joinPath .chezmoi.homeDir ".local/share/Trash" }}
-
-{{- if lookPath "gio" -}}
-{{ $hasTrash = true }}
-{{ $trashCommand = "gio trash" }}
-{{- else if lookPath "trash-put" -}}
-{{ $hasTrash = true }}
-{{ $trashCommand = "trash-put" }}
-{{- else if stat $trashDir -}}
-{{ $hasTrash = true }}
-{{ $trashCommand = "custom_trash" }}
-{{- end }}
-
-{{ if $hasTrash }}
-# Safe rm wrapper - moves files to trash instead of permanent deletion
-TRASH_DIR="{{ $trashDir }}"
-
-{{ if eq $trashCommand "custom_trash" }}
-# Custom trash implementation for systems without gio/trash-cli
-custom_trash() {
-    local trash_files="$TRASH_DIR/files"
-    local trash_info="$TRASH_DIR/info"
-    
-    mkdir -p "$trash_files" "$trash_info"
-    
-    for file in "$@"; do
-        if [ ! -e "$file" ]; then
-            echo "trash: cannot trash '$file': No such file or directory" >&2
-            continue
-        fi
-        
-        local basename=$(basename "$file")
-        local timestamp=$(date +%Y-%m-%dT%H:%M:%S)
-        local abs_path=$(realpath "$file")
-        
-        # Handle name collisions
-        local dest_name="$basename"
-        local counter=1
-        while [ -e "$trash_files/$dest_name" ]; do
-            dest_name="${basename}.${counter}"
-            counter=$((counter + 1))
-        done
-        
-        # Move file to trash
-        mv "$file" "$trash_files/$dest_name"
-        
-        # Create .trashinfo metadata
-        cat > "$trash_info/${dest_name}.trashinfo" <<EOF
-[Trash Info]
-Path=$abs_path
-DeletionDate=$timestamp
-EOF
-    done
-}
-{{ end }}
-
+# Keep rm recoverable. Unsupported flags fail; permanent deletion is explicit.
 safe_rm() {
-    local force_delete=0
-    local trash_args=()
-    
-    # Check for --really-delete flag to bypass trash
+    local arg file force_delete=0 ignore_missing=0 options=1
+    local files=() original=("$@")
     for arg in "$@"; do
-        if [ "$arg" = "--really-delete" ] || [ "$arg" = "--force-delete" ]; then
-            force_delete=1
-        else
-            trash_args+=("$arg")
+        if [ "$options" -eq 1 ]; then
+            case "$arg" in
+                --) options=0; continue ;;
+                --really-delete|--force-delete) force_delete=1; continue ;;
+            esac
         fi
+        files+=("$arg")
     done
-    
-    if [ $force_delete -eq 1 ]; then
-        command rm "${trash_args[@]}"
-    else
-        {{ $trashCommand }} "${trash_args[@]}"
+    if [ "$force_delete" -eq 1 ]; then
+        command rm "${files[@]}"
+        return $?
     fi
+    files=(); options=1
+    for arg in "${original[@]}"; do
+        if [ "$options" -eq 1 ]; then
+            case "$arg" in
+                --) options=0; continue ;;
+                -) ;;
+                -*)
+                    case "$arg" in
+                        *[!rRf-]*) printf 'safe_rm: unsupported option: %s\n' "$arg" >&2; return 2 ;;
+                    esac
+                    case "$arg" in *f*) ignore_missing=1 ;; esac
+                    continue ;;
+            esac
+        fi
+        files+=("$arg")
+    done
+    local targets=()
+    for file in "${files[@]}"; do
+        if [ "$ignore_missing" -eq 1 ] && [ ! -e "$file" ] && [ ! -L "$file" ]; then continue; fi
+        case "$file" in /*) targets+=("$file") ;; *) targets+=("$PWD/$file") ;; esac
+    done
+    [ "${#targets[@]}" -gt 0 ] || return 0
+    case "$(uname -s)" in
+        Darwin)
+            if [ -x /usr/bin/trash ]; then
+                /usr/bin/trash "${targets[@]}"
+            elif commandsAvailable trash; then
+                command trash "${targets[@]}"
+            else
+                printf 'safe_rm: native trash command is unavailable; nothing deleted\n' >&2
+                return 1
+            fi ;;
+        Linux)
+            if commandsAvailable gio; then
+                command gio trash -- "${targets[@]}"
+            elif commandsAvailable trash-put; then
+                command trash-put -- "${targets[@]}"
+            else
+                printf 'safe_rm: install gio or trash-cli; nothing deleted\n' >&2
+                return 1
+            fi ;;
+        *) printf 'safe_rm: unsupported OS; nothing deleted\n' >&2; return 1 ;;
+    esac
 }
-
-# Alias rm to safe_rm (users can still use \rm or command rm to bypass)
 alias rm='safe_rm'
-{{ end }}
 
 # Fuzzy finders (fzf vim, fzf make, fzf git log)
 if commandsAvailable fzf-tmux tmux lvim && { commandsAvailable fd || commandsAvailable fdfind; }; then
@@ -229,10 +200,10 @@ fi
 # nori-handroll
 export PATH="$HOME/.nori/handroll/bin:$PATH"
 if commandsAvailable nori-handroll; then
-alias claude="nori-handroll --skip-menu-exit claude --permission-mode auto"
-alias codex="nori-handroll --skip-menu-exit codex --approve-for-me"
-alias nori="nori-handroll --skip-menu-exit nori"
-alias pi="nori-handroll --skip-menu-exit pi"
+alias nclaude="nori-handroll --skip-menu-exit claude --permission-mode auto"
+alias ncodex="nori-handroll --skip-menu-exit codex --approve-for-me"
+alias nnori="nori-handroll --skip-menu-exit nori"
+alias npi="nori-handroll --skip-menu-exit pi"
 # End of Nori section
 
 alias hdr="nori-handroll"

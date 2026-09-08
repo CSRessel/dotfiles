@@ -1,0 +1,64 @@
+{
+  "modulePaths": {
+    "alacritty": [
+      ".config/alacritty"
+    ],
+    "ghostty": [
+      ".config/ghostty"
+    ],
+    "kitty": [
+      ".config/kitty"
+    ],
+    "lunarvim": [
+      ".config/lvim"
+    ],
+    "vscode": [
+      ".config/Code"
+    ],
+    "k9s": [
+      ".config/k9s"
+    ],
+    "marimo": [
+      ".config/marimo"
+    ],
+    "opencode": [
+      ".config/opencode"
+    ],
+    "tridactyl": [
+      ".config/tridactyl"
+    ],
+    "nethack": [
+      ".nethackrc"
+    ],
+    "warp": [
+      ".warp"
+    ],
+    "nix": [
+      ".config/nix"
+    ],
+    "poetry": [
+      ".config/pypoetry"
+    ],
+    "claude": [
+      ".claude"
+    ],
+    "gemini": [
+      ".gemini"
+    ],
+    "codex": [
+      ".codex"
+    ],
+    "tmux-memory": [
+      ".config/systemd/user"
+    ],
+    "mac-shortcuts": [
+      "mac_keyboard_shortcuts.sh"
+    ],
+    "local-scripts": [
+      ".local/bin"
+    ],
+    "user-oom-policy": [
+      ".config/systemd/user.conf.d"
+    ]
+  }
+}

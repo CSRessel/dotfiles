@@ -1,3 +1,12 @@
 {{- $email := promptStringOnce . "email" "Git email" -}}
+{{- $catalog := (include ".chezmoidata.json" | fromJson).modulePaths -}}
+{{- $modules := promptMultichoiceOnce . "modules" "Optional modules" (keys $catalog | sortAlpha) (list) -}}
 [data]
 email = {{ $email | quote }}
+modules = {{ $modules | toJson }}
+{{ if and (eq .chezmoi.os "linux") (has "tmux-memory" $modules) }}
+[data.tmuxMemory]
+high = {{ promptStringOnce . "tmuxMemory.high" "Tmux memory throttle threshold" "24G" | quote }}
+max = {{ promptStringOnce . "tmuxMemory.max" "Tmux memory hard limit" "32G" | quote }}
+swap = {{ promptStringOnce . "tmuxMemory.swap" "Tmux swap limit" "8G" | quote }}
+{{ end }}

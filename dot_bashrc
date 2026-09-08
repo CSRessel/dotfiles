@@ -8,6 +8,10 @@ case $- in
       *) return;;
 esac
 
+# A login .profile may already have sourced this file.
+[ "${dotfiles_bashrc_loaded:-}" != 1 ] || return
+dotfiles_bashrc_loaded=1
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -75,13 +79,13 @@ esac
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
+    : # Keep standard commands unchanged.
     #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+
+
+
 fi
 
 # colored GCC warnings and errors
@@ -94,16 +98,14 @@ alias l='ls -CF'
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+command -v notify-send >/dev/null 2>&1 && alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.sh_aliases ]; then
-    source ~/.sh_aliases
-fi
+
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -130,8 +132,4 @@ for editor in lvim nvim vim nano vi; do
 done
 unset editor
 
-# Load existing toolchains when present; choosing a replacement comes later.
-[ ! -r "$HOME/.cargo/env" ] || . "$HOME/.cargo/env"
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ ! -s "$NVM_DIR/nvm.sh" ] || . "$NVM_DIR/nvm.sh"
-[ ! -s "$NVM_DIR/bash_completion" ] || . "$NVM_DIR/bash_completion"
+[ ! -r "$HOME/.sh_aliases" ] || . "$HOME/.sh_aliases"

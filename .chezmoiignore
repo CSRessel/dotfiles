@@ -1,52 +1,29 @@
+# Repository-only files
 README.md
 docs/
 tests/
-
-# Deferred until the environment and app configuration chapters.
-.config/nix/
-.config/pypoetry/
-.claude/
-.gemini/
-
-# git-contribution-graph build artifacts
 git-contribution-graph/
-
-.vim
-# .vim/plugged/*
-# .vim/.git/*
-# .vim/.gitignore
-# .vim/.gitmodules
-# .vim/.gitignore
-
-.packages.md
-
 24-bit-color.sh
 
-# backup only, not to be applied
-.config/Code/User
+# Missing module selection means the portable shell/Git/tmux base only.
+{{ $enabled := get . "modules" | default (list) }}
+{{ range $name, $paths := .modulePaths }}
+{{ if not (has $name $enabled) }}
+{{ range $paths }}
+{{ . }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ if not (or (has "tmux-memory" $enabled) (has "user-oom-policy" $enabled)) }}
+.config/systemd
+{{ end }}
 
 {{ if ne .chezmoi.os "linux" }}
-# linux-only
-.bashrc
-.config/tridactyl
-.config/lvim/plugin
-.local
-.nethackrc
-.vim
-.config/k9s
-.config/kitty
-.config/nix
-
-
-build_githubgraph.sh
-catpuccin_tmux.sh
-rust_and_tools.sh
-
-
-{{- else if ne .chezmoi.os "darwin" }}
-# darwin (macOS) only
-.packages_mac.md
-run_once_mac_keyboard_shortcuts.sh.tmpl
+.config/systemd
+.local/bin/wsp-toggle
+{{ end }}
+{{ if ne .chezmoi.os "darwin" }}
 mac_keyboard_shortcuts.sh
 .warp
-{{- end }}
+{{ end }}

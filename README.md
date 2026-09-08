@@ -5,10 +5,10 @@ Generally biased for Pop!OS 24.04 / COSMIC (for code-as-config: settings, keybin
 
 ## Quickstart
 
-Install prerequisites:
+Install prerequisites on Pop!OS (macOS already includes Zsh; install Apple Command Line Tools with `xcode-select --install` if Git is missing):
 
 ```sh
-sudo apt update && sudo apt install -y ca-certificates curl git
+sudo apt update && sudo apt install -y ca-certificates curl git zsh
 ```
 
 Install chezmoi, clone, and inspect:
@@ -17,10 +17,20 @@ Install chezmoi, clone, and inspect:
 sh -c "$(curl -fsLS https://get.chezmoi.io)" -- -b "$HOME/.local/bin" init https://github.com/CSRessel/dotfiles.git && "$HOME/.local/bin/chezmoi" status
 ```
 
-Enter Git email when prompted.
+Enter Git email and select optional modules when prompted; none are enabled by default.
 The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chezmoi/chezmoi.toml`.
 
 ## Overview
+
+The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts, and `safe_rm`.
+It does not initialize language runtimes or development toolchain managers.
+Catppuccin loads if installed. The contribution graph builds on apply when Cargo exists
+and displays in Zsh login shells. Old launchers/icons and Obsidian sync aliases are removed.
+
+For this existing checkout, select modules with `chezmoi init`, then review the diff.
+Change later selections with `chezmoi edit-config`; [module settings](docs/modules.md)
+include per-machine Linux memory limits and the shortcut names.
+To make Zsh your login shell after installing it: `chsh -s "$(command -v zsh)"`, then log out and back in.
 
 ```sh
 ~/.local/bin/chezmoi diff
