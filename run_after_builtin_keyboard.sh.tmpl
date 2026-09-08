@@ -1,0 +1,58 @@
+{{ if and (eq .chezmoi.os "linux") (has "builtin-keyboard" (get . "modules" | default (list))) -}}
+#!/bin/sh
+set -eu
+
+skip() { printf 'builtin-keyboard: %s; skipping.\n' "$*"; exit 0; }
+for tool in systemd-hwdb udevadm install cmp readlink; do
+    command -v "$tool" >/dev/null 2>&1 || skip "$tool unavailable"
+done
+if [ "$(id -u)" -ne 0 ]; then
+    command -v sudo >/dev/null 2>&1 || skip 'sudo unavailable'
+fi
+
+device=/dev/input/by-path/platform-i8042-serio-0-event-kbd
+[ -c "$device" ] || skip 'internal keyboard unavailable'
+[ -r /sys/class/dmi/id/modalias ] || skip 'DMI identity unavailable'
+case "$(cat /sys/class/dmi/id/modalias)" in
+    *:svnFramework:pnLaptop13Pro\(IntelCoreUltraSeries3\):*) ;;
+    *) skip 'laptop model does not match' ;;
+esac
+event=$(basename "$(readlink -f "$device")")
+input=/sys/class/input/$event/device
+[ "$(cat "$input/name")" = 'AT Translated Set 2 keyboard' ] || skip 'keyboard name does not match'
+[ "$(cat "$input/phys")" = 'isa0060/serio0/input0' ] || skip 'keyboard connection does not match'
+[ "$(basename "$(readlink -f "$input/device/driver")")" = atkbd ] || skip 'keyboard driver does not match'
+
+source_file="$HOME/.config/builtin-keyboard/90-builtin-keyboard.hwdb"
+target=/etc/udev/hwdb.d/90-builtin-keyboard.hwdb
+[ -f "$source_file" ] || skip 'staged rule unavailable'
+as_root() {
+    if [ "$(id -u)" -eq 0 ]; then "$@"; else sudo "$@"; fi
+}
+
+# Run on every apply so missing hardware/tools and interrupted installs are retried.
+# Rebuilding and triggering also reapplies the rule if another tool changed the keymap.
+if ! cmp -s "$source_file" "$target"; then
+    as_root install -Dm644 "$source_file" "$target"
+fi
+as_root systemd-hwdb update
+as_root udevadm trigger --action=change "$device"
+as_root udevadm settle
+properties=$(udevadm info --query=property --name="$device")
+while IFS= read -r line; do
+    case "$line" in
+        ' KEYBOARD_KEY_'*)
+            expected=${line# }
+            case "
+$properties
+" in
+                *"
+$expected
+"*) ;;
+                *) printf 'builtin-keyboard: udev did not import %s\n' "$expected" >&2; exit 1 ;;
+            esac
+            ;;
+    esac
+done < "$source_file"
+printf 'builtin-keyboard: rule installed; udev imported all five mappings.\n'
+{{ end -}}

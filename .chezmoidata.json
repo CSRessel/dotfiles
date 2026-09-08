@@ -1,5 +1,8 @@
 {
   "modulePaths": {
+    "builtin-keyboard": [
+      ".config/builtin-keyboard"
+    ],
     "alacritty": [
       ".config/alacritty"
     ],

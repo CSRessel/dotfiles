@@ -36,8 +36,18 @@ To make Zsh your login shell after installing it: `chsh -s "$(command -v zsh)"`,
 ~/.local/bin/chezmoi diff
 ```
 
-TODO:
-Development environment management, COSMIC settings, and optional apps follow next.
+## Built-in keyboard
+
+Add `"builtin-keyboard"` to your modules with `chezmoi edit-config`, then `chezmoi diff`.
+Follow the [install/rollback runbook](docs/builtin-keyboard.md): Right Alt → Escape,
+Caps Lock → Control, Left Control → volume down, Escape → Caps Lock,
+Right Shift → Right Alt; Left Alt and Super stay normal.
+Run `chezmoi apply`; it installs and activates the native udev hwdb rule via sudo
+only when the required tools and matching internal keyboard are present.
+It targets this Framework model's internal keyboard, leaving external keyboards alone.
+COSMIC appearance and other desktop settings follow next.
+
+TODO: Development environment management and optional apps.
 
 [Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/codex.md)
 
