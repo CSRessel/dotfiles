@@ -54,6 +54,12 @@ window/workspace preferences, pointer sensitivity, touchpad natural scrolling,
 clock, and suspend settings. See the
 [captured settings](docs/cosmic.md). Fonts will be a separate module.
 
+## Fonts
+
+Enable `fonts` alongside `cosmic`, then `chezmoi diff` and `chezmoi apply`.
+Installs IBM Plex Sans with Noto fallback and FiraCode Nerd Font Mono, then sets
+desktop and generic font defaults. [Details](docs/fonts.md).
+
 TODO: Development environment management and optional apps.
 
 [Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/codex.md)

@@ -1,0 +1,31 @@
+{{ if and (eq .chezmoi.os "linux") (has "fonts" (get . "modules" | default (list))) -}}
+#!/bin/sh
+set -eu
+
+# Install first, then let chezmoi write the font preferences.
+command -v apt-get >/dev/null 2>&1 || { echo 'fonts: automatic installation requires apt-get' >&2; exit 1; }
+missing=''
+for package in fonts-ibm-plex fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji curl unzip fontconfig; do
+    if [ "$(dpkg-query -W -f='${Status}' "$package" 2>/dev/null || true)" != 'install ok installed' ]; then
+        missing="$missing $package"
+    fi
+done
+if [ -n "$missing" ]; then
+    sudo apt-get update
+    # Deliberate splitting: these are fixed package names above.
+    sudo apt-get install -y $missing
+fi
+
+version=3.5.1
+font_dir="$HOME/.local/share/fonts/dotfiles-firacode-$version"
+if [ ! -f "$font_dir/.complete" ]; then
+    work=$(mktemp -d)
+    trap 'rm -rf -- "$work"' EXIT HUP INT TERM
+    curl -fL --retry 3 -o "$work/FiraCode.zip" "https://github.com/ryanoasis/nerd-fonts/releases/download/v$version/FiraCode.zip"
+    printf '%s  %s\n' '239395baf60c89b2eaf4862b6b09db0ef95605cd3e8eef51c00345822a81a665' "$work/FiraCode.zip" | sha256sum -c -
+    mkdir -p "$font_dir"
+    unzip -oq "$work/FiraCode.zip" -d "$font_dir"
+    fc-cache -f "$font_dir"
+    touch "$font_dir/.complete"
+fi
+{{ end -}}

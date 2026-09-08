@@ -1,5 +1,10 @@
 {
   "modulePaths": {
+    "fonts": [
+      ".config/fontconfig/conf.d/60-dotfiles-fonts.conf",
+      ".config/cosmic/com.system76.CosmicTk/v1/interface_font",
+      ".config/cosmic/com.system76.CosmicTk/v1/monospace_font"
+    ],
     "cosmic": [
       ".config/cosmic"
     ],
