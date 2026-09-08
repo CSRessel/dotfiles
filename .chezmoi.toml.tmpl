@@ -1,6 +1,8 @@
 {{- $email := promptStringOnce . "email" "Git email" -}}
 {{- $catalog := (include ".chezmoidata.json" | fromJson).modulePaths -}}
 {{- $modules := promptMultichoiceOnce . "modules" "Optional modules" (keys $catalog | sortAlpha) (list) -}}
+umask = 0o022
+
 [data]
 email = {{ $email | quote }}
 modules = {{ $modules | toJson }}
