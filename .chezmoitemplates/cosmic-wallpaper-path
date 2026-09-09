@@ -1,0 +1,4 @@
+{{- /* Bump v1 when changing the rendering recipe. */ -}}
+{{- $sourceHash := include "docs/assets/cosmic/phytoplankton_bloom_nasa_oli2_20240121.jpg" | sha256sum -}}
+{{- $key := printf "%s:%s:v1" .chezmoi.hostname $sourceHash | sha256sum | trunc 16 -}}
+{{- printf "%s/.config/cosmic/wallpapers/phytoplankton-%s.jpg" .chezmoi.homeDir $key -}}

@@ -1,0 +1,26 @@
+{{ if and (eq .chezmoi.os "linux") (has "cosmic" (get . "modules" | default (list))) -}}
+#!/bin/sh
+set -eu
+
+output={{ includeTemplate "cosmic-wallpaper-path" . | trim | replace "'" "'\"'\"'" | squote }}
+# Generate once per hostname, source image and recipe; repair deleted output.
+[ -s "$output" ] && exit 0
+if command -v magick >/dev/null 2>&1; then
+    renderer=magick
+elif command -v convert >/dev/null 2>&1; then
+    renderer=convert
+else
+    echo 'cosmic-wallpaper: ImageMagick is required (install imagemagick, then retry chezmoi apply).' >&2
+    exit 1
+fi
+
+source_image={{ printf "%s/docs/assets/cosmic/phytoplankton_bloom_nasa_oli2_20240121.jpg" .chezmoi.sourceDir | replace "'" "'\"'\"'" | squote }}
+# ImageMagick hue is a percentage: 100 is unchanged, 200 is a full turn.
+hue=$((0x{{ .chezmoi.hostname | sha256sum | trunc 6 }} % 200))
+mkdir -p "$(dirname "$output")"
+temporary=$(mktemp "${output}.XXXXXX")
+trap 'rm -f -- "$temporary"' EXIT HUP INT TERM
+"$renderer" "$source_image" -modulate "125,125,$hue" -quality 95 "jpg:$temporary"
+mv -f -- "$temporary" "$output"
+printf 'cosmic-wallpaper: generated %s (hue %s).\n' "$output" "$hue"
+{{ end -}}

@@ -17,6 +17,9 @@
     "kitty": [
       ".config/kitty"
     ],
+    "ghostty": [
+      ".config/ghostty"
+    ],
     "lunarvim": [
       ".config/lvim"
     ],

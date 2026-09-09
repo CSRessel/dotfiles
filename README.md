@@ -48,11 +48,14 @@ only when the required tools and matching internal keyboard are present.
 It targets this Framework model's internal keyboard, leaving external keyboards alone.
 ## COSMIC desktop
 
-Add `"cosmic"` to your modules with `chezmoi edit-config`, then `chezmoi diff` and
-`chezmoi apply`. Native RON files capture wallpaper, compact appearance, panel/dock,
+Install ImageMagick (`sudo apt install imagemagick`) and add `"cosmic"` to your
+modules with `chezmoi edit-config`, then `chezmoi diff` and `chezmoi apply`.
+The phytoplankton wallpaper gets a stable bright coloration from the hostname.
+Native RON files capture wallpaper, compact appearance, panel/dock,
 window/workspace preferences, pointer sensitivity, touchpad natural scrolling,
 clock, and suspend settings. See the
-[captured settings](docs/mod_cosmic.md). Fonts will be a separate module.
+[captured settings and wallpaper runbook](docs/mod_cosmic.md).
+[Fonts](docs/mod_fonts.md) are a separate module.
 
 ## Fonts
 

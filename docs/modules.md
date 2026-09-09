@@ -2,8 +2,7 @@
 
 The shared base is Zsh, Bash, Git, tmux, and useful aliases on Linux and macOS.
 Original command names stay intact except `rm`, which uses recoverable trash.
-Toolchains and desktop preferences are opt-in. Ghostty config is managed
-unconditionally and is inert when Ghostty is absent.
+Toolchains and desktop preferences, including Ghostty, are opt-in.
 
 ## Catalog
 
@@ -14,7 +13,7 @@ unconditionally and is inert when Ghostty is absent.
 | [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC and Zed defaults when installed | Linux |
 | [cosmic](mod_cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
-| `alacritty`, `kitty` | Terminal preferences | Linux / macOS |
+| `alacritty`, `kitty`, `ghostty` | Terminal preferences | Linux / macOS |
 | `warp` | Terminal preferences | macOS |
 | `lunarvim`, `vscode` | Editor preferences | App-dependent |
 | [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
@@ -35,6 +34,7 @@ by default. [The catalog](../.chezmoidata.json) maps names to managed paths;
 [ignore rules](../.chezmoiignore) enforce selection and platform boundaries.
 
 - `fonts` needs `cosmic` for COSMIC font preferences; Fontconfig settings stand alone.
+- `cosmic` requires ImageMagick for hostname-colored wallpaper generation; install it manually before applying.
 - `tmux-memory` requires `data.tmuxMemory.high`, `.max`, and `.swap`; it limits existing scopes, not their creation.
 - Most modules configure existing tools. `fonts` installs dependencies; `builtin-keyboard` and `boot-theme` install system configuration through sudo.
 - Disabling a module stops management. It does not remove applied files, packages, or system changes.

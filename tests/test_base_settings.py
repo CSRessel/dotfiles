@@ -1,5 +1,4 @@
 """Exercise module boundaries and recoverable deletion without touching the real home."""
-import json
 import os
 from pathlib import Path
 import shutil
@@ -11,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class BaseSettingsTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory(prefix="dotfiles-base-")
         self.addCleanup(self.temp.cleanup)
         self.home = Path(self.temp.name)
@@ -24,14 +23,14 @@ class BaseSettingsTest(unittest.TestCase):
                      "--destination", str(self.home), "--config", str(self.config),
                      "--persistent-state", str(self.home / "state.db")]
 
-    def cm(self, *args, ok=True):
+    def cm(self, *args: str, ok: bool = True) -> subprocess.CompletedProcess[str]:
         p = subprocess.run(self.base + list(args), env=self.env,
                            capture_output=True, text=True)
         if ok:
             self.assertEqual(p.returncode, 0, p.stderr)
         return p
 
-    def test_base_and_selected_modules(self):
+    def test_base_and_selected_modules(self) -> None:
         paths = self.cm("managed").stdout.splitlines()
         for path in [".bashrc", ".bash_profile", ".zshrc", ".gitconfig", ".tmux.conf"]:
             self.assertIn(path, paths)
@@ -44,15 +43,15 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertIn(".codex/config.toml", paths)
         self.assertNotIn(".claude/settings.json", paths)
 
-    def test_macos_excludes_linux_policy(self):
-        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "ghostty"]\n')
-        self.base += ["--override-data", json.dumps({"chezmoi": {"os": "darwin"}})]
+    def test_macos_excludes_linux_policy(self) -> None:
+        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "ghostty"]\n'
+                               '[data.chezmoi]\nos = "darwin"\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".bashrc", paths)
         self.assertIn(".config/ghostty/config", paths)
         self.assertFalse(any(path.startswith(".config/systemd") for path in paths))
 
-    def test_memory_limits_are_explicit(self):
+    def test_memory_limits_are_explicit(self) -> None:
         self.config.write_text('[data]\nmodules = ["tmux-memory"]\n')
         target = str(self.home / ".config/systemd/user/tmux-spawn-.scope.d/50-oom-protection.conf")
         p = self.cm("cat", target, ok=False)
@@ -65,13 +64,13 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertNotIn(".config/systemd/user.conf.d/10-oom-policy.conf",
                          self.cm("managed").stdout)
 
-    def test_init_preserves_module_selection(self):
+    def test_init_preserves_module_selection(self) -> None:
         self.cm("init", "--promptDefaults")
         self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["ghostty"]\n')
         self.cm("init", "--no-tty")
         self.assertIn('"ghostty"', self.config.read_text())
 
-    def test_aliases_and_trash_on_available_shells(self):
+    def test_aliases_and_trash_on_available_shells(self) -> None:
         aliases = self.home / "aliases.sh"
         aliases.write_text(self.cm("cat", str(self.home / ".sh_aliases")).stdout)
         bindir = self.home / "bin"
