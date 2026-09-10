@@ -41,11 +41,15 @@ flatpak install --user flathub app.zen_browser.zen com.bitwarden.desktop md.obsi
 
 ## Native installs
 
-Use upstream instructions; installer commands and versions are not copied here.
+Entries must link to the tool's official website or installation documentation.
+Do not copy installer commands or pin versions here: commands can quickly become
+outdated, and embedded download URLs can suffer from link rot.
 Tailscale and ChatGPT use native installers, even when backed by apt packages.
 
 - [Ghostty — ghostty-ubuntu](https://github.com/mkasberg/ghostty-ubuntu): community native `.deb` for Pop!OS 24.04; updates use the same installer.
 - [mise](https://mise.jdx.dev/installing-mise.html): installs the manager; then follow [development tools setup](dev-tools.md#setup-and-updates).
+- [direnv](https://direnv.net/docs/installation.html)
+- [Nix](https://nixos.org/download/#nix): install manually for project flakes.
 - [Oh My Zsh](https://ohmyz.sh/#install)
 - [Tailscale](https://tailscale.com/docs/install/linux)
 - [ChatGPT desktop](https://learn.chatgpt.com/docs/linux/linux-app)
