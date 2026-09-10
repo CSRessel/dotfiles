@@ -9,7 +9,7 @@ Generally biased for Pop!OS 24.04 / COSMIC (for code-as-config: settings, keybin
 Install prerequisites on Pop!OS (macOS already includes Zsh; install Apple Command Line Tools with `xcode-select --install` if Git is missing):
 
 ```sh
-sudo apt update && sudo apt install -y ca-certificates curl git zsh
+sudo apt update && sudo apt install -y ca-certificates curl git zsh imagemagick
 ```
 
 Install chezmoi, clone, and inspect:
@@ -23,74 +23,20 @@ The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chez
 
 ## Overview
 
-The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases. A series of composable modules support the other configs.
-
-It does not currently handle language runtimes or development toolchains.
-(Extras: catppuccin loads if installed. The contribution graph builds on apply when Cargo exists and displays in Zsh login shells.)
+The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases. A series of composable modules support the other configs. It does not currently handle language runtimes or development toolchains (coming shortly, with cleaner setup via mises or devenv or just more nix flakes).
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
-Change later selections with `chezmoi edit-config`; [module settings](docs/modules.md)
-include per-machine Linux memory limits and the shortcut names.
-To make Zsh login shell after installing it: `chsh -s "$(command -v zsh)"`, then log out and back in.
+Change later selections with `chezmoi edit-config`
 
-```sh
-~/.local/bin/chezmoi diff
-```
+## Docs
 
-## Built-in keyboard
+- [Module settings overview](docs/modules.md)
+- [Expected packages and defaults](docs/packages.md)
+- [Development environments]()
 
-Add `"builtin-keyboard"` to your modules with `chezmoi edit-config`, then `chezmoi diff`.
-Follow the [install/rollback runbook](docs/mod_builtin-keyboard.md): Right Alt → Escape,
-Caps Lock → Control, Left Control → volume down, Escape → Caps Lock,
-Right Shift → Right Alt; Left Alt and Super stay normal.
-Run `chezmoi apply`; once per script/rule version, it installs and activates the native udev hwdb rule via sudo
-only when the required tools and matching internal keyboard are present.
-It targets this Framework model's internal keyboard, leaving external keyboards alone.
-## COSMIC desktop
+TODO: Development environment management.
 
-Install ImageMagick (`sudo apt install imagemagick`) and add `"cosmic"` to your
-modules with `chezmoi edit-config`, then `chezmoi diff` and `chezmoi apply`.
-The phytoplankton wallpaper gets a stable bright coloration from the hostname.
-Native RON files capture wallpaper, compact appearance, panel/dock,
-window/workspace preferences, pointer sensitivity, touchpad natural scrolling,
-clock, and suspend settings. See the
-[captured settings and wallpaper runbook](docs/mod_cosmic.md).
-[Fonts](docs/mod_fonts.md) are a separate module.
-
-## Fonts
-
-Enable `fonts` alongside `cosmic`, then `chezmoi diff` and `chezmoi apply`.
-Installs IBM Plex Sans with Noto fallback and FiraCode Nerd Font Mono, then sets
-desktop and generic font defaults. [Details](docs/mod_fonts.md).
-
-## Boot appearance
-
-Enable `boot-theme`, then `chezmoi diff` and `chezmoi apply` when ready. Installs
-coffee for boot splash and lock for disk encryption via sudo, then rebuilds initramfs.
-[Install/rollback](docs/mod_boot-theme.md). Key artwork for COSMIC login is staged only;
-login wallpaper support remains unresolved.
-
-[Cat assets](docs/assets/boot-cat/): `cat.txt`, `render.py`, and four emoji variants
-(coffee/key/laptop/lock), each white on black, transparent white (640 × 448), and
-left-offset on black (1920 × 1200), plus 320 × 224 Plymouth exports for coffee/lock. Based on [my website](https://clifford.ressel.fyi/)
-(CC BY-SA 4.0); fixed character spacing with FiraCode Nerd Font and Unicode fallback.
-
-To regenerate with the fonts module and `python3-gi-cairo`, `python3-cairo`, and
-`gir1.2-pango-1.0` installed:
-
-```sh
-python3 docs/assets/boot-cat/render.py
-```
-
-[Expected packages and desktop defaults](docs/packages.md): apt/Flatpak commands
-and native installer links. Enable `desktop-apps` to manage Firefox, VLC and Zed
-defaults when installed.
-
-TODO: Development environment management and additional apps.
-
-[Chezmoi installation](https://www.chezmoi.io/install/) · [Configuration internals](docs/mod_codex.md)
-
-### Philosophy
+## Philosophy
 
 1. Maximize consistency everywhere
 2. Minimize future cost to revise
