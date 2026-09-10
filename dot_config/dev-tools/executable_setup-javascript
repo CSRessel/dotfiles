@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+cd "$HOME"
+. "$HOME/.config/dev-tools/env.sh"
+command -v mise >/dev/null 2>&1 || { echo "Install mise first." >&2; exit 1; }
+mise install node bun
+mise exec -- node --version
+mise exec -- npm --version
+mise exec -- bun --version

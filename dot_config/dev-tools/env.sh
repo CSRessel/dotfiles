@@ -15,6 +15,8 @@ dev_tools_prepend() {
 }
 
 dev_tools_prepend "${CARGO_HOME:-$HOME/.cargo}/bin"
+# Bun global applications use this directory; mise shims precede an old Bun binary.
+dev_tools_prepend "${BUN_INSTALL:-$HOME/.bun}/bin"
 dev_tools_prepend "$HOME/.local/bin"
 dev_tools_prepend "${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims"
 unset -f dev_tools_prepend

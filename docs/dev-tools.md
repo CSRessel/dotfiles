@@ -145,3 +145,35 @@ it explicitly, for example with `uv tool install poetry`.
 
 Reference: [uv Python installation](https://docs.astral.sh/uv/guides/install-python/),
 [uv scripts](https://docs.astral.sh/uv/guides/scripts/).
+
+## JavaScript and TypeScript
+
+Run `~/.config/dev-tools/setup-javascript` after applying. Mise installs Node's
+current LTS release (with npm/npx) and Bun (with bunx). Update with
+`mise upgrade node bun` from home; use mise rather than `bun upgrade`.
+The rolling `lts` default may cross a Node major release when LTS changes.
+
+Existing `.nvmrc` and `.node-version` files are supported through mise's Node
+idiomatic-file setting. Run `mise install` in an existing project to install its
+requested version; shims select it on invocation. A conflicting Node declaration
+in `mise.toml` takes precedence. Do not initialize nvm or asdf alongside this setup.
+Use `mise use node@VERSION` or `mise use bun@VERSION` for new project declarations.
+
+TypeScript, linters and build tools belong in `package.json` dev dependencies.
+Keep the project's selected package manager, scripts, and lockfile; this does not
+convert npm/pnpm/Yarn projects to Bun. Install a project's required pnpm or Yarn
+explicitly; Node/npm/Bun do not guarantee those commands are available.
+
+The shared PATH retains Bun's global application directory (`~/.bun/bin`, or
+`$BUN_INSTALL/bin`) behind mise shims on fresh setup. npm globals from nvm are tied
+to the old Node installation; inventory and reinstall desired applications under
+the new Node, or declare standalone CLIs in mise. Bun global applications remain
+in their existing location. Do not assume an old `~/.bun/_bun` completion script
+matches the new runtime; regenerate completions with the installed Bun if desired.
+
+Check `command -v node npm bun`, their version output, and a representative
+project's existing test command. Check again inside a flake to verify its runtimes
+win, and after leaving it to verify personal defaults return.
+
+Reference: [mise Node](https://mise.jdx.dev/lang/node.html),
+[mise Bun](https://mise.jdx.dev/lang/bun.html).
