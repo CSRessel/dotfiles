@@ -13,7 +13,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | --- | --- | --- |
 | [builtin-keyboard](mod_builtin-keyboard.md) | Native remapping of the matching Framework internal keyboard; external keyboards untouched | Linux |
 | [fonts](mod_fonts.md) | IBM Plex Sans, Noto fallback, FiraCode Nerd Font Mono | Linux with apt |
-| [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC and Zed defaults when installed | Linux |
+| [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC, Zed and Ghostty defaults when installed | Linux |
 | [cosmic](mod_cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
 | `alacritty`, `kitty`, `ghostty` | Terminal preferences | Linux / macOS |

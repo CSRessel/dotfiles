@@ -31,6 +31,9 @@ config.optionxform = str
 original = sys.stdin.read()
 config.read_string(original)
 updates = {}
+terminal = desktop(['com.mitchellh.ghostty.desktop'])
+if terminal:
+    updates.update(dict.fromkeys(['x-scheme-handler/terminal', 'application/x-terminal-emulator'], terminal + ';'))
 browser = desktop(['firefox.desktop', 'org.mozilla.firefox.desktop'])
 if browser:
     updates.update(dict.fromkeys(['text/html', 'application/xhtml+xml', 'x-scheme-handler/chrome', 'x-scheme-handler/http', 'x-scheme-handler/https', 'x-scheme-handler/about', 'x-scheme-handler/unknown'], browser + ';'))

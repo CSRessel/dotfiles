@@ -71,15 +71,23 @@ The Linux-only `desktop-apps` module merges `~/.config/mimeapps.list`:
 | Web browser | Firefox |
 | Music and video | VLC |
 | GUI text editor | Zed |
+| Terminal | Ghostty |
 
 [The modifier](../dot_config/modify_mimeapps.list) selects only installed desktop
 entries, preferring native entries when available. Missing apps leave existing
 associations intact; a later apply picks up newly installed apps. Other defaults
 and association groups are preserved; INI formatting and comments are not.
 Text/empty files use Zed; HTML uses Firefox. Audio/video types follow the local
-MIME database, plus COSMIC's music associations.
+MIME database, plus COSMIC's music associations. Ghostty uses
+`x-scheme-handler/terminal` and `application/x-terminal-emulator`; its appearance
+and shell preferences remain in the separate `ghostty` module.
 
 COSMIC's [Default Applications implementation](https://github.com/pop-os/cosmic-settings/blob/master/cosmic-settings/src/pages/applications/default_apps.rs)
-uses these same XDG associations for browser, music, video and editor. There is
-no separate RON preference for these roles. File manager, terminal and mail defaults
-remain local. This module works independently of `cosmic`.
+uses these same XDG associations for browser, music, video, editor and terminal.
+COSMIC's terminal keyboard shortcut is a separate `Terminal` command in
+`~/.config/cosmic/com.system76.CosmicSettings.Shortcuts/v1/system_actions` and
+remains local. Selecting Ghostty in COSMIC Settings also updates that command.
+Desktop-specific files such as `~/.config/cosmic-mimeapps.list` take precedence
+over the generic defaults; remove a conflicting terminal override or select
+Ghostty in COSMIC Settings. File manager and mail defaults remain local.
+This module works independently of `cosmic`.
