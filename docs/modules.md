@@ -22,6 +22,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
 | `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
 | `k9s`, `marimo`, `tridactyl`, `nethack` | Application preferences | App-dependent |
+| [dev-tools](dev-tools.md) | Global mise tools and shared shell integration | Linux / macOS |
 | `nix`, `poetry` | Optional tool configs; no toolchain installation | Tool-dependent |
 | `tmux-memory` | Per-machine memory limits for matching tmux scopes | Linux / systemd |
 | `user-oom-policy` | User services continue after an OOM kill | Linux / systemd |

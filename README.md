@@ -23,7 +23,7 @@ The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chez
 
 ## Overview
 
-The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases. A series of composable modules support the other configs. It does not currently handle language runtimes or development toolchains (coming shortly, with cleaner setup via mises or devenv or just more nix flakes).
+The shared base is Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases. A series of composable modules support the other configs. The optional `dev-tools` module provides a global mise configuration and shared shell integration.
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
 Change later selections with `chezmoi edit-config`
@@ -32,9 +32,8 @@ Change later selections with `chezmoi edit-config`
 
 - [Module settings overview](docs/modules.md)
 - [Expected packages and defaults](docs/packages.md)
-- [Development environments]()
+- [Development tools and environments](docs/dev-tools.md)
 
-TODO: Development environment management.
 
 ## Philosophy
 

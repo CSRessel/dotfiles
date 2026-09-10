@@ -123,6 +123,10 @@ fi
 
 export PATH="$HOME/.local/bin:$PATH"
 
+{{ template "dev-tools-shell" . }}
+
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook bash)"
+
 # Use an installed editor; optional toolchains are configured separately.
 for editor in lvim nvim vim nano vi; do
     if command -v "$editor" >/dev/null 2>&1; then
