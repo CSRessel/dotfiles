@@ -3,3 +3,6 @@
 # Install rustup itself; rustup owns compiler selection (including project pins).
 "aqua:rust-lang/rustup" = "latest"
 sccache = "latest"
+
+# uv owns Python interpreters and environments.
+uv = "latest"

@@ -27,7 +27,7 @@ independent legacy module for projects that still need its configuration.
 2. Enable `dev-tools`, review `chezmoi diff`, and run `chezmoi apply`.
 3. Open a fresh shell. From your home directory, run `mise install` to install
    the global declarations (running it in a project also loads that project's config).
-4. Follow the language initialization instructions below as they are introduced.
+4. Follow the language initialization instructions below.
 
 Edit `dot_config/mise/config.toml` in the chezmoi source to change shared defaults,
 then apply. `mise use --global` edits the destination instead; use `chezmoi re-add
@@ -112,3 +112,36 @@ is enabled, so it can find Cargo without an interactive shell. If it was skipped
 before Rust installation, build
 `git-contribution-graph` manually with `cargo build --release --locked` and copy
 its executable to `~/.local/bin/githubgraph`.
+
+## Python
+
+Run `~/.config/dev-tools/setup-python` after applying. It installs uv through
+mise and Python 3.14 through uv. Pass a version, for example
+`~/.config/dev-tools/setup-python 3.13`, for another interpreter. The default
+bootstrap installs a versioned `python3.14` executable in uv's normal bin location
+(`~/.local/bin` by default); it does not replace `python` or system `python3`.
+Use `uv run --python 3.14 script.py` when the interpreter matters.
+
+Projects own `.python-version`, `pyproject.toml`, and `uv.lock`:
+
+```sh
+uv python pin 3.14
+uv sync --locked
+uv run python your_script.py
+```
+
+For standalone scripts, `uv init --script script.py` and
+`uv add --script script.py requests` record inline dependencies.
+Use `uv lock --script script.py` when a script needs a dependency lockfile.
+Use `uv tool install PACKAGE` for persistent applications and `uvx PACKAGE`
+for occasional use. Existing tools can be inspected with `uv tool list`.
+There is no mise Python declaration, pyenv initialization, or automatic virtualenv
+activation; uv owns `.venv` and `uv run` supplies the correct project context.
+
+Upgrade the uv executable with `mise upgrade uv` from home, and Python with
+uv's Python management commands. Do not use `uv self update` for a mise install.
+The old Poetry config remains optional; projects requiring Poetry must install
+it explicitly, for example with `uv tool install poetry`.
+
+Reference: [uv Python installation](https://docs.astral.sh/uv/guides/install-python/),
+[uv scripts](https://docs.astral.sh/uv/guides/scripts/).

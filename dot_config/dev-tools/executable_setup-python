@@ -1,0 +1,10 @@
+#!/bin/sh
+# Explicit personal Python bootstrap. Optional argument selects a Python version.
+set -eu
+cd "$HOME"
+. "$HOME/.config/dev-tools/env.sh"
+command -v mise >/dev/null 2>&1 || { echo "Install mise first." >&2; exit 1; }
+mise install uv
+# Install a versioned executable; preserve system Python and unversioned aliases.
+mise exec -- uv python install "${1:-3.14}"
+mise exec -- uv python list --only-installed
