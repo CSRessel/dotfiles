@@ -3,6 +3,7 @@
 # {{ include "git-contribution-graph/src/main.rs" | sha256sum }}
 # {{ include "git-contribution-graph/src/data.rs" | sha256sum }}
 # {{ include "git-contribution-graph/src/display.rs" | sha256sum }}
+# Installed binary present: {{ if stat (joinPath .chezmoi.homeDir ".local/bin/githubgraph") }}yes{{ else }}no{{ end }}
 set -euo pipefail
 
 {{ template "dev-tools-shell" . }}

@@ -124,6 +124,9 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 
 {{ template "dev-tools-shell" . }}
+{{ if has "dev-tools" (get . "modules" | default (list)) -}}
+[ ! -r "$HOME/.config/dev-tools/completions.sh" ] || . "$HOME/.config/dev-tools/completions.sh"
+{{- end }}
 
 command -v direnv >/dev/null 2>&1 && eval "$(direnv hook bash)"
 

@@ -51,11 +51,11 @@ shortcutIfInstalled pdc podman-compose
 
 commandsAvailable flatpak && alias network-displays="G_MESSAGES_DEBUG=all flatpak run org.gnome.NetworkDisplays"
 
-if commandsAvailable entr pytest && { commandsAvailable fd || commandsAvailable fdfind; }; then
+if commandsAvailable entr uv && { commandsAvailable fd || commandsAvailable fdfind; }; then
 watchpytest () {
     local watch_dir=${1:-"./"} finder
     finder=$(command -v fd || command -v fdfind)
-    "$finder" . -e py "$watch_dir" | entr -d pytest "$watch_dir"
+    "$finder" . -e py "$watch_dir" | entr -d uv run pytest "$watch_dir"
 }
 fi
 

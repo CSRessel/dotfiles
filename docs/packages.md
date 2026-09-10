@@ -9,7 +9,7 @@ Shell, Git tools, Neovim, JSON/YAML utilities, archives, keyboard diagnostics,
 and native Firefox:
 
 ```sh
-sudo apt update && sudo apt install -y ca-certificates curl git zsh tmux tree neovim gh jq yq unzip evtest fd-find firefox
+sudo apt update && sudo apt install -y ca-certificates curl git zsh tmux tree neovim gh jq yq unzip evtest fd-find firefox entr
 ```
 
 ### Docker Engine

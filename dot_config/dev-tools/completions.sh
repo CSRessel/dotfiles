@@ -1,0 +1,33 @@
+# Interactive shells only. Generate from installed versions; never install files
+# through tool-specific completion installers or register a mise PATH hook.
+if [ -n "${ZSH_VERSION:-}" ]; then
+    if ! typeset -f compdef >/dev/null 2>&1; then
+        autoload -Uz compinit
+        compinit
+    fi
+    dev_tools_shell=zsh
+elif [ -n "${BASH_VERSION:-}" ]; then
+    dev_tools_shell=bash
+else
+    return
+fi
+
+command -v mise >/dev/null 2>&1 && eval "$(mise completion "$dev_tools_shell")"
+command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion "$dev_tools_shell")"
+command -v uvx >/dev/null 2>&1 && eval "$(uvx --generate-shell-completion "$dev_tools_shell")"
+if command -v rustup >/dev/null 2>&1; then
+    eval "$(rustup completions "$dev_tools_shell")"
+    if [ "$dev_tools_shell" = zsh ]; then
+        # Cargo ships an autoload body, which must execute during completion.
+        _dev_tools_cargo() { eval "$(rustup completions zsh cargo)"; }
+        compdef _dev_tools_cargo cargo
+    else
+        eval "$(rustup completions bash cargo)"
+    fi
+fi
+# Captured stdout makes Bun print completions instead of modifying shell files.
+command -v bun >/dev/null 2>&1 && eval "$(SHELL="/bin/$dev_tools_shell" bun completions)"
+if [ "$dev_tools_shell" = bash ] && command -v npm >/dev/null 2>&1; then
+    eval "$(npm completion)"
+fi
+unset dev_tools_shell
