@@ -1,4 +1,8 @@
-shortcutIfInstalled () {
+# Shared aliases and functions for interactive Bash and Zsh.
+
+# ---- Dependency checks ----
+
+shortcutIfInstalled() {
     type "$2" >/dev/null 2>&1 && alias "$1"="$2"
 }
 
@@ -10,18 +14,122 @@ commandsAvailable() {
     done
 }
 
+# ---- Everyday shortcuts ----
 
 shortcutIfInstalled lv lvim
-shortcutIfInstalled kc kubectl
-shortcutIfInstalled kx kubectx
 if commandsAvailable bat; then
     shortcutIfInstalled bcat bat
 else
     shortcutIfInstalled bcat batcat
 fi
-# shortcutIfInstalled grep rg
 shortcutIfInstalled fdf fdfind
 
+alias cpi="cp -i" # Confirm before overwriting.
+alias dfh="df -h" # Human-readable sizes.
+commandsAvailable less && alias lessmore="less"
+commandsAvailable flatpak && alias network-displays="G_MESSAGES_DEBUG=all flatpak run org.gnome.NetworkDisplays"
+
+# ---- Safe deletion ----
+
+# Keep rm recoverable. Unsupported flags fail; permanent deletion is explicit.
+safe_rm() {
+    local arg file force_delete=0 ignore_missing=0 options=1
+    local files=() original=("$@")
+
+    # Explicit permanent deletion forwards the remaining arguments to rm.
+    for arg in "$@"; do
+        if [ "$options" -eq 1 ]; then
+            case "$arg" in
+                --)
+                    options=0
+                    continue
+                    ;;
+                --really-delete|--force-delete)
+                    force_delete=1
+                    continue
+                    ;;
+            esac
+        fi
+        files+=("$arg")
+    done
+    if [ "$force_delete" -eq 1 ]; then
+        command rm "${files[@]}"
+        return $?
+    fi
+
+    # Trash accepts recursive/force flags only; reject all other options.
+    files=()
+    options=1
+    for arg in "${original[@]}"; do
+        if [ "$options" -eq 1 ]; then
+            case "$arg" in
+                --)
+                    options=0
+                    continue
+                    ;;
+                -) ;;
+                -*)
+                    case "$arg" in
+                        *[!rRf-]*)
+                            printf 'safe_rm: unsupported option: %s\n' "$arg" >&2
+                            return 2
+                            ;;
+                    esac
+                    case "$arg" in
+                        *f*) ignore_missing=1 ;;
+                    esac
+                    continue
+                    ;;
+            esac
+        fi
+        files+=("$arg")
+    done
+
+    # Absolute paths keep filenames beginning with a dash unambiguous.
+    local targets=()
+    for file in "${files[@]}"; do
+        if [ "$ignore_missing" -eq 1 ] && [ ! -e "$file" ] && [ ! -L "$file" ]; then
+            continue
+        fi
+        case "$file" in
+            /*) targets+=("$file") ;;
+            *) targets+=("$PWD/$file") ;;
+        esac
+    done
+    [ "${#targets[@]}" -gt 0 ] || return 0
+
+    case "$(uname -s)" in
+        Darwin)
+            if [ -x /usr/bin/trash ]; then
+                /usr/bin/trash "${targets[@]}"
+            elif commandsAvailable trash; then
+                command trash "${targets[@]}"
+            else
+                printf 'safe_rm: native trash command is unavailable; nothing deleted\n' >&2
+                return 1
+            fi
+            ;;
+        Linux)
+            if commandsAvailable gio; then
+                command gio trash -- "${targets[@]}"
+            elif commandsAvailable trash-put; then
+                command trash-put -- "${targets[@]}"
+            else
+                printf 'safe_rm: install gio or trash-cli; nothing deleted\n' >&2
+                return 1
+            fi
+            ;;
+        *)
+            printf 'safe_rm: unsupported OS; nothing deleted\n' >&2
+            return 1
+            ;;
+    esac
+}
+alias rm='safe_rm'
+
+# ---- Chezmoi and tmux ----
+
+# ch st / ch di: abbreviate status and diff; pass other commands through.
 chezmoiAliased() {
     if [ $# -eq 1 ]; then
         if [ "$1" = "st" ]; then
@@ -38,174 +146,121 @@ chezmoiAliased() {
 commandsAvailable chezmoi && alias ch=chezmoiAliased
 
 commandsAvailable tmux && alias tx="tmux -L clifford-human-only"
-alias cpi="cp -i" # confirm before overwriting something
-alias dfh="df -h" # human-readable sizes
-commandsAvailable less && alias lessmore="less"
-commandsAvailable k9s && alias k9="k9s --logoless"
-commandsAvailable bun && alias buni="bun i -g --ignore-scripts"
 
+# ---- Containers and Kubernetes ----
+
+shortcutIfInstalled kc kubectl
+shortcutIfInstalled kx kubectx
+commandsAvailable k9s && alias k9="k9s --logoless"
 commandsAvailable minikube && alias mkc="minikube kubectl --"
 shortcutIfInstalled pd podman
 shortcutIfInstalled pdc podman-compose
 
+# ---- Development commands ----
 
-commandsAvailable flatpak && alias network-displays="G_MESSAGES_DEBUG=all flatpak run org.gnome.NetworkDisplays"
+commandsAvailable bun && alias buni="bun i -g --ignore-scripts"
 
+# watchpytest [directory]: rerun pytest when Python files change.
 if commandsAvailable entr uv && { commandsAvailable fd || commandsAvailable fdfind; }; then
-watchpytest () {
-    local watch_dir=${1:-"./"} finder
-    finder=$(command -v fd || command -v fdfind)
-    "$finder" . -e py "$watch_dir" | entr -d uv run pytest "$watch_dir"
-}
+    watchpytest() {
+        local watch_dir=${1:-"./"} finder
+        finder=$(command -v fd || command -v fdfind)
+        "$finder" . -e py "$watch_dir" | entr -d uv run pytest "$watch_dir"
+    }
 fi
 
 commandsAvailable uvx && alias mitm="uvx mitmproxy"
-commandsAvailable bunx && alias ai="bunx opencode-ai run -m 'opencode/kimi-k2.5-free'" # currently free, and very fast
+commandsAvailable bunx && alias ai="bunx opencode-ai run -m 'opencode/kimi-k2.5-free'"
 
-{{- /* whisper.cpp dictation toggle — only if the vulkan build and model are present */ -}}
-{{ $whisperBin := joinPath .chezmoi.homeDir "Documents/builds/whisper.cpp/build-vulkan/bin/whisper-cli" }}
-{{ $whisperModel := joinPath .chezmoi.homeDir "Documents/builds/whisper.cpp/models/ggml-base.en.bin" }}
-{{ if and (stat $whisperBin) (stat $whisperModel) }}
-if commandsAvailable parecord && { commandsAvailable wl-copy || commandsAvailable xclip; }; then
-# whisper.cpp dictation
-#   wsp        : interactive — press [Enter] to stop, colored inline output
-#   wsp-toggle : toggle-style for DE keyboard shortcut (see ~/.local/bin/wsp-toggle)
-alias wsp-toggle="$HOME/.local/bin/wsp-toggle"
-wsp() {
-    local rec whisper model text
-    rec=$(mktemp --suffix=.wav)
-    whisper=~/Documents/builds/whisper.cpp/build-vulkan/bin/whisper-cli
-    model=~/Documents/builds/whisper.cpp/models/ggml-base.en.bin
+# ---- Fuzzy finders ----
 
-    printf '\033[1;31m●\033[0m \033[1mRecording...\033[0m press [Enter] to stop '
-    parecord --channels=1 --rate=16000 --file-format=wav "$rec" 2>/dev/null &
-    local pid=$!
-    read -r
-    kill -INT $pid 2>/dev/null; wait $pid 2>/dev/null
-
-    printf '\r\033[K\033[1;33m…\033[0m transcribing\n'
-    text=$("$whisper" -m "$model" -f "$rec" -nt -np 2>/dev/null \
-            | sed 's/^ *//;s/ *$//' | tr '\n' ' ' | sed 's/ *$//')
-    command rm -f "$rec"
-
-    if command -v wl-copy >/dev/null; then
-        printf '%s' "$text" | wl-copy
-    else
-        printf '%s' "$text" | xclip -selection clipboard
-    fi
-    printf '\033[1;32m✓\033[0m %s\n' "$text"
-}
-fi
-{{- end }}
-
-# Keep rm recoverable. Unsupported flags fail; permanent deletion is explicit.
-safe_rm() {
-    local arg file force_delete=0 ignore_missing=0 options=1
-    local files=() original=("$@")
-    for arg in "$@"; do
-        if [ "$options" -eq 1 ]; then
-            case "$arg" in
-                --) options=0; continue ;;
-                --really-delete|--force-delete) force_delete=1; continue ;;
-            esac
-        fi
-        files+=("$arg")
-    done
-    if [ "$force_delete" -eq 1 ]; then
-        command rm "${files[@]}"
-        return $?
-    fi
-    files=(); options=1
-    for arg in "${original[@]}"; do
-        if [ "$options" -eq 1 ]; then
-            case "$arg" in
-                --) options=0; continue ;;
-                -) ;;
-                -*)
-                    case "$arg" in
-                        *[!rRf-]*) printf 'safe_rm: unsupported option: %s\n' "$arg" >&2; return 2 ;;
-                    esac
-                    case "$arg" in *f*) ignore_missing=1 ;; esac
-                    continue ;;
-            esac
-        fi
-        files+=("$arg")
-    done
-    local targets=()
-    for file in "${files[@]}"; do
-        if [ "$ignore_missing" -eq 1 ] && [ ! -e "$file" ] && [ ! -L "$file" ]; then continue; fi
-        case "$file" in /*) targets+=("$file") ;; *) targets+=("$PWD/$file") ;; esac
-    done
-    [ "${#targets[@]}" -gt 0 ] || return 0
-    case "$(uname -s)" in
-        Darwin)
-            if [ -x /usr/bin/trash ]; then
-                /usr/bin/trash "${targets[@]}"
-            elif commandsAvailable trash; then
-                command trash "${targets[@]}"
-            else
-                printf 'safe_rm: native trash command is unavailable; nothing deleted\n' >&2
-                return 1
-            fi ;;
-        Linux)
-            if commandsAvailable gio; then
-                command gio trash -- "${targets[@]}"
-            elif commandsAvailable trash-put; then
-                command trash-put -- "${targets[@]}"
-            else
-                printf 'safe_rm: install gio or trash-cli; nothing deleted\n' >&2
-                return 1
-            fi ;;
-        *) printf 'safe_rm: unsupported OS; nothing deleted\n' >&2; return 1 ;;
-    esac
-}
-alias rm='safe_rm'
-
-# Fuzzy finders (fzf vim, fzf make, fzf git log)
 if commandsAvailable fzf-tmux tmux lvim && { commandsAvailable fd || commandsAvailable fdfind; }; then
-fvim() {
-    local finder file
-    finder=$(command -v fd || command -v fdfind)
-    "$finder" --type f --hidden --exclude .git --print0 |
-        fzf-tmux -p -- --read0 --print0 --exit-0 |
-        while IFS= read -r -d '' file; do
-            lvim "$file" < /dev/tty
-        done
-}
+    # fvim: select files to open in LunarVim.
+    fvim() {
+        local finder file
+        finder=$(command -v fd || command -v fdfind)
+        "$finder" --type f --hidden --exclude .git --print0 |
+            fzf-tmux -p -- --read0 --print0 --exit-0 |
+            while IFS= read -r -d '' file; do
+                lvim "$file" < /dev/tty
+            done
+    }
 fi
+
 if commandsAvailable make fzf; then
-fmake() {
-  local target=$(make -qp | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ {split($1,A,/ /);for(i in A)print A[i]}' | sort -u | fzf --header="Select Makefile Target")
-  [ -n "$target" ] && make "$target"
-}
+    # fmake: select and run a Makefile target.
+    fmake() {
+        local target=$(
+            make -qp |
+                awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$)/ {split($1,A,/ /);for(i in A)print A[i]}' |
+                sort -u |
+                fzf --header="Select Makefile Target"
+        )
+        [ -n "$target" ] && make "$target"
+    }
 fi
+
 if commandsAvailable git fzf; then
-flog() {
-    local selection=$(
-      git lo --color=always "$@" | \
-        fzf --no-multi --ansi --no-sort --no-height \
-            --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
-                       xargs -I@ sh -c 'git show --color=always @'"
-    )
-    if [[ -n $selection ]]; then
-        local commit=$(echo "$selection" | sed 's/^[* |]*//' | awk '{print $1}' | tr -d '\n')
-        git show $commit
-    fi
-}
-
+    # flog [git log arguments]: select and inspect a commit.
+    flog() {
+        local selection=$(
+            git lo --color=always "$@" | \
+                fzf --no-multi --ansi --no-sort --no-height \
+                    --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 |
+                           xargs -I@ sh -c 'git show --color=always @'"
+        )
+        if [[ -n $selection ]]; then
+            local commit=$(echo "$selection" | sed 's/^[* |]*//' | awk '{print $1}' | tr -d '\n')
+            git show $commit
+        fi
+    }
 fi
+{{ $whisperBin := joinPath .chezmoi.homeDir "Documents/builds/whisper.cpp/build-vulkan/bin/whisper-cli" -}}
+{{ $whisperModel := joinPath .chezmoi.homeDir "Documents/builds/whisper.cpp/models/ggml-base.en.bin" -}}
+{{ if and (stat $whisperBin) (stat $whisperModel) }}
+# ---- Dictation ----
 
-{{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) -}}
-# Added by Nori
-# nori-handroll
+if commandsAvailable parecord && { commandsAvailable wl-copy || commandsAvailable xclip; }; then
+    # wsp: record until Enter, transcribe, and copy to the clipboard.
+    # wsp-toggle: start/stop dictation from a desktop keyboard shortcut.
+    alias wsp-toggle="$HOME/.local/bin/wsp-toggle"
+    wsp() {
+        local rec whisper model text
+        rec=$(mktemp --suffix=.wav)
+        whisper=~/Documents/builds/whisper.cpp/build-vulkan/bin/whisper-cli
+        model=~/Documents/builds/whisper.cpp/models/ggml-base.en.bin
+
+        printf '\033[1;31m●\033[0m \033[1mRecording...\033[0m press [Enter] to stop '
+        parecord --channels=1 --rate=16000 --file-format=wav "$rec" 2>/dev/null &
+        local pid=$!
+        read -r
+        kill -INT $pid 2>/dev/null
+        wait $pid 2>/dev/null
+
+        printf '\r\033[K\033[1;33m…\033[0m transcribing\n'
+        text=$("$whisper" -m "$model" -f "$rec" -nt -np 2>/dev/null \
+                | sed 's/^ *//;s/ *$//' | tr '\n' ' ' | sed 's/ *$//')
+        command rm -f "$rec"
+
+        if command -v wl-copy >/dev/null; then
+            printf '%s' "$text" | wl-copy
+        else
+            printf '%s' "$text" | xclip -selection clipboard
+        fi
+        printf '\033[1;32m✓\033[0m %s\n' "$text"
+    }
+fi
+{{ end -}}
+
+{{ if (stat (joinPath .chezmoi.homeDir ".nori/handroll/bin")) }}
+# ---- Nori shortcuts ----
+
 export PATH="$HOME/.nori/handroll/bin:$PATH"
 if commandsAvailable nori-handroll; then
-alias nclaude="nori-handroll --skip-menu-exit claude --permission-mode auto"
-alias ncodex="nori-handroll --skip-menu-exit codex --approve-for-me"
-alias nnori="nori-handroll --skip-menu-exit nori"
-alias npi="nori-handroll --skip-menu-exit pi"
-# End of Nori section
-
-alias hdr="nori-handroll"
+    alias nclaude="nori-handroll --skip-menu-exit claude --permission-mode auto"
+    alias ncodex="nori-handroll --skip-menu-exit codex --approve-for-me"
+    alias nnori="nori-handroll --skip-menu-exit nori"
+    alias npi="nori-handroll --skip-menu-exit pi"
+    alias hdr="nori-handroll"
 fi
-{{- end }}
+{{ end -}}
