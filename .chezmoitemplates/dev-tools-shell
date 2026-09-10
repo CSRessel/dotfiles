@@ -1,4 +1,3 @@
 {{ if has "dev-tools" (get . "modules" | default (list)) -}}
-# mise tools use shims; direnv owns project shell activation.
-[ ! -r "$HOME/.config/dev-tools/env.sh" ] || . "$HOME/.config/dev-tools/env.sh"
+{{ template "dev-tools-env" . }}
 {{- end }}

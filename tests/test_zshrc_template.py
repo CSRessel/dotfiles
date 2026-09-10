@@ -17,9 +17,13 @@ class ZshrcTemplateTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory(prefix="zshrc-template-") as destination:
             destination_path = Path(destination)
+            config = destination_path / "config.toml"
+            config.write_text('[data]\nmodules = []\n')
             result = subprocess.run(
                 [
                     str(chezmoi),
+                    "--config",
+                    str(config),
                     "--source",
                     str(REPOSITORY_ROOT),
                     "--destination",

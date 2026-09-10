@@ -1,4 +1,4 @@
-# Shared by interactive shells and explicitly sourced by noninteractive jobs.
+# Shared by interactive shells and the contribution-graph build.
 # Add each path once; preserve a Nix shell's existing PATH precedence.
 dev_tools_prepend() {
     case ":$PATH:" in

@@ -131,7 +131,7 @@ unset editor
 
 {{ template "dev-tools-shell" . }}
 {{ if has "dev-tools" (get . "modules" | default (list)) -}}
-[ ! -r "$HOME/.config/dev-tools/completions.sh" ] || . "$HOME/.config/dev-tools/completions.sh"
+{{ template "dev-tools-completions" . }}
 {{- end }}
 
 # direnv

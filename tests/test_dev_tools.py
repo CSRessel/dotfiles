@@ -25,10 +25,10 @@ class DevToolsTest(unittest.TestCase):
                                   ('["dev-tools"]' if enabled else '[]') + '\n')
                 paths = subprocess.check_output(base + ['managed'], env=env, text=True)
                 self.assertEqual('.config/mise/config.toml' in paths, enabled)
-                self.assertEqual('.config/dev-tools/env.sh' in paths, enabled)
+                self.assertNotIn('.config/dev-tools/env.sh', paths)
                 for name, shell in [('.bashrc', 'bash'), ('.zshrc', 'zsh')]:
                     rendered = subprocess.check_output(base + ['cat', str(home / name)], env=env, text=True)
-                    self.assertEqual('.config/dev-tools/env.sh' in rendered, enabled)
+                    self.assertEqual('dev_tools_prepend' in rendered, enabled)
                     if shutil.which(shell):
                         subprocess.run([shell, '-n'], input=rendered, text=True, check=True)
 
@@ -44,7 +44,7 @@ class DevToolsTest(unittest.TestCase):
                     env['IN_NIX_SHELL'] = 'impure'
                 result = subprocess.check_output(
                     [shutil.which(shell), '-fc', '. "$1"; . "$1"; printf "%s" "$PATH"',
-                     'test', str(ROOT / 'dot_config/dev-tools/env.sh')], env=env, text=True)
+                     'test', str(ROOT / '.chezmoitemplates/dev-tools-env')], env=env, text=True)
                 paths = result.split(':')
                 self.assertEqual(len(paths), len(set(paths)))
                 shims = '/tmp/dev-tools-test/.local/share/mise/shims'
@@ -65,7 +65,7 @@ class DevToolsTest(unittest.TestCase):
                 env = dict(HOME=directory, PATH=directory + ':/usr/bin:/bin', **extra)
                 result = subprocess.check_output(
                     ['sh', '-c', '. "$1"; printf "%s" "${RUSTC_WRAPPER:-}"',
-                     'test', str(ROOT / 'dot_config/dev-tools/env.sh')], env=env, text=True)
+                     'test', str(ROOT / '.chezmoitemplates/dev-tools-env')], env=env, text=True)
                 self.assertEqual(result, expected)
 
 

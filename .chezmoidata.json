@@ -78,8 +78,7 @@
       ".config/mimeapps.list"
     ],
     "dev-tools": [
-      ".config/mise/config.toml",
-      ".config/dev-tools"
+      ".config/mise/config.toml"
     ]
   }
 }

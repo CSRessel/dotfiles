@@ -1,16 +1,21 @@
-# Personal defaults. Edit this chezmoi source, then apply and run mise install.
+# Verified personal defaults. Change pins here; chezmoi apply installs them.
 [tools]
 # Install rustup itself; rustup owns compiler selection (including project pins).
-"aqua:rust-lang/rustup" = "latest"
-sccache = "latest"
+"aqua:rust-lang/rustup" = "1.29.1"
+sccache = "0.17.0"
 
 # uv owns Python interpreters and environments.
-uv = "latest"
+uv = "0.12.11"
 
 # Node retains npm compatibility; Bun provides bun and bunx.
-node = "lts"
-bun = "latest"
+node = "24.21.0"
+bun = "1.4.2"
 
 [settings]
 # Honor existing .nvmrc/.node-version files without loading nvm.
 idiomatic_version_file_enable_tools = ["node"]
+
+# Bootstrap interpreters are separate from their mise-managed installers.
+[vars]
+rust_bootstrap = "1.98.1"
+python_bootstrap = "3.14.7"

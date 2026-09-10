@@ -1,0 +1,8 @@
+{{ if has "dev-tools" (get . "modules" | default (list)) -}}
+# Retired helpers; only remove the files previously managed by this module.
+.config/dev-tools/env.sh
+.config/dev-tools/completions.sh
+.config/dev-tools/setup-rust
+.config/dev-tools/setup-python
+.config/dev-tools/setup-javascript
+{{- end }}
