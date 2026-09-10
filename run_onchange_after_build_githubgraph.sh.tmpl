@@ -5,6 +5,8 @@
 # {{ include "git-contribution-graph/src/display.rs" | sha256sum }}
 set -euo pipefail
 
+{{ template "dev-tools-shell" . }}
+
 if command -v cargo > /dev/null 2>&1; then
   cd "{{ .chezmoi.sourceDir }}/git-contribution-graph"
   mkdir -p "$HOME/.local/bin"

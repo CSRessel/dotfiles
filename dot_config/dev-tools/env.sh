@@ -14,6 +14,15 @@ dev_tools_prepend() {
     export PATH
 }
 
+dev_tools_prepend "${CARGO_HOME:-$HOME/.cargo}/bin"
 dev_tools_prepend "$HOME/.local/bin"
 dev_tools_prepend "${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}/shims"
 unset -f dev_tools_prepend
+
+# Respect an explicit wrapper, including an explicitly empty opt-out.
+if [ "${RUSTC_WRAPPER+x}" != x ] && [ -z "${IN_NIX_SHELL:-}" ] && command -v sccache >/dev/null 2>&1; then
+    export RUSTC_WRAPPER=sccache
+fi
+if [ "$(uname -s)" = Linux ] && [ -n "${CODEX_THREAD_ID:-}" ] && [ "${SCCACHE_SERVER_UDS+x}" != x ]; then
+    export SCCACHE_SERVER_UDS="/tmp/sccache-${CODEX_THREAD_ID}.sock"
+fi

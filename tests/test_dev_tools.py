@@ -54,6 +54,20 @@ class DevToolsTest(unittest.TestCase):
                 else:
                     self.assertEqual(paths[0], shims)
 
+    def test_cache_respects_explicit_wrapper_and_nix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            binary = Path(directory) / 'sccache'
+            binary.write_text('#!/bin/sh\nexit 0\n')
+            binary.chmod(0o755)
+            for extra, expected in [({}, 'sccache'), ({'RUSTC_WRAPPER': ''}, ''),
+                                    ({'RUSTC_WRAPPER': '/custom/wrapper'}, '/custom/wrapper'),
+                                    ({'IN_NIX_SHELL': 'pure'}, '')]:
+                env = dict(HOME=directory, PATH=directory + ':/usr/bin:/bin', **extra)
+                result = subprocess.check_output(
+                    ['sh', '-c', '. "$1"; printf "%s" "${RUSTC_WRAPPER:-}"',
+                     'test', str(ROOT / 'dot_config/dev-tools/env.sh')], env=env, text=True)
+                self.assertEqual(result, expected)
+
 
 if __name__ == '__main__':
     unittest.main()

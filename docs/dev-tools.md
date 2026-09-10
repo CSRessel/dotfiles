@@ -17,7 +17,7 @@ software during `chezmoi apply`. Existing project Nix flakes remain authoritativ
 The target replaces master's asdf, nvm, standalone Bun startup, and pyenv setup.
 It retains Cargo tools, optional sccache, and direnv/Nix. Poetry remains an
 independent legacy module for projects that still need its configuration.
-Language defaults and initialization instructions are added in separate commits.
+
 
 ## Setup and updates
 
@@ -82,3 +82,33 @@ shell files; it does not uninstall tools or delete previously applied files.
 References: [configuration](https://mise.jdx.dev/configuration.html),
 [shims](https://mise.jdx.dev/dev-tools/shims.html),
 [direnv limitations](https://mise.jdx.dev/direnv.html).
+
+## Rust
+
+Run `~/.config/dev-tools/setup-rust` after applying. It installs rustup and sccache
+through mise, refreshes native Cargo/rustc proxies without editing shell files,
+preserves existing toolchains/defaults, and selects stable only if no default
+exists. It adds rustfmt, Clippy and rust-src to that default toolchain.
+Rerun after upgrading the mise rustup package to refresh the native proxy copy.
+Rustup self-updates are disabled so mise owns the installer version.
+
+There is deliberately no `rust` entry in mise and no global `RUSTUP_TOOLCHAIN`.
+Rustup continues to honor `rust-toolchain.toml`; Cargo owns `Cargo.lock` and
+`cargo install` applications. Update compilers with `rustup update`, separately
+from updating the installer. Native linkers and headers still come from your
+OS or project flake (for example, a C compiler/linker is required for normal
+Cargo builds). Mise does not install a complete native build environment.
+
+The shared environment enables sccache when available, unless `RUSTC_WRAPPER`
+is already set (including an empty value). A Nix shell can supply its own policy;
+the helper does not newly enable caching when `IN_NIX_SHELL` is set. A wrapper
+inherited before entering Nix remains inherited unless the flake overrides it.
+Use `RUSTC_WRAPPER= cargo build` to disable it for a command. On Linux, task-specific
+sccache sockets follow `CODEX_THREAD_ID`, retaining master's behavior.
+
+Check `rustup show active-toolchain`, `cargo --version`, and `sccache --show-stats`.
+The githubgraph build explicitly sources the shared environment when this module
+is enabled, so it can find Cargo without an interactive shell. If it was skipped
+before Rust installation, build
+`git-contribution-graph` manually with `cargo build --release --locked` and copy
+its executable to `~/.local/bin/githubgraph`.

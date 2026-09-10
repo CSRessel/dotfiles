@@ -1,0 +1,23 @@
+#!/bin/sh
+# Explicit bootstrap, also rerun after upgrading mise's rustup package.
+set -eu
+cd "$HOME"
+. "$HOME/.config/dev-tools/env.sh"
+command -v mise >/dev/null 2>&1 || { echo "Install mise first." >&2; exit 1; }
+mise install aqua:rust-lang/rustup sccache
+# Refresh native Cargo/rustc proxies using the mise-managed installer. Preserve
+# existing toolchains and default selection; never edit shell startup files.
+# Aqua may expose only the rustup filename. The upstream binary dispatches
+# installer mode by argv[0], so provide a temporary rustup-init symlink.
+installer_dir=$(mktemp -d)
+trap 'rm -rf "$installer_dir"' EXIT HUP INT TERM
+ln -s "$(mise which rustup)" "$installer_dir/rustup-init"
+"$installer_dir/rustup-init" -y --no-modify-path --default-toolchain none
+mise exec -- rustup set auto-self-update disable
+if ! mise exec -- rustup default >/dev/null 2>&1; then
+    mise exec -- rustup default stable
+fi
+# Components follow the user's default, not whichever project invoked this script.
+default_toolchain=$(mise exec -- rustup default | awk '{print $1}')
+mise exec -- rustup component add --toolchain "$default_toolchain" rustfmt clippy rust-src
+mise exec -- rustup show
