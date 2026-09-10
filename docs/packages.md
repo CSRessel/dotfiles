@@ -12,6 +12,23 @@ and native Firefox:
 sudo apt update && sudo apt install -y ca-certificates curl git zsh tmux tree neovim gh jq yq unzip evtest fd-find firefox
 ```
 
+### Docker Engine
+
+Use the distribution's `docker.io` package from the existing apt sources.
+This installation was verified on this Pop!OS 24.04 machine:
+
+```sh
+sudo apt update
+sudo apt install --no-install-recommends docker.io
+sudo systemctl start docker
+sudo /usr/bin/docker info
+```
+
+Updates come through apt. The explicit `/usr/bin/docker` path selects the
+system-installed CLI. This baseline does not configure Docker's upstream apt
+repository or install Docker Desktop. Compose and Buildx are separate additions;
+the commands above verify the Engine and CLI only.
+
 ## COSMIC Store / Flatpak
 
 The same user-scoped Flathub apps available through COSMIC Store: Zen, Bitwarden,
@@ -28,6 +45,7 @@ Use upstream instructions; installer commands and versions are not copied here.
 Tailscale and ChatGPT use native installers, even when backed by apt packages.
 
 - [Ghostty — ghostty-ubuntu](https://github.com/mkasberg/ghostty-ubuntu): community native `.deb` for Pop!OS 24.04; updates use the same installer.
+- [mise](https://mise.jdx.dev/installing-mise.html): installs the manager; then follow [development tools setup](dev-tools.md#setup-and-updates).
 - [Oh My Zsh](https://ohmyz.sh/#install)
 - [Tailscale](https://tailscale.com/docs/install/linux)
 - [ChatGPT desktop](https://learn.chatgpt.com/docs/linux/linux-app)
