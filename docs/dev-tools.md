@@ -8,8 +8,9 @@ There are no separate language setup commands.
 
 | Owner | Responsibility |
 | --- | --- |
-| chezmoi | Global mise config, shell integration, installation on apply |
-| mise | Exact versions of rustup, sccache, uv, Node and Bun |
+| chezmoi | Global mise and user Nix configs, shell integration, mise tool installation on apply |
+| mise | Exact versions of rustup, sccache, uv, Node, Bun, kubectl, gh, btop and mold |
+| Native Nix installation | Nix itself, the shared store, daemon and upgrades |
 | rustup | Rust compilers, components, targets and project toolchain selection |
 | uv | Python interpreters, environments, dependencies and Python applications |
 | Projects | Existing flakes, language manifests and lockfiles |
@@ -26,7 +27,13 @@ installs with rustfmt, Clippy and rust-src. An existing Rust default is preserve
 the pinned compiler becomes the default only if none exists. Set your preferred
 default explicitly with `rustup default VERSION`. Python installs a versioned
 executable without replacing system `python3`. Project toolchain selections remain
-independent. Native compilers/linkers and headers still come from apt or flakes.
+independent. Native compilers and headers still come from apt or flakes.
+Mise installs mold on Linux; projects choose whether to use it as their linker.
+
+Kubectl and gh are shared CLI defaults; btop and mold are Linux-only with the
+selected release packages. Override kubectl in a project's `mise.toml` to match
+its cluster: the client must stay within one minor version of the server
+([compatibility guidance](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)).
 
 Rustup's native Cargo proxies are refreshed when the mise-managed installer
 changes. Self-updates are disabled so mise owns the rustup version. After setup,
@@ -44,17 +51,34 @@ Mise shims select tools by directory. Global defaults are overridden by project
 Use `mise config` and `mise ls --current` to inspect selection. Review configuration
 before trusting it. Keep personal project overrides in ignored `mise.local.toml`.
 
-Direnv retains control of flake activation; no mise prompt hook is installed.
-Nix-provided tools should precede the shims. Verify paths entering/leaving your
-actual flakes. Upstream does not support mixed direnv/mise integration.
 Independently launched editors need their own PATH setup; use the project flake
 or `mise exec -- COMMAND` for explicit execution environments as appropriate.
 
-Interactive shells generate completions from installed mise, uv/uvx, rustup/Cargo
-and Bun; Bash also loads npm completions. A fresh shell picks up tool upgrades.
+Interactive shells generate completions from installed mise, gh, kubectl, uv/uvx,
+rustup/Cargo and Bun; Bash also loads npm completions. A fresh shell picks up tool upgrades.
 Cargo and Bun global application paths remain available. sccache is enabled
 unless a wrapper is already set or setup occurs inside Nix; an explicitly empty
 `RUSTC_WRAPPER` disables it. Linux task sockets follow `CODEX_THREAD_ID`.
+
+## Nix and project flakes
+
+Install upstream Nix separately using the [native installation link](packages.md#native-installs);
+use the recommended multi-user installation on Pop!OS. The installer owns the
+store, daemon and system shell initialization. Update Nix through its native
+installation; mise and chezmoi do not install or upgrade it.
+
+Enable `nix` in chezmoi's `data.modules`, then review and apply. This deploys
+`~/.config/nix/nix.conf`, enabling `nix-command`, `flakes` and `keep-outputs`.
+Installing Nix alone does not enable this module. Open a fresh shell afterward.
+
+Projects retain their existing `flake.nix`, `flake.lock` and `.envrc`. Use
+`nix develop`, or direnv for directory-based activation. Bash and Zsh load direnv's
+hook when installed; no mise prompt hook is registered. Nix-provided tools should
+precede mise shims inside a flake environment; verify selection when entering and
+leaving a project. Upstream mise does not support mixed direnv/mise integration.
+
+[nix-direnv](https://github.com/nix-community/nix-direnv) is an optional follow-up
+for cached flake environments; this repository does not configure it.
 
 ## Daily commands
 

@@ -23,7 +23,8 @@ is available and displays in interactive Zsh login shells when its binary exists
 | `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
 | `k9s`, `marimo`, `tridactyl`, `nethack` | Application preferences | App-dependent |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
-| `nix`, `poetry` | Optional tool configs; no toolchain installation | Tool-dependent |
+| [nix](dev-tools.md#nix-and-project-flakes) | User Nix config with flakes enabled; install Nix separately | Linux / macOS |
+| `poetry` | Legacy Poetry preferences; no toolchain installation | Tool-dependent |
 | `tmux-memory` | Per-machine memory limits for matching tmux scopes | Linux / systemd |
 | `user-oom-policy` | User services continue after an OOM kill | Linux / systemd |
 | `mac-shortcuts` | Keyboard shortcut automation | macOS |

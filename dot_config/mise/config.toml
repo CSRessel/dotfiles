@@ -11,6 +11,13 @@ uv = "0.12.11"
 node = "24.21.0"
 bun = "1.4.2"
 
+# Global CLI tools; projects can override kubectl for their cluster version.
+kubectl = "1.37.0"
+gh = "2.100.0"
+# These release packages are available on Linux only.
+btop = { version = "1.4.7", os = ["linux"] }
+mold = { version = "2.42.0", os = ["linux"] }
+
 [settings]
 # Honor existing .nvmrc/.node-version files without loading nvm.
 idiomatic_version_file_enable_tools = ["node"]

@@ -5,11 +5,11 @@ list. Fonts belong to the [fonts module](mod_fonts.md).
 
 ## Apt
 
-Shell, Git tools, Neovim, JSON/YAML utilities, archives, keyboard diagnostics,
+Shell, Git, Neovim, JSON/YAML utilities, archives, keyboard diagnostics,
 and native Firefox:
 
 ```sh
-sudo apt update && sudo apt install -y ca-certificates curl git zsh tmux tree neovim gh jq yq unzip evtest fd-find firefox entr
+sudo apt update && sudo apt install -y ca-certificates curl git zsh tmux tree neovim jq yq unzip evtest fd-find firefox entr
 ```
 
 ### Docker Engine
@@ -29,6 +29,12 @@ system-installed CLI. This baseline does not configure Docker's upstream apt
 repository or install Docker Desktop. Compose and Buildx are separate additions;
 the commands above verify the Engine and CLI only.
 
+## Mise
+
+The [dev-tools module](dev-tools.md) installs rustup, sccache, uv, Node, Bun,
+kubectl and gh, plus btop and mold on Linux. Versions are pinned in the
+[global mise config](../dot_config/mise/config.toml) and installed on `ch apply`.
+
 ## COSMIC Store / Flatpak
 
 The same user-scoped Flathub apps available through COSMIC Store: Zen, Bitwarden,
@@ -47,9 +53,9 @@ outdated, and embedded download URLs can suffer from link rot.
 Tailscale and ChatGPT use native installers, even when backed by apt packages.
 
 - [Ghostty — ghostty-ubuntu](https://github.com/mkasberg/ghostty-ubuntu): community native `.deb` for Pop!OS 24.04; updates use the same installer.
-- [mise](https://mise.jdx.dev/installing-mise.html): installs the manager; then follow [development tools setup](dev-tools.md#setup-and-updates).
+- [mise](https://mise.jdx.dev/installing-mise.html): installs the manager; then follow [development tools setup](dev-tools.md).
 - [direnv](https://direnv.net/docs/installation.html)
-- [Nix](https://nixos.org/download/#nix): install manually for project flakes.
+- [Nix](https://nixos.org/download/#nix): multi-user installation; then enable the [Nix module](dev-tools.md#nix-and-project-flakes).
 - [Oh My Zsh](https://ohmyz.sh/#install)
 - [Tailscale](https://tailscale.com/docs/install/linux)
 - [ChatGPT desktop](https://learn.chatgpt.com/docs/linux/linux-app)

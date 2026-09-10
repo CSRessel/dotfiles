@@ -13,6 +13,8 @@ else
 fi
 
 command -v mise >/dev/null 2>&1 && eval "$(mise completion "$dev_tools_shell")"
+command -v gh >/dev/null 2>&1 && eval "$(gh completion -s "$dev_tools_shell")"
+command -v kubectl >/dev/null 2>&1 && eval "$(kubectl completion "$dev_tools_shell")"
 command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion "$dev_tools_shell")"
 command -v uvx >/dev/null 2>&1 && eval "$(uvx --generate-shell-completion "$dev_tools_shell")"
 if command -v rustup >/dev/null 2>&1; then
