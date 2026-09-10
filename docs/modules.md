@@ -4,6 +4,9 @@ The shared base is Zsh, Bash, Git, tmux, and useful aliases on Linux and macOS.
 Original command names stay intact except `rm`, which uses recoverable trash.
 Toolchains and desktop preferences, including Ghostty, are opt-in.
 
+Tmux loads Catppuccin when installed. The contribution graph builds when Cargo
+is available and displays in interactive Zsh login shells when its binary exists.
+
 ## Catalog
 
 | Module | Opinion / purpose | Platform |
@@ -32,6 +35,9 @@ Platform labels describe intended scope, not cross-platform validation.
 `data.modules` in `~/.config/chezmoi/chezmoi.toml` selects modules; none are enabled
 by default. [The catalog](../.chezmoidata.json) maps names to managed paths;
 [ignore rules](../.chezmoiignore) enforce selection and platform boundaries.
+
+Chezmoi uses an explicit `0022` umask: ordinary files are `0644`, executable files
+and directories `0755`; `private_` attributes remove group/other access.
 
 - `fonts` needs `cosmic` for COSMIC font preferences; Fontconfig settings stand alone.
 - `cosmic` requires ImageMagick for hostname-colored wallpaper generation; install it manually before applying.

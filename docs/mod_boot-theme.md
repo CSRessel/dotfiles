@@ -11,6 +11,21 @@ White cat artwork on black, using Pop!OS 24.04's native Plymouth `two-step` rend
 The renderer retains native password handling, keyboard indicators and messages.
 Encryption configuration is unchanged.
 
+## Artwork
+
+Adapted from [Clifford’s website](https://clifford.ressel.fyi/) (CC BY-SA 4.0).
+Coffee, key, laptop and lock variants use a fixed character grid, FiraCode Nerd
+Font Mono and Unicode fallback; emoji are rendered white.
+
+| Format | Dimensions |
+| --- | --- |
+| White on black / transparent white | 640 × 448 |
+| Left-offset white on black | 1920 × 1200 |
+| Transparent Plymouth exports (coffee/lock) | 320 × 224 |
+
+The [renderer](assets/boot-cat/render.py) depends on `python3-gi-cairo`,
+`python3-cairo`, `gir1.2-pango-1.0` and the fonts module. Pre-rendered PNGs are tracked.
+
 ## Mechanism and ownership
 
 - [Artwork](assets/boot-cat/): text source, Python renderer and PNG variants. Plymouth uses 320 × 224 transparent exports; target machines need no rendering tools.
