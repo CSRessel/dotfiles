@@ -62,9 +62,12 @@ class CosmicWallpaperTest(unittest.TestCase):
     def test_repeat_apply_is_cached_and_deleted_image_recovers(self) -> None:
         output = self.apply_wallpaper()
         content, modified = output.read_bytes(), output.stat().st_mtime_ns
+        self.assertNotIn("cosmic_wallpaper.sh", self.cm("status").stdout)
+        self.assertNotIn("cosmic_wallpaper.sh", self.cm("diff").stdout)
         self.assertEqual(self.apply_wallpaper(), output)
         self.assertEqual(output.stat().st_mtime_ns, modified)
         output.unlink()
+        self.assertIn("cosmic_wallpaper.sh", self.cm("status").stdout)
         self.assertEqual(self.apply_wallpaper().read_bytes(), content)
 
     def test_hostname_changes_color_and_preserves_dimensions(self) -> None:

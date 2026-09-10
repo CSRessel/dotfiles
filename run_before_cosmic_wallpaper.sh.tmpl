@@ -1,8 +1,11 @@
 {{ if and (eq .chezmoi.os "linux") (has "cosmic" (get . "modules" | default (list))) -}}
+{{ $output := includeTemplate "cosmic-wallpaper-path" . | trim -}}
+{{ $existing := stat $output -}}
+{{ if or (not $existing) (eq $existing.size 0) -}}
 #!/bin/sh
 set -eu
 
-output={{ includeTemplate "cosmic-wallpaper-path" . | trim | replace "'" "'\"'\"'" | squote }}
+output={{ $output | replace "'" "'\"'\"'" | squote }}
 # Generate once per hostname, source image and recipe; repair deleted output.
 [ -s "$output" ] && exit 0
 if command -v magick >/dev/null 2>&1; then
@@ -23,4 +26,5 @@ trap 'rm -f -- "$temporary"' EXIT HUP INT TERM
 "$renderer" "$source_image" -modulate "125,125,$hue" -quality 95 "jpg:$temporary"
 mv -f -- "$temporary" "$output"
 printf 'cosmic-wallpaper: generated %s (hue %s).\n' "$output" "$hue"
+{{ end -}}
 {{ end -}}

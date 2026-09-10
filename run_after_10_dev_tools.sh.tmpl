@@ -6,21 +6,30 @@ command -v mise >/dev/null || { echo 'Install mise first: https://mise.jdx.dev/i
 # An empty config search root keeps the invoking project's tools out of setup.
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
+# Successful checks are silent; failures retain their full diagnostics.
+quiet() {
+    "$@" > "$work/setup.log" 2>&1 || {
+        result=$?
+        cat "$work/setup.log" >&2
+        return "$result"
+    }
+}
 cd "$work"
 export MISE_CEILING_PATHS="$work"
 unset RUSTUP_TOOLCHAIN
-mise install
+quiet mise install
 # Activate only in this script, not in interactive shells alongside direnv.
-eval "$(mise env -s bash)"
+mise_env=$(mise env -s bash)
+eval "$mise_env"
 
 # Aqua exposes rustup; installer mode is selected by the rustup-init filename.
 if ! cmp -s "$(command -v rustup)" "${CARGO_HOME:-$HOME/.cargo}/bin/rustup"; then
     ln -s "$(command -v rustup)" "$work/rustup-init"
-    "$work/rustup-init" -y --no-modify-path --default-toolchain none
+    quiet "$work/rustup-init" -y --no-modify-path --default-toolchain none
 fi
-rustup set auto-self-update disable
+quiet rustup set auto-self-update disable
 {{ $pins := (include "dot_config/mise/config.toml" | fromToml).vars -}}
-rustup toolchain install {{ $pins.rust_bootstrap }} --profile minimal --component rustfmt,clippy,rust-src
-rustup default >/dev/null 2>&1 || rustup default {{ $pins.rust_bootstrap }}
-uv python install {{ $pins.python_bootstrap }}
+quiet rustup toolchain install {{ $pins.rust_bootstrap }} --profile minimal --component rustfmt,clippy,rust-src
+rustup default >/dev/null 2>&1 || quiet rustup default {{ $pins.rust_bootstrap }}
+quiet uv python install {{ $pins.python_bootstrap }}
 {{- end }}

@@ -16,7 +16,8 @@ There are no separate language setup commands.
 
 Edit pins in `dot_config/mise/config.toml`, review, and apply. The apply hook
 runs `mise install` every time; existing exact versions are reused and missing
-tools are installed. It does not upgrade mise itself, run `mise upgrade`, or
+tools are installed. Successful checks are silent; failures print their diagnostics.
+It does not upgrade mise itself, run `mise upgrade`, or
 remove older installations. Update mise through its original installation method.
 The hook isolates configuration discovery from the invoking project.
 
@@ -74,3 +75,6 @@ References: [mise selection](https://mise.jdx.dev/faq.html),
 [chezmoi scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/),
 [shims](https://mise.jdx.dev/dev-tools/shims.html),
 [direnv limitations](https://mise.jdx.dev/direnv.html).
+
+`ch st` hides script entries so it reports file changes. `ch diff` still shows
+scripts scheduled for apply, including the every-apply tool check.

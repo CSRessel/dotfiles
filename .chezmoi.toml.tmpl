@@ -3,6 +3,9 @@
 {{- $modules := promptMultichoiceOnce . "modules" "Optional modules" (keys $catalog | sortAlpha) (list) -}}
 umask = 0o022
 
+[status]
+exclude = ["scripts"]
+
 [data]
 email = {{ $email | quote }}
 modules = {{ $modules | toJson }}
