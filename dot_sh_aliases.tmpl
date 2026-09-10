@@ -14,6 +14,30 @@ commandsAvailable() {
     done
 }
 
+# ---- Colors ----
+
+# Use native colors when supported; keep redirected output plain.
+for color_cmd in ls dir vdir grep diff; do
+    if command "$color_cmd" --color=auto --help >/dev/null 2>&1; then
+        alias "$color_cmd=$color_cmd --color=auto"
+    fi
+done
+unset color_cmd
+
+{{ if eq .chezmoi.os "darwin" -}}
+# macOS's built-in ls uses -G.
+alias ls='ls -G'
+{{ end -}}
+
+# Optionally color commands without native support using grc.
+if commandsAvailable grc; then
+    for color_cmd in ping traceroute dig netstat ps df du mount; do
+        commandsAvailable "$color_cmd" &&
+            alias "$color_cmd=grc --colour=auto $color_cmd"
+    done
+    unset color_cmd
+fi
+
 # ---- Everyday shortcuts ----
 
 shortcutIfInstalled lv lvim
