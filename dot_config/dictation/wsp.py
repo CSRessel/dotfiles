@@ -19,6 +19,20 @@ MODEL = Path.home() / ".local/share/wsp/model.json"
 
 
 def notify(message):
+    """Send status through a platform backend; notification failures are nonfatal."""
+    try:
+        if sys.platform == "darwin":
+            return notify_macos(message)
+        if sys.platform.startswith("linux"):
+            return notify_linux(message)
+        raise NotImplementedError(f"Notifications are not implemented on {sys.platform}")
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError, NotImplementedError) as exc:
+        detail = getattr(exc, "stderr", None) or str(exc)
+        print(f"wsp-toggle: notification failed: {detail.strip()}", file=sys.stderr)
+        return None
+
+
+def notify_linux(message):
     # busctl is supplied by systemd, which dictation already requires. Do not
     # silently depend on the optional notify-send/libnotify-bin package.
     command = ["busctl", "--user", "--timeout=5s", "call",
@@ -26,14 +40,20 @@ def notify(message):
                "org.freedesktop.Notifications", "Notify", "susssasa{sv}i",
                "Dictation", "0", "audio-input-microphone", "Dictation", message,
                "0", "1", "urgency", "y", "1", "4000"]
-    try:
-        result = subprocess.run(command, capture_output=True, text=True,
-                                check=True, timeout=6)
-        return int(result.stdout.split()[1])
-    except (OSError, subprocess.SubprocessError, ValueError, IndexError) as exc:
-        detail = getattr(exc, "stderr", None) or str(exc)
-        print(f"wsp-toggle: notification failed: {detail.strip()}", file=sys.stderr)
-        return None
+    result = subprocess.run(command, capture_output=True, text=True,
+                            check=True, timeout=6)
+    return int(result.stdout.split()[1])
+
+
+def notify_macos(message):
+    """Future macOS port: Notification Center adapter, not yet validated on a Mac."""
+    # Keep message text out of AppleScript source, including quotes and newlines.
+    # Capture, clipboard ownership, and lifecycle still need macOS backends.
+    command = ["/usr/bin/osascript", "-e", "on run argv",
+               "-e", 'display notification (item 1 of argv) with title "Dictation"',
+               "-e", "end run", "--", message]
+    subprocess.run(command, capture_output=True, text=True, check=True, timeout=6)
+    return True
 
 
 def config():

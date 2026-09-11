@@ -64,7 +64,7 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertIn(".config/dictation/wsp.py", paths)
         self.assertNotIn(".config/cosmic", paths)
         rendered = self.cm("cat", str(self.home / ".config/dictation/config.json")).stdout
-        self.assertIn('"tiny-streaming"', rendered)
+        self.assertIn('"medium-streaming"', rendered)
 
     def test_memory_limits_are_explicit(self) -> None:
         self.config.write_text('[data]\nmodules = ["tmux-memory"]\n')

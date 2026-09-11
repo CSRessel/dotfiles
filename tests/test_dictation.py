@@ -116,6 +116,25 @@ while True:
             self.assertIsNone(wsp.notify("Recording"))
             self.assertIn("notification failed: Notification service unavailable", log.getvalue())
 
+    def test_macos_notification_adapter_passes_text_as_data(self):
+        message = 'Recording "quoted text"\nwith a second line'
+        with patch.object(wsp.sys, "platform", "darwin"), \
+                patch.object(wsp.subprocess, "run") as run:
+            self.assertTrue(wsp.notify(message))
+            command = run.call_args.args[0]
+            self.assertEqual(command[0], "/usr/bin/osascript")
+            self.assertEqual(command[-2:], ["--", message])
+            self.assertNotIn(message, " ".join(command[:-2]))
+            self.assertTrue(run.call_args.kwargs["check"])
+
+    def test_unsupported_notification_backend_is_reported(self):
+        with patch.object(wsp.sys, "platform", "unsupported"), \
+                patch.object(wsp.subprocess, "run") as run, \
+                patch("sys.stderr", new_callable=io.StringIO) as log:
+            self.assertIsNone(wsp.notify("Recording"))
+            run.assert_not_called()
+            self.assertIn("not implemented on unsupported", log.getvalue())
+
     def test_start_uses_transient_service_and_session_environment(self):
         with patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}), \
                 patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=3)) as run:

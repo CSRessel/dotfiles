@@ -1,7 +1,7 @@
 # Dictation
 
 The `dictation` module provides `wsp-toggle`: run once to record, again to finish
-and copy the transcript. It uses Moonshine Voice 0.1.5 and the English Tiny
+and copy the transcript. It uses Moonshine Voice 0.1.5 and the English Medium
 Streaming model by default. Recognition runs locally on the CPU while you speak;
 it does not require a cloud account or upload audio. Model files download during
 setup and stay outside the dotfiles repository.
@@ -48,6 +48,15 @@ They use the desktop's D-Bus notification service through systemd's `busctl`;
 of silently ignored. Errors are available
 with `journalctl --user -u wsp-dictation.service`.
 
+The notification interface dispatches to separate Linux and macOS backends.
+The macOS adapter uses `osascript` and passes message text as arguments rather
+than interpolating it into AppleScript. It is groundwork for a future port,
+not a claim of macOS support: only its command construction is tested here.
+Notification Center permissions and banner delivery still need Mac validation;
+recording, clipboard ownership, process lifecycle, and installation remain
+Linux-specific, and chezmoi still excludes this module on macOS. See Apple's
+[notification scripting guide](https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayNotifications.html).
+
 ## Optional Pop!OS shortcuts
 
 When both `cosmic` and `dictation` are enabled, the managed COSMIC `custom`
@@ -70,26 +79,32 @@ Optional machine-specific settings in `chezmoi edit-config`:
 ```toml
 [data.dictation]
 language = "en"
-model = "tiny-streaming"
+model = "medium-streaming"
 ```
 
-`small-streaming` and `medium-streaming` trade more compute for accuracy. Only
+`medium-streaming` prioritizes accuracy; choose `small-streaming` or
+`tiny-streaming` for lower compute use. Only
 language/model combinations published by Moonshine are supported. After changing
 these settings, `chezmoi apply` downloads the selected model. No old Whisper build
 paths or shell aliases are needed.
 
-The default is a speed-first choice for the Intel Core Ultra 5 325 machine tested
-here, not a claim of universally fastest recognition. Review the
-[model catalog](https://moonshine-voice.readthedocs.io/en/latest/models/available-models/)
-and [streaming API](https://moonshine-voice.readthedocs.io/en/latest/using/transcription/).
-Published benchmark results from other hardware do not predict your latency.
-On this machine, the standard whisper.cpp 11-second JFK sample took about 2.0s
-of total compute with Tiny Streaming and 4.1s with Small Streaming, feeding audio
-in 100ms chunks. Finalization took about 0.5s and 0.8s respectively. These are
-single-sample throughput checks, not an accuracy evaluation or a benchmark
-against every backend. Small correctly recognized “Americans” where Tiny produced
-“America”. Partial-line decoding is disabled because only the final clipboard
-result is needed. This avoids repeatedly decoding text that will be replaced.
+Moonshine's [model catalog](https://moonshine-voice.readthedocs.io/en/latest/models/available-models/)
+reports average English word error rates of 6.65% for Medium, 7.84% for Small,
+and 12.00% for Tiny on its floating-point reference models. This installation uses
+quantized models, whose accuracy differs; those figures are not a guarantee for
+personal dictation.
+
+On the Intel Core Ultra 5 325, a live-paced test of the 11-second whisper.cpp JFK
+sample fed 100ms audio chunks at their actual arrival times. Tiny finished about
+0.40s after the audio ended; Medium finished about 1.19s after it ended, about
+0.79s extra. Model loading took 0.84s and 0.48s respectively in that run (cache
+state affects startup). Medium correctly recognized “Americans” where Tiny
+produced “America”. This single sample checks responsiveness, not overall
+accuracy. Longer phrases and machine load can increase the delay.
+
+Partial-line decoding is disabled because only the final clipboard result is
+needed. This avoids repeatedly decoding text that will be replaced. See the
+[streaming API](https://moonshine-voice.readthedocs.io/en/latest/using/transcription/).
 
 Disabling the module stops chezmoi management; it does not uninstall the runtime
 or remove an existing desktop shortcut. Cancel recording and remove the shortcut
