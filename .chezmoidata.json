@@ -11,44 +11,8 @@
     "builtin-keyboard": [
       ".config/builtin-keyboard"
     ],
-    "alacritty": [
-      ".config/alacritty"
-    ],
-    "kitty": [
-      ".config/kitty"
-    ],
-    "ghostty": [
-      ".config/ghostty"
-    ],
-    "lunarvim": [
-      ".config/lvim"
-    ],
-    "vscode": [
-      ".config/Code"
-    ],
-    "k9s": [
-      ".config/k9s"
-    ],
-    "marimo": [
-      ".config/marimo"
-    ],
     "opencode": [
       ".config/opencode"
-    ],
-    "tridactyl": [
-      ".config/tridactyl"
-    ],
-    "nethack": [
-      ".nethackrc"
-    ],
-    "warp": [
-      ".warp"
-    ],
-    "nix": [
-      ".config/nix"
-    ],
-    "poetry": [
-      ".config/pypoetry"
     ],
     "claude": [
       ".claude"

@@ -7,6 +7,16 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+APP_CONFIGS = [
+    ".config/ghostty/config", ".config/kitty/kitty.conf", ".config/lvim/config.lua",
+    ".config/Code/User/settings.json", ".config/marimo/marimo.toml",
+    ".config/tridactyl/tridactylrc", ".nethackrc", ".config/nix/nix.conf",
+]
+RETIRED_CONFIGS = [
+    ".config/alacritty/alacritty.toml", ".config/k9s/config.yml",
+    ".config/k9s/monokai.yaml", ".config/pypoetry/config.toml",
+    ".warp/themes/catppuccin.yaml",
+]
 
 
 class BaseSettingsTest(unittest.TestCase):
@@ -36,26 +46,43 @@ class BaseSettingsTest(unittest.TestCase):
             self.assertIn(path, paths)
         for path in [".local/bin/add_iso_prefixes.sh", ".local/bin/open_github.sh"]:
             self.assertIn(path, paths)
+        for path in APP_CONFIGS:
+            self.assertIn(path, paths)
         for path in [".local/bin/reclaim_docker_space.sh", ".local/bin/wsp-toggle", ".config/dictation"]:
             self.assertNotIn(path, paths)
-        for path in [".codex", ".config/ghostty", ".config/systemd", ".claude"]:
+        for path in [".codex", ".config/systemd", ".claude", ".gemini", ".config/opencode"]:
             self.assertNotIn(path, paths)
         self.config.write_text('[data]\nemail = "test@example.com"\n'
-                               'modules = ["ghostty", "codex"]\n')
+                               'modules = ["codex"]\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".config/ghostty/config", paths)
         self.assertIn(".codex/config.toml", paths)
         self.assertNotIn(".claude/settings.json", paths)
 
     def test_macos_excludes_linux_policy(self) -> None:
-        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "ghostty", "dictation"]\n'
+        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "dictation"]\n'
                                '[data.chezmoi]\nos = "darwin"\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".bashrc", paths)
-        self.assertIn(".config/ghostty/config", paths)
+        for path in APP_CONFIGS:
+            self.assertIn(path, paths)
         self.assertFalse(any(path.startswith(".config/systemd") for path in paths))
         self.assertNotIn(".local/bin/wsp-toggle", paths)
         self.assertNotIn(".config/dictation", paths)
+
+    def test_retired_configs_removed_without_other_app_files(self) -> None:
+        # Stale module selections must not keep retired configs alive.
+        self.config.write_text('[data]\nemail = "test@example.com"\n'
+                               'modules = ["warp", "alacritty", "k9s", "poetry"]\n')
+        targets = [self.home / path for path in RETIRED_CONFIGS]
+        for target in targets:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("old managed config\n")
+            (target.parent / "keep-local").write_text("local app state\n")
+        self.cm("apply", "--force", "--exclude=scripts", *(str(path) for path in targets))
+        for target in targets:
+            self.assertFalse(target.exists())
+            self.assertEqual((target.parent / "keep-local").read_text(), "local app state\n")
 
     def test_dictation_is_independent(self) -> None:
         self.config.write_text('[data]\nmodules = ["dictation"]\n')
@@ -81,9 +108,9 @@ class BaseSettingsTest(unittest.TestCase):
 
     def test_init_preserves_module_selection(self) -> None:
         self.cm("init", "--promptDefaults")
-        self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["ghostty"]\n')
+        self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["codex"]\n')
         self.cm("init", "--no-tty")
-        self.assertIn('"ghostty"', self.config.read_text())
+        self.assertIn('"codex"', self.config.read_text())
 
     def test_aliases_and_trash_on_available_shells(self) -> None:
         aliases = self.home / "aliases.sh"

@@ -3,7 +3,15 @@
 The shared base is Zsh, Bash, Git, tmux, and useful aliases on Linux and macOS.
 Original command names stay intact except `rm`, which uses recoverable trash.
 The base also installs `add_iso_prefixes.sh` and `open_github.sh` in `~/.local/bin`.
-Toolchains and desktop preferences, including Ghostty, are opt-in.
+Standalone app configs are also always managed: Ghostty (`~/.config/ghostty`),
+Kitty (`~/.config/kitty`), LunarVim (`~/.config/lvim`), VS Code (`~/.config/Code`),
+marimo (`~/.config/marimo`), Tridactyl (`~/.config/tridactyl`), NetHack (`~/.nethackrc`)
+and Nix (`~/.config/nix`). Applying them does not install the applications.
+System settings, toolchain installation, dictation and AI-tool integrations remain opt-in.
+
+Warp, Alacritty, k9s and Poetry configs have been retired. Apply removes only their
+previously managed config files, preserving other application files and installed
+packages. The old configs remain available in Git history.
 
 Tmux loads Catppuccin when installed. The contribution graph builds when Cargo
 is available and displays in interactive Zsh login shells when its binary exists.
@@ -17,15 +25,9 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC, Zed and Ghostty defaults when installed | Linux |
 | [cosmic](mod_cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
-| `alacritty`, `kitty`, `ghostty` | Terminal preferences | Linux / macOS |
-| `warp` | Terminal preferences | macOS |
-| `lunarvim`, `vscode` | Editor preferences | App-dependent |
 | [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
 | `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
-| `k9s`, `marimo`, `tridactyl`, `nethack` | Application preferences | App-dependent |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
-| [nix](dev-tools.md#nix-and-project-flakes) | User Nix config with flakes enabled; install Nix separately | Linux / macOS |
-| `poetry` | Legacy Poetry preferences; no toolchain installation | Tool-dependent |
 | `tmux-memory` | Per-machine memory limits for matching tmux scopes | Linux / systemd |
 | `user-oom-policy` | User services continue after an OOM kill | Linux / systemd |
 | `mac-shortcuts` | Keyboard shortcut automation | macOS |
@@ -38,6 +40,8 @@ Platform labels describe intended scope, not cross-platform validation.
 `data.modules` in `~/.config/chezmoi/chezmoi.toml` selects modules; none are enabled
 by default. [The catalog](../.chezmoidata.json) maps names to managed paths;
 [ignore rules](../.chezmoiignore) enforce selection and platform boundaries.
+Remove old standalone-app and retired-app names from `data.modules` when updating;
+those entries no longer control any paths.
 
 Chezmoi uses an explicit `0022` umask: ordinary files are `0644`, executable files
 and directories `0755`; `private_` attributes remove group/other access.

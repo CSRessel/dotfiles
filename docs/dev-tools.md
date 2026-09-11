@@ -67,9 +67,9 @@ use the recommended multi-user installation on Pop!OS. The installer owns the
 store, daemon and system shell initialization. Update Nix through its native
 installation; mise and chezmoi do not install or upgrade it.
 
-Enable `nix` in chezmoi's `data.modules`, then review and apply. This deploys
+The shared base deploys
 `~/.config/nix/nix.conf`, enabling `nix-command`, `flakes` and `keep-outputs`.
-Installing Nix alone does not enable this module. Open a fresh shell afterward.
+No module selection is needed. Review and apply, then open a fresh shell after installing Nix.
 
 Projects retain their existing `flake.nix`, `flake.lock` and `.envrc`. Use
 `nix develop`, or direnv for directory-based activation. Bash and Zsh load direnv's
@@ -93,7 +93,7 @@ for cached flake environments; this repository does not configure it.
 
 Other global applications are explicit additions. The migration inventory found
 no extra Cargo, uv or Bun applications; npm had only its bundled npm/Corepack.
-Legacy Poetry, editors, marimo and k9s remain separate optional modules.
+Editor and marimo configs are part of the shared base. Poetry and k9s configs have been retired.
 
 References: [mise selection](https://mise.jdx.dev/faq.html),
 [chezmoi scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/),

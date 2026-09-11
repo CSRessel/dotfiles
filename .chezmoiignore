@@ -5,7 +5,7 @@ tests/
 git-contribution-graph/
 24-bit-color.sh
 
-# Missing module selection means the portable shell/Git/tmux base only.
+# Standalone app configs are always managed; modules gate optional integrations.
 {{ $enabled := get . "modules" | default (list) }}
 {{ range $name, $paths := .modulePaths }}
 {{ if not (has $name $enabled) }}
@@ -31,5 +31,4 @@ git-contribution-graph/
 {{ end }}
 {{ if ne .chezmoi.os "darwin" }}
 mac_keyboard_shortcuts.sh
-.warp
 {{ end }}

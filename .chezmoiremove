@@ -1,6 +1,13 @@
 # Retired personal helper.
 .local/bin/reclaim_docker_space.sh
 
+# Retired app configs; preserve other files in these application directories.
+.config/alacritty/alacritty.toml
+.config/k9s/config.yml
+.config/k9s/monokai.yaml
+.config/pypoetry/config.toml
+.warp/themes/catppuccin.yaml
+
 {{ if has "dev-tools" (get . "modules" | default (list)) -}}
 # Retired helpers; only remove the files previously managed by this module.
 .config/dev-tools/env.sh

@@ -55,7 +55,7 @@ Tailscale and ChatGPT use native installers, even when backed by apt packages.
 - [Ghostty — ghostty-ubuntu](https://github.com/mkasberg/ghostty-ubuntu): community native `.deb` for Pop!OS 24.04; updates use the same installer.
 - [mise](https://mise.jdx.dev/installing-mise.html): installs the manager; then follow [development tools setup](dev-tools.md).
 - [direnv](https://direnv.net/docs/installation.html)
-- [Nix](https://nixos.org/download/#nix): multi-user installation; then enable the [Nix module](dev-tools.md#nix-and-project-flakes).
+- [Nix](https://nixos.org/download/#nix): multi-user installation; the shared base supplies the [user config](dev-tools.md#nix-and-project-flakes).
 - [Oh My Zsh](https://ohmyz.sh/#install)
 - [Tailscale](https://tailscale.com/docs/install/linux)
 - [ChatGPT desktop](https://learn.chatgpt.com/docs/linux/linux-app)
@@ -80,7 +80,7 @@ and association groups are preserved; INI formatting and comments are not.
 Text/empty files use Zed; HTML uses Firefox. Audio/video types follow the local
 MIME database, plus COSMIC's music associations. Ghostty uses
 `x-scheme-handler/terminal` and `application/x-terminal-emulator`; its appearance
-and shell preferences remain in the separate `ghostty` module.
+and shell preferences are always managed as part of the shared base.
 
 COSMIC's [Default Applications implementation](https://github.com/pop-os/cosmic-settings/blob/master/cosmic-settings/src/pages/applications/default_apps.rs)
 uses these same XDG associations for browser, music, video, editor and terminal.
