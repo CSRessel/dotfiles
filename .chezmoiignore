@@ -4,6 +4,13 @@ docs/
 tests/
 git-contribution-graph/
 24-bit-color.sh
+.github/
+.editorconfig
+ruff.toml
+requirements-dev.txt
+.ruff_cache/
+.pre-commit-config.yaml
+.gitleaks.toml
 
 # Standalone app configs are always managed; modules gate optional integrations.
 {{ $enabled := get . "modules" | default (list) }}

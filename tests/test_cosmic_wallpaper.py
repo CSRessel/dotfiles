@@ -1,13 +1,14 @@
 """Exercise wallpaper generation through chezmoi in disposable homes."""
+
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import tempfile
 import tomllib
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,14 +20,19 @@ class CosmicWallpaperTest(unittest.TestCase):
         self.home = Path(self.temp.name)
         self.source = self.home / "source"
         self.source.mkdir()
-        for name in (".chezmoidata.json", ".chezmoiignore",
-                     "run_before_cosmic_wallpaper.sh.tmpl"):
+        for name in (".chezmoidata.json", ".chezmoiignore", "run_before_cosmic_wallpaper.sh.tmpl"):
             shutil.copy2(ROOT / name, self.source / name)
-        for name in (".chezmoitemplates", "docs/assets/cosmic",
-                     "dot_config/cosmic/com.system76.CosmicBackground"):
+        for name in (
+            ".chezmoitemplates",
+            "docs/assets/cosmic",
+            "dot_config/cosmic/com.system76.CosmicBackground",
+        ):
             shutil.copytree(ROOT / name, self.source / name)
-        self.env = {key: value for key, value in os.environ.items()
-                    if not key.startswith(("XDG_", "CHEZMOI_"))}
+        self.env = {
+            key: value
+            for key, value in os.environ.items()
+            if not key.startswith(("XDG_", "CHEZMOI_"))
+        }
         self.env["HOME"] = str(self.home)
         self.config = self.home / "chezmoi.toml"
         self.config.write_text('[data]\nmodules = ["de-cosmic"]\n')
@@ -41,11 +47,22 @@ class CosmicWallpaperTest(unittest.TestCase):
         values["data"]["chezmoi"] = {"hostname": self.hostname, "os": self.os}
         config.write_text(json.dumps(values))
         return subprocess.run(
-            [shutil.which("chezmoi") or "chezmoi", "--source", str(self.source),
-             "--destination", str(self.home), "--config", str(config),
-             "--persistent-state", str(self.home / "state.db"),
-             *args],
-            env=self.env, capture_output=True, text=True)
+            [
+                shutil.which("chezmoi") or "chezmoi",
+                "--source",
+                str(self.source),
+                "--destination",
+                str(self.home),
+                "--config",
+                str(config),
+                "--persistent-state",
+                str(self.home / "state.db"),
+                *args,
+            ],
+            env=self.env,
+            capture_output=True,
+            text=True,
+        )
 
     def apply_wallpaper(self) -> Path:
         target = self.home / ".config/cosmic/com.system76.CosmicBackground/v1/all"
@@ -80,8 +97,9 @@ class CosmicWallpaperTest(unittest.TestCase):
         identify = ["magick", "identify"] if shutil.which("magick") else ["identify"]
         for image in (first, second):
             dimensions = subprocess.check_output(identify + ["-format", "%wx%h", str(image)])
-            self.assertEqual(dimensions, subprocess.check_output(
-                identify + ["-format", "%wx%h", str(source)]))
+            self.assertEqual(
+                dimensions, subprocess.check_output(identify + ["-format", "%wx%h", str(source)])
+            )
 
     def test_renderer_failure_leaves_config_and_image_unchanged(self) -> None:
         original = self.apply_wallpaper()
@@ -102,7 +120,7 @@ class CosmicWallpaperTest(unittest.TestCase):
 
     def test_disabled_module_and_non_linux_do_not_generate(self) -> None:
         for modules, operating_system in (([], "linux"), (["de-cosmic"], "darwin")):
-            self.config.write_text('[data]\nmodules = ' + json.dumps(modules) + '\n')
+            self.config.write_text("[data]\nmodules = " + json.dumps(modules) + "\n")
             self.os = operating_system
             result = self.cm("apply")
             self.assertEqual(result.returncode, 0, result.stderr)

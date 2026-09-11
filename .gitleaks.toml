@@ -1,0 +1,45 @@
+title = "Dotfiles secrets and private configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "private-network-url"
+description = "URL points to a private network or link-local address"
+regex = '''(?i)(?:https?|ssh|postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis|amqps?)://(?:10(?:\.[0-9]{1,3}){3}|192\.168(?:\.[0-9]{1,3}){2}|172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2}|169\.254(?:\.[0-9]{1,3}){2}|\[(?:f[cd][0-9a-f]{2}|fe[89ab][0-9a-f]):[0-9a-f:]+\])(?:[/:?#][^\s"'<>]*)?'''
+
+[[rules]]
+id = "private-hostname-url"
+description = "URL contains an internal hostname"
+regex = '''(?i)(?:https?|ssh|postgres(?:ql)?|mysql|mongodb(?:\+srv)?|redis|amqps?)://[a-z0-9][a-z0-9.-]*\.(?:internal|corp|lan|local)(?:[/:?#][^\s"'<>]*)?'''
+
+[[rules]]
+id = "private-endpoint-setting"
+description = "Host or endpoint setting contains a private address or hostname"
+regex = '''(?i)\b(?:host|hostname|server|endpoint|address)\b["']?\s*[:=]\s*["']((?:10(?:\.[0-9]{1,3}){3}|192\.168(?:\.[0-9]{1,3}){2}|172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2}|[a-z0-9][a-z0-9.-]*\.(?:internal|corp|lan|local))(?::[0-9]+)?)["']'''
+secretGroup = 1
+
+[[rules]]
+id = "aws-account-url"
+description = "Account-specific AWS sign-in URL"
+regex = '''(?i)https?://[a-z0-9-]+\.(?:signin\.aws\.amazon\.com|awsapps\.com)(?:[/:?#][^\s"'<>]*)?'''
+
+[[rules]]
+id = "url-credentials"
+description = "Credentials embedded in a connection URL"
+regex = '''(?i)[a-z][a-z0-9+.-]*://[^\s/:@"'<>]+:[^\s/@"'<>]+@[^\s"'<>]+'''
+
+[[rules]]
+id = "sensitive-url-parameter"
+description = "URL carries a credential or signed-access parameter"
+regex = '''(?i)[?&](?:access[_-]?token|api[_-]?key|auth|authorization|password|secret|token|signature|sig|x-amz-(?:signature|credential)|x-goog-(?:signature|credential))=[^\s&#"'<>$]{3,}'''
+
+[[rules]]
+id = "literal-secret-setting"
+description = "Literal password, token or secret configuration value"
+regex = '''(?i)\b(?:password|passwd|secret|token|client[_-]?secret|private[_-]?key|api[_-]?token|api[_-]?key|access[_-]?token|auth[_-]?token)\b["']?\s*[:=]\s*["']([^\s"'$<>]{4,})["']'''
+secretGroup = 1
+[[rules.allowlists]]
+description = "Explicit documentation placeholders, never real values"
+regexTarget = "secret"
+regexes = ['''(?i)^(?:example|placeholder|changeme|redacted|test-token|your[_-][a-z_-]+)$''']

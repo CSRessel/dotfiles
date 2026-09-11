@@ -2,15 +2,17 @@
 """Render the website's Unicode cat. Requires python3-gi-cairo, python3-cairo,
 gir1.2-pango-1.0 and the fonts module. Run from any directory.
 """
-from pathlib import Path
+
 import unicodedata
+from pathlib import Path
+
 import cairo
 import gi
 
 gi.require_foreign("cairo")
 gi.require_version("Pango", "1.0")
 gi.require_version("PangoCairo", "1.0")
-from gi.repository import Pango, PangoCairo
+from gi.repository import Pango, PangoCairo  # noqa: E402 -- versions must be selected first
 
 ROOT = Path(__file__).resolve().parent
 ART = (ROOT / "cat.txt").read_text().rstrip("\n")
@@ -55,8 +57,15 @@ def render_cat(art):
             width = columns(char)
             if not char.isspace():
                 glyph = char + "\ufe0f" if char in "🖥⌨" else char
-                text(rc, glyph, 32, left + (column + width / 2) * cell,
-                     28 + row * 42, centered=True, mono=True)
+                text(
+                    rc,
+                    glyph,
+                    32,
+                    left + (column + width / 2) * cell,
+                    28 + row * 42,
+                    centered=True,
+                    mono=True,
+                )
             column += width
     cat, cc = surface(640, 448)
     cc.set_source_rgb(1, 1, 1)
@@ -83,12 +92,12 @@ for name, emoji in {"coffee": "☕", "key": "🔑", "laptop": "💻", "lock": "�
     place_cat(ctx, 320, 0, 1, artwork)
     img.write_to_png(str(ROOT / f"{name}-black.png"))
     img, ctx = surface(1920, 1200, True)
-    place_cat(ctx, 340, 530, .9, artwork)
+    place_cat(ctx, 340, 530, 0.9, artwork)
     img.write_to_png(str(ROOT / f"{name}-left.png"))
 
     if name in ("coffee", "lock"):
         img, ctx = surface(320, 224)
-        ctx.scale(.5, .5)
+        ctx.scale(0.5, 0.5)
         ctx.set_source_surface(artwork, 0, 0)
         ctx.paint()
         img.write_to_png(str(ROOT / f"{name}-plymouth.png"))

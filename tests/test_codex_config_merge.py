@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import Any
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
-
+from pathlib import Path
+from typing import Any
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
@@ -48,7 +47,7 @@ class CodexConfigMergeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="codex-config-merge-") as destination:
             destination_path = Path(destination)
             chezmoi_config = destination_path / "chezmoi.toml"
-            chezmoi_config.write_text('[data]\nmodules = []\n')
+            chezmoi_config.write_text("[data]\nmodules = []\n")
             config_path = destination_path / ".codex" / "config.toml"
             config_path.parent.mkdir(parents=True)
             config_path.write_text(source)
@@ -187,13 +186,9 @@ trust_level = "trusted"
             config["marketplaces"]["openai-bundled"],
             {"last_updated": "volatile-timestamp", "source": "/runtime/marketplace"},
         )
+        self.assertEqual(config["mcp_servers"]["node_repl"]["command"], "/runtime/node_repl")
         self.assertEqual(
-            config["mcp_servers"]["node_repl"]["command"], "/runtime/node_repl"
-        )
-        self.assertEqual(
-            config["mcp_servers"]["node_repl"]["env"][
-                "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S"
-            ],
+            config["mcp_servers"]["node_repl"]["env"]["NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S"],
             "volatile-hash",
         )
         self.assertEqual(config["desktop"]["future_setting"], "preserve-me")
@@ -207,7 +202,10 @@ trust_level = "trusted"
         self.assertEqual(table_headers[-2], "[projects]")
         self.assertIn(
             table_headers[-1],
-            ["[projects.'/home/tester/source/project']", '[projects."/home/tester/source/project"]'],
+            [
+                "[projects.'/home/tester/source/project']",
+                '[projects."/home/tester/source/project"]',
+            ],
         )
 
     def test_macos_enforces_workspace_and_computer_use_while_preserving_app_state(
@@ -331,9 +329,7 @@ trust_level = "trusted"
         self.assertTrue(config["desktop"]["keepRemoteControlAwakeWhilePluggedIn"])
         self.assertEqual(config["desktop"]["followUpQueueMode"], "queue")
         self.assertEqual(config["desktop"]["dock-icon-preference"], "codex-system")
-        self.assertEqual(
-            config["desktop"]["open-in-target-preferences"]["global"], "ghostty"
-        )
+        self.assertEqual(config["desktop"]["open-in-target-preferences"]["global"], "ghostty")
         self.assertEqual(
             config["desktop"]["open-in-target-preferences"]["perPath"],
             {"/Users/tester/source/project": "zed"},

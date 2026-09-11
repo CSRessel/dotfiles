@@ -1,6 +1,16 @@
 # dotfiles
 
-Personal configs. Linux and MacOS support.
+[![Dotfiles checks](https://github.com/CSRessel/dotfiles/actions/workflows/checks.yml/badge.svg?branch=master)](https://github.com/CSRessel/dotfiles/actions/workflows/checks.yml)
+[![Secret scan](https://github.com/CSRessel/dotfiles/actions/workflows/secrets.yml/badge.svg?branch=master)](https://github.com/CSRessel/dotfiles/actions/workflows/secrets.yml)
+[![Dependency updates](https://img.shields.io/badge/updates-Dependabot-025E8C?logo=dependabot)](.github/dependabot.yml)
+[![Pre-commit](https://img.shields.io/badge/pre--commit-secrets%20%2B%20privacy-FAB040?logo=precommit)](docs/checks.md#pre-commit-protection)
+
+[![chezmoi](https://img.shields.io/badge/dotfiles-chezmoi-1682D4?logo=chezmoi)](https://www.chezmoi.io/)
+[![Linux and macOS](https://img.shields.io/badge/platforms-Linux%20%2B%20macOS-555)](docs/modules.md)
+[![COSMIC](https://img.shields.io/badge/desktop-COSMIC-63B3ED)](docs/mod_de-cosmic.md)
+[![Zsh, Bash and tmux](https://img.shields.io/badge/shell-Zsh%20%2F%20Bash%20%2F%20tmux-4EAA25)](docs/modules.md)
+
+Personal configs. Linux and macOS support.
 
 Generally biased for Pop!OS 24.04 / COSMIC (for code-as-config: settings, keybinds, and extras).
 
@@ -48,6 +58,7 @@ inside the existing theme checkout.
 - [Module settings overview](docs/modules.md)
 - [Expected packages and defaults](docs/packages.md)
 - [Development tools and environments](docs/dev-tools.md)
+- [Checks and contributing](docs/checks.md)
 
 
 ## Philosophy

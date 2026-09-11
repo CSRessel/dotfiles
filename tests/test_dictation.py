@@ -1,14 +1,15 @@
 """Exercise dictation lifecycle without microphone access or a downloaded model."""
+
 import importlib.util
 import io
 import os
-from pathlib import Path
 import signal
 import subprocess
 import sys
 import unittest
-from unittest.mock import patch
+from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("wsp", ROOT / "dot_config/dictation/wsp.py")
@@ -67,11 +68,13 @@ while True:
 
         handlers = {s: signal.getsignal(s) for s in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT)}
         try:
-            with patch.object(wsp, "engine", return_value=model), \
-                    patch.object(wsp, "config", return_value={"max_seconds": 5}), \
-                    patch.object(wsp.subprocess, "Popen", side_effect=spawn), \
-                    patch.object(wsp, "notify", side_effect=notify), \
-                    patch.object(wsp, "copy_text") as copied:
+            with (
+                patch.object(wsp, "engine", return_value=model),
+                patch.object(wsp, "config", return_value={"max_seconds": 5}),
+                patch.object(wsp.subprocess, "Popen", side_effect=spawn),
+                patch.object(wsp, "notify", side_effect=notify),
+                patch.object(wsp, "copy_text") as copied,
+            ):
                 wsp.record()
                 self.assertTrue(all(p.poll() is not None for p in children))
                 return model, copied.call_args_list
@@ -91,8 +94,10 @@ while True:
         self.assertEqual(copies, [])
 
     def test_toggle_stops_only_our_service_main_process(self):
-        with patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run, \
-                patch.object(wsp, "notify") as notify:
+        with (
+            patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run,
+            patch.object(wsp, "notify") as notify,
+        ):
             wsp.control("toggle")
             self.assertIn("--signal=SIGUSR1", run.call_args.args[0])
             self.assertIn("--kill-whom=main", run.call_args.args[0])
@@ -100,8 +105,12 @@ while True:
             self.assertIn("Finishing dictation", notify.call_args.args[0])
 
     def test_notifications_work_without_notify_send(self):
-        with patch.object(wsp.shutil, "which", return_value=None), \
-                patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(stdout="u 42\n")) as run:
+        with (
+            patch.object(wsp.shutil, "which", return_value=None),
+            patch.object(
+                wsp.subprocess, "run", return_value=SimpleNamespace(stdout="u 42\n")
+            ) as run,
+        ):
             self.assertEqual(wsp.notify("Recording"), 42)
             command = run.call_args.args[0]
             self.assertEqual(command[0], "busctl")
@@ -110,16 +119,22 @@ while True:
             self.assertTrue(run.call_args.kwargs["check"])
 
     def test_notification_failure_is_logged_without_stopping_dictation(self):
-        failure = subprocess.CalledProcessError(1, ["busctl"], stderr="Notification service unavailable")
-        with patch.object(wsp.subprocess, "run", side_effect=failure), \
-                patch("sys.stderr", new_callable=io.StringIO) as log:
+        failure = subprocess.CalledProcessError(
+            1, ["busctl"], stderr="Notification service unavailable"
+        )
+        with (
+            patch.object(wsp.subprocess, "run", side_effect=failure),
+            patch("sys.stderr", new_callable=io.StringIO) as log,
+        ):
             self.assertIsNone(wsp.notify("Recording"))
             self.assertIn("notification failed: Notification service unavailable", log.getvalue())
 
     def test_macos_notification_adapter_passes_text_as_data(self):
         message = 'Recording "quoted text"\nwith a second line'
-        with patch.object(wsp.sys, "platform", "darwin"), \
-                patch.object(wsp.subprocess, "run") as run:
+        with (
+            patch.object(wsp.sys, "platform", "darwin"),
+            patch.object(wsp.subprocess, "run") as run,
+        ):
             self.assertTrue(wsp.notify(message))
             command = run.call_args.args[0]
             self.assertEqual(command[0], "/usr/bin/osascript")
@@ -128,16 +143,20 @@ while True:
             self.assertTrue(run.call_args.kwargs["check"])
 
     def test_unsupported_notification_backend_is_reported(self):
-        with patch.object(wsp.sys, "platform", "unsupported"), \
-                patch.object(wsp.subprocess, "run") as run, \
-                patch("sys.stderr", new_callable=io.StringIO) as log:
+        with (
+            patch.object(wsp.sys, "platform", "unsupported"),
+            patch.object(wsp.subprocess, "run") as run,
+            patch("sys.stderr", new_callable=io.StringIO) as log,
+        ):
             self.assertIsNone(wsp.notify("Recording"))
             run.assert_not_called()
             self.assertIn("not implemented on unsupported", log.getvalue())
 
     def test_start_uses_transient_service_and_session_environment(self):
-        with patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}), \
-                patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=3)) as run:
+        with (
+            patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}),
+            patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=3)) as run,
+        ):
             wsp.control("toggle")
             command = run.call_args.args[0]
             self.assertEqual(command[0], "systemd-run")
@@ -145,14 +164,18 @@ while True:
             self.assertEqual(command[-1], "record")
 
     def test_clipboard_owner_outlives_recording(self):
-        with patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}), \
-                patch.object(wsp.shutil, "which", return_value="/usr/bin/wl-copy"), \
-                patch.object(wsp.subprocess, "run") as run:
+        with (
+            patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}),
+            patch.object(wsp.shutil, "which", return_value="/usr/bin/wl-copy"),
+            patch.object(wsp.subprocess, "run") as run,
+        ):
             wsp.copy_text("Hello\nworld")
             command = run.call_args.args[0]
             self.assertIn("--unit=wsp-clipboard", command)
             self.assertIn("--foreground", command)
-            data = next(x.split("=", 2)[2] for x in command if x.startswith("--property=StandardInputData="))
+            data = next(
+                x.split("=", 2)[2] for x in command if x.startswith("--property=StandardInputData=")
+            )
             self.assertEqual(wsp.base64.b64decode(data), b"Hello\nworld")
 
 

@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """Local streaming dictation; systemd owns recording processes, never PID files."""
+
 import argparse
 import array
 import base64
 import json
 import os
-from pathlib import Path
 import selectors
 import shutil
 import signal
 import subprocess
 import sys
 import time
+from pathlib import Path
 
 UNIT = "wsp-dictation.service"
 CONFIG = Path.home() / ".config/dictation/config.json"
@@ -26,7 +27,13 @@ def notify(message):
         if sys.platform.startswith("linux"):
             return notify_linux(message)
         raise NotImplementedError(f"Notifications are not implemented on {sys.platform}")
-    except (OSError, subprocess.SubprocessError, ValueError, IndexError, NotImplementedError) as exc:
+    except (
+        OSError,
+        subprocess.SubprocessError,
+        ValueError,
+        IndexError,
+        NotImplementedError,
+    ) as exc:
         detail = getattr(exc, "stderr", None) or str(exc)
         print(f"wsp-toggle: notification failed: {detail.strip()}", file=sys.stderr)
         return None
@@ -35,13 +42,29 @@ def notify(message):
 def notify_linux(message):
     # busctl is supplied by systemd, which dictation already requires. Do not
     # silently depend on the optional notify-send/libnotify-bin package.
-    command = ["busctl", "--user", "--timeout=5s", "call",
-               "org.freedesktop.Notifications", "/org/freedesktop/Notifications",
-               "org.freedesktop.Notifications", "Notify", "susssasa{sv}i",
-               "Dictation", "0", "audio-input-microphone", "Dictation", message,
-               "0", "1", "urgency", "y", "1", "4000"]
-    result = subprocess.run(command, capture_output=True, text=True,
-                            check=True, timeout=6)
+    command = [
+        "busctl",
+        "--user",
+        "--timeout=5s",
+        "call",
+        "org.freedesktop.Notifications",
+        "/org/freedesktop/Notifications",
+        "org.freedesktop.Notifications",
+        "Notify",
+        "susssasa{sv}i",
+        "Dictation",
+        "0",
+        "audio-input-microphone",
+        "Dictation",
+        message,
+        "0",
+        "1",
+        "urgency",
+        "y",
+        "1",
+        "4000",
+    ]
+    result = subprocess.run(command, capture_output=True, text=True, check=True, timeout=6)
     return int(result.stdout.split()[1])
 
 
@@ -49,9 +72,17 @@ def notify_macos(message):
     """Future macOS port: Notification Center adapter, not yet validated on a Mac."""
     # Keep message text out of AppleScript source, including quotes and newlines.
     # Capture, clipboard ownership, and lifecycle still need macOS backends.
-    command = ["/usr/bin/osascript", "-e", "on run argv",
-               "-e", 'display notification (item 1 of argv) with title "Dictation"',
-               "-e", "end run", "--", message]
+    command = [
+        "/usr/bin/osascript",
+        "-e",
+        "on run argv",
+        "-e",
+        'display notification (item 1 of argv) with title "Dictation"',
+        "-e",
+        "end run",
+        "--",
+        message,
+    ]
     subprocess.run(command, capture_output=True, text=True, check=True, timeout=6)
     return True
 
@@ -63,27 +94,36 @@ def config():
 def setup():
     from moonshine_voice import ModelArch
     from moonshine_voice.download import get_model_for_language
+
     cfg = config()
     arch = ModelArch[cfg["model"].replace("-", "_").upper()]
     path, arch = get_model_for_language(cfg["language"], arch)
     MODEL.parent.mkdir(parents=True, exist_ok=True)
     temporary = MODEL.with_suffix(".tmp")
-    temporary.write_text(json.dumps({"path": path, "arch": arch.value,
-                                     "language": cfg["language"], "model": cfg["model"]}))
+    temporary.write_text(
+        json.dumps(
+            {"path": path, "arch": arch.value, "language": cfg["language"], "model": cfg["model"]}
+        )
+    )
     temporary.replace(MODEL)
     print(f"Dictation ready: {cfg['language']} / {cfg['model']}")
 
 
 def engine():
     from moonshine_voice import ModelArch, Transcriber
+
     saved = json.loads(MODEL.read_text())
     cfg = config()
     if any(saved[key] != cfg[key] for key in ("language", "model")):
         raise RuntimeError("Model selection changed; run wsp-toggle setup first.")
     # No network lookup at recording time. Two-second updates reduce repeated
     # decoding; stop() still immediately finalizes the last partial phrase.
-    return Transcriber(saved["path"], ModelArch(saved["arch"]), update_interval=2,
-                       options={"return_audio_data": "false", "decode_incomplete_lines": "false"})
+    return Transcriber(
+        saved["path"],
+        ModelArch(saved["arch"]),
+        update_interval=2,
+        options={"return_audio_data": "false", "decode_incomplete_lines": "false"},
+    )
 
 
 def copy_text(text):
@@ -92,32 +132,55 @@ def copy_text(text):
     elif os.environ.get("DISPLAY") and shutil.which("xclip"):
         command = [shutil.which("xclip"), "-quiet", "-selection", "clipboard"]
     else:
-        raise RuntimeError("No clipboard available; install wl-clipboard for Wayland or xclip for X11.")
+        raise RuntimeError(
+            "No clipboard available; install wl-clipboard for Wayland or xclip for X11."
+        )
     # Clipboard owners must outlive the recording unit. Give the owner its own
     # transient service; input is passed in memory, with no transcript file.
-    subprocess.run(["systemctl", "--user", "stop", "wsp-clipboard.service"],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    launch = ["systemd-run", "--user", "--collect", "--quiet", "--unit=wsp-clipboard",
-              "--property=Type=exec", "--property=StandardInput=data",
-              "--property=StandardInputData=" + base64.b64encode(text.encode()).decode(),
-              "--property=StandardOutput=null", "--property=StandardError=null"]
+    subprocess.run(
+        ["systemctl", "--user", "stop", "wsp-clipboard.service"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    launch = [
+        "systemd-run",
+        "--user",
+        "--collect",
+        "--quiet",
+        "--unit=wsp-clipboard",
+        "--property=Type=exec",
+        "--property=StandardInput=data",
+        "--property=StandardInputData=" + base64.b64encode(text.encode()).decode(),
+        "--property=StandardOutput=null",
+        "--property=StandardError=null",
+    ]
     launch += session_environment()
     subprocess.run(launch + command, check=True, timeout=10)
 
 
 def session_environment():
-    return [f"--setenv={key}={os.environ[key]}" for key in
-            ("DISPLAY", "WAYLAND_DISPLAY", "XDG_RUNTIME_DIR", "PULSE_SERVER",
-             "DBUS_SESSION_BUS_ADDRESS", "PATH") if key in os.environ]
+    return [
+        f"--setenv={key}={os.environ[key]}"
+        for key in (
+            "DISPLAY",
+            "WAYLAND_DISPLAY",
+            "XDG_RUNTIME_DIR",
+            "PULSE_SERVER",
+            "DBUS_SESSION_BUS_ADDRESS",
+            "PATH",
+        )
+        if key in os.environ
+    ]
 
 
 def transcribe(path):
     from moonshine_voice import load_wav_file
+
     audio, rate = load_wav_file(path)
     with engine() as model:
         model.start()
         for offset in range(0, len(audio), rate // 10):
-            model.add_audio(audio[offset:offset + rate // 10], rate)
+            model.add_audio(audio[offset : offset + rate // 10], rate)
         transcript = model.stop()
         if transcript is None:
             raise RuntimeError("Speech recognition failed while finalizing.")
@@ -141,8 +204,16 @@ def record():
             return
         model.start()
         recorder = subprocess.Popen(
-            ["parecord", "--raw", "--format=float32le", "--rate=16000", "--channels=1",
-             "--latency-msec=100"], stdout=subprocess.PIPE)
+            [
+                "parecord",
+                "--raw",
+                "--format=float32le",
+                "--rate=16000",
+                "--channels=1",
+                "--latency-msec=100",
+            ],
+            stdout=subprocess.PIPE,
+        )
         pending = b""
         deadline = time.monotonic() + config()["max_seconds"]
         stopped_at = None
@@ -165,7 +236,9 @@ def record():
                 chunk = os.read(recorder.stdout.fileno(), 6400)
                 if not chunk:
                     if not stopping:
-                        raise RuntimeError("Microphone recording ended unexpectedly; check audio input.")
+                        raise RuntimeError(
+                            "Microphone recording ended unexpectedly; check audio input."
+                        )
                     break
                 if not received_audio:
                     notify("Recording. Run wsp-toggle again to finish and copy.")
@@ -208,13 +281,23 @@ def control(action):
             subprocess.run(["systemctl", "--user", "stop", UNIT], check=True)
         notify("Dictation cancelled.")
     elif active:
-        subprocess.run(["systemctl", "--user", "kill", "--kill-whom=main",
-                        "--signal=SIGUSR1", UNIT], check=True)
+        subprocess.run(
+            ["systemctl", "--user", "kill", "--kill-whom=main", "--signal=SIGUSR1", UNIT],
+            check=True,
+        )
         notify("Finishing dictation… The transcript will be copied shortly.")
     else:
-        command = ["systemd-run", "--user", "--collect", "--quiet", f"--unit={UNIT}",
-                   "--property=Type=exec", "--property=RuntimeMaxSec=360",
-                   "--property=TimeoutStopSec=5", "--property=UMask=0077"]
+        command = [
+            "systemd-run",
+            "--user",
+            "--collect",
+            "--quiet",
+            f"--unit={UNIT}",
+            "--property=Type=exec",
+            "--property=RuntimeMaxSec=360",
+            "--property=TimeoutStopSec=5",
+            "--property=UMask=0077",
+        ]
         command += session_environment()
         command += [sys.executable, str(Path(__file__).resolve()), "record"]
         subprocess.run(command, check=True)
@@ -222,8 +305,12 @@ def control(action):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", nargs="?", default="toggle",
-                        choices=["toggle", "status", "cancel", "setup", "record", "transcribe"])
+    parser.add_argument(
+        "action",
+        nargs="?",
+        default="toggle",
+        choices=["toggle", "status", "cancel", "setup", "record", "transcribe"],
+    )
     parser.add_argument("wav", nargs="?")
     args = parser.parse_args()
     if args.action == "setup":

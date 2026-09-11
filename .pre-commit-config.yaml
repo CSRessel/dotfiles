@@ -1,0 +1,10 @@
+minimum_pre_commit_version: "4.0.0"
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # v8.30.1
+    hooks:
+      - id: gitleaks
+        name: Staged secrets and private configuration
+        entry: python3 .github/scan-secrets.py staged
+        pass_filenames: false
+        require_serial: true

@@ -1,0 +1,60 @@
+name: Dotfiles checks
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dotfiles:
+    name: Templates, tests and formatting
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y zsh imagemagick shellcheck
+          python -m pip install -r requirements-dev.txt
+          python .github/install-tools.py --directory "$RUNNER_TEMP/dotfiles-bin" chezmoi actionlint gitleaks
+          echo "$RUNNER_TEMP/dotfiles-bin" >> "$GITHUB_PATH"
+      - name: Lint Python and workflow files
+        run: |
+          ruff check .
+          ruff format --check .
+          pre-commit validate-config
+          actionlint -color
+      - name: Test in disposable homes
+        run: python -m unittest discover -s tests -v
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+  rust:
+    name: Contribution graph
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: git-contribution-graph
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust toolchain
+        run: rustup toolchain install 1.98.1 --profile minimal --component rustfmt,clippy
+      - run: cargo +1.98.1 fmt -- --check
+      - run: cargo +1.98.1 clippy --locked --all-targets -- -D warnings
+      - run: cargo +1.98.1 test --locked

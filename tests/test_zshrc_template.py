@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
-
+from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
@@ -18,7 +17,7 @@ class ZshrcTemplateTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="zshrc-template-") as destination:
             destination_path = Path(destination)
             config = destination_path / "config.toml"
-            config.write_text('[data]\nmodules = []\n')
+            config.write_text("[data]\nmodules = []\n")
             result = subprocess.run(
                 [
                     str(chezmoi),
