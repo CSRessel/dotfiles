@@ -1,4 +1,4 @@
-{{ if and (eq .chezmoi.os "linux") (has "cosmic" (get . "modules" | default (list))) -}}
+{{ if and (eq .chezmoi.os "linux") (has "de-cosmic" (get . "modules" | default (list))) -}}
 {{ $output := includeTemplate "cosmic-wallpaper-path" . | trim -}}
 {{ $existing := stat $output -}}
 {{ if or (not $existing) (eq $existing.size 0) -}}

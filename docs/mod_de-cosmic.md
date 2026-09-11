@@ -28,7 +28,8 @@ Pointer settings are shared defaults, not device-specific. Natural scrolling is
 set only for the touchpad; sensitivity comes from `input_default`.
 
 Wallpaper-picker history is excluded. [Fonts](mod_fonts.md) owns font selection;
-[builtin-keyboard](mod_builtin-keyboard.md) owns hardware key remapping.
+[keyboard-remapping](mod_keyboard-remapping.md) owns physical-key remapping.
+Desktop shortcuts stay in COSMIC; they are independent of the remapping module.
 
 [Desktop app defaults](packages.md#desktop-defaults) use XDG associations through
 the independent `desktop-apps` module.
@@ -37,7 +38,7 @@ the independent `desktop-apps` module.
 
 Install ImageMagick manually on Pop!OS with `sudo apt install imagemagick`.
 The generator accepts ImageMagick 7's `magick` or ImageMagick 6's `convert`.
-It runs only on Linux with the `cosmic` module enabled.
+It runs only on Linux with the `de-cosmic` module enabled.
 
 The [before script](../run_before_cosmic_wallpaper.sh.tmpl) renders the
 [vendored original](assets/cosmic/README.md) before chezmoi updates the

@@ -1,9 +1,9 @@
-{{ if and (eq .chezmoi.os "linux") (has "builtin-keyboard" (get . "modules" | default (list))) -}}
+{{ if and (eq .chezmoi.os "linux") (has "keyboard-remapping" (get . "modules" | default (list))) -}}
 #!/bin/sh
-# Rule fingerprint: {{ include "dot_config/builtin-keyboard/90-builtin-keyboard.hwdb" | sha256sum }}
+# Rule fingerprint: {{ include "dot_config/keyboard-remapping/linux/90-builtin-keyboard.hwdb" | sha256sum }}
 set -eu
 
-skip() { printf 'builtin-keyboard: %s; skipping.\n' "$*"; exit 0; }
+skip() { printf 'keyboard-remapping: %s; skipping.\n' "$*"; exit 0; }
 for tool in systemd-hwdb udevadm install cmp readlink; do
     command -v "$tool" >/dev/null 2>&1 || skip "$tool unavailable"
 done
@@ -24,7 +24,7 @@ input=/sys/class/input/$event/device
 [ "$(cat "$input/phys")" = 'isa0060/serio0/input0' ] || skip 'keyboard connection does not match'
 [ "$(basename "$(readlink -f "$input/device/driver")")" = atkbd ] || skip 'keyboard driver does not match'
 
-source_file="$HOME/.config/builtin-keyboard/90-builtin-keyboard.hwdb"
+source_file="$HOME/.config/keyboard-remapping/linux/90-builtin-keyboard.hwdb"
 target=/etc/udev/hwdb.d/90-builtin-keyboard.hwdb
 [ -f "$source_file" ] || skip 'staged rule unavailable'
 as_root() {
@@ -49,10 +49,10 @@ $properties
                 *"
 $expected
 "*) ;;
-                *) printf 'builtin-keyboard: udev did not import %s\n' "$expected" >&2; exit 1 ;;
+                *) printf 'keyboard-remapping: udev did not import %s\n' "$expected" >&2; exit 1 ;;
             esac
             ;;
     esac
 done < "$source_file"
-printf 'builtin-keyboard: rule installed; udev imported all five mappings.\n'
+printf 'keyboard-remapping: rule installed; udev imported all five mappings.\n'
 {{ end -}}

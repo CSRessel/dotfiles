@@ -1,4 +1,4 @@
-{{ if eq .chezmoi.os "darwin" -}}
+{{ if and (eq .chezmoi.os "darwin") (has "de-macos" (get . "modules" | default (list))) -}}
 #!/bin/bash
 
 # This script is used to create keyboard shortcuts on MacOS

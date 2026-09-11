@@ -5,11 +5,11 @@
       ".config/cosmic/com.system76.CosmicTk/v1/interface_font",
       ".config/cosmic/com.system76.CosmicTk/v1/monospace_font"
     ],
-    "cosmic": [
+    "de-cosmic": [
       ".config/cosmic"
     ],
-    "builtin-keyboard": [
-      ".config/builtin-keyboard"
+    "keyboard-remapping": [
+      ".config/keyboard-remapping"
     ],
     "opencode": [
       ".config/opencode"
@@ -26,9 +26,6 @@
     "memory-protection": [
       ".config/systemd"
     ],
-    "mac-shortcuts": [
-      "mac_keyboard_shortcuts.sh"
-    ],
     "dictation": [
       ".config/dictation",
       ".local/bin/wsp-toggle"
@@ -41,6 +38,9 @@
     ],
     "dev-tools": [
       ".config/mise/config.toml"
+    ],
+    "de-macos": [
+      "mac_keyboard_shortcuts.sh"
     ]
   }
 }

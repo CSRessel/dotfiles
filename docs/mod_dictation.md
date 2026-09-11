@@ -59,7 +59,7 @@ Linux-specific, and chezmoi still excludes this module on macOS. See Apple's
 
 ## Optional Pop!OS shortcuts
 
-When both `cosmic` and `dictation` are enabled, the managed COSMIC `custom`
+When both `de-cosmic` and `dictation` are enabled, the managed COSMIC `custom`
 shortcuts file binds **Super+Shift+D** to `~/.local/bin/wsp-toggle`, with the home
 path expanded for each machine. Press once to record, again to finish and copy.
 Additional managed custom bindings belong in that same template.

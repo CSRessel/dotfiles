@@ -1,6 +1,11 @@
 # Retired personal helper.
 .local/bin/reclaim_docker_space.sh
 
+{{ if and (eq .chezmoi.os "linux") (has "keyboard-remapping" (get . "modules" | default (list))) -}}
+# Staged rule moved into the keyboard-remapping module; the system rule stays put.
+.config/builtin-keyboard/90-builtin-keyboard.hwdb
+{{ end }}
+
 # Retired app configs; preserve other files in these application directories.
 .config/alacritty/alacritty.toml
 .config/k9s/config.yml

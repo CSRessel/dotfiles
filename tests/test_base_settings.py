@@ -1,4 +1,5 @@
 """Exercise module boundaries and recoverable deletion without touching the real home."""
+import json
 import os
 from pathlib import Path
 import shutil
@@ -50,7 +51,7 @@ class BaseSettingsTest(unittest.TestCase):
             self.assertIn(path, paths)
         for path in [".local/bin/reclaim_docker_space.sh", ".local/bin/wsp-toggle", ".config/dictation"]:
             self.assertNotIn(path, paths)
-        for path in [".codex", ".config/systemd", ".claude", ".gemini", ".config/opencode"]:
+        for path in [".codex", ".config/systemd", ".claude", ".gemini", ".config/opencode", ".config/keyboard-remapping"]:
             self.assertNotIn(path, paths)
         self.config.write_text('[data]\nemail = "test@example.com"\n'
                                'modules = ["codex"]\n')
@@ -110,6 +111,56 @@ class BaseSettingsTest(unittest.TestCase):
         self.cm("init", "--no-tty")
         self.assertIn('"memory-protection"', self.config.read_text())
         self.assertEqual(self.cm("cat", target).stdout, rendered)
+
+    def test_linux_keyboard_remapping_is_independent(self) -> None:
+        self.config.write_text('[data]\nmodules = ["keyboard-remapping"]\n'
+                               '[data.chezmoi]\nos = "linux"\n')
+        rule = ".config/keyboard-remapping/linux/90-builtin-keyboard.hwdb"
+        paths = self.cm("managed").stdout.splitlines()
+        self.assertIn(rule, paths)
+        self.assertNotIn(".config/cosmic", paths)
+        self.assertNotIn(".config/keyboard-remapping/darwin", paths)
+        rendered = self.cm("cat", str(self.home / rule)).stdout
+        self.assertIn("pnLaptop13Pro_IntelCoreUltraSeries3_", rendered)
+        for mapping in ["b8=esc", "3a=leftctrl", "1d=volumedown", "01=capslock", "36=rightalt"]:
+            self.assertIn("KEYBOARD_KEY_" + mapping, rendered)
+        script = self.cm("cat", str(self.home / "keyboard_remapping_linux.sh")).stdout
+        p = subprocess.run(["sh", "-n"], input=script, text=True, capture_output=True)
+        self.assertEqual(p.returncode, 0, p.stderr)
+        self.assertIn('source_file="$HOME/' + rule + '"', script)
+        self.assertIn("target=/etc/udev/hwdb.d/90-builtin-keyboard.hwdb", script)
+        old = self.home / ".config/builtin-keyboard/90-builtin-keyboard.hwdb"
+        old.parent.mkdir(parents=True)
+        old.write_text(rendered)
+        (old.parent / "keep-local").write_text("local state")
+        self.cm("apply", "--exclude=scripts", "--parent-dirs", str(old), str(self.home / rule))
+        self.assertFalse(old.exists())
+        self.assertEqual((self.home / rule).read_text(), rendered)
+        self.assertTrue((old.parent / "keep-local").exists())
+
+    def test_desktop_and_remapping_platform_boundaries(self) -> None:
+        for operating_system in ["linux", "darwin"]:
+            for modules in [[], ["keyboard-remapping"], ["de-macos"], ["de-cosmic"],
+                            ["de-cosmic", "de-macos", "keyboard-remapping"]]:
+                with self.subTest(os=operating_system, modules=modules):
+                    self.config.write_text('[data]\nmodules = ' + json.dumps(modules) + '\n'
+                                           '[data.chezmoi]\nos = "' + operating_system + '"\n')
+                    paths = self.cm("managed").stdout.splitlines()
+                    self.assertEqual(".config/cosmic" in paths,
+                                     operating_system == "linux" and "de-cosmic" in modules)
+                    self.assertEqual(".config/keyboard-remapping" in paths,
+                                     operating_system == "linux" and "keyboard-remapping" in modules)
+                    for filename, expected in [
+                        ("run_once_mac_keyboard_shortcuts.sh.tmpl",
+                         operating_system == "darwin" and "de-macos" in modules),
+                        ("run_once_after_keyboard_remapping_linux.sh.tmpl",
+                         operating_system == "linux" and "keyboard-remapping" in modules),
+                    ]:
+                        script = self.cm("execute-template", "--file", str(ROOT / filename)).stdout
+                        self.assertEqual(bool(script.strip()), expected)
+                        if expected:
+                            p = subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True)
+                            self.assertEqual(p.returncode, 0, p.stderr)
 
     def test_init_preserves_module_selection(self) -> None:
         self.cm("init", "--promptDefaults")

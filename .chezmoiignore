@@ -18,7 +18,8 @@ git-contribution-graph/
 {{ if ne .chezmoi.os "linux" }}
 .config/fontconfig/conf.d/60-dotfiles-fonts.conf
 .config/cosmic
-.config/builtin-keyboard
+# macOS built-in-keyboard remapping is not implemented yet.
+.config/keyboard-remapping
 .config/boot-theme
 .config/mimeapps.list
 .config/systemd

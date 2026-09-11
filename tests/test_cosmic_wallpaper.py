@@ -29,7 +29,7 @@ class CosmicWallpaperTest(unittest.TestCase):
                     if not key.startswith(("XDG_", "CHEZMOI_"))}
         self.env["HOME"] = str(self.home)
         self.config = self.home / "chezmoi.toml"
-        self.config.write_text('[data]\nmodules = ["cosmic"]\n')
+        self.config.write_text('[data]\nmodules = ["de-cosmic"]\n')
         self.hostname = "shelyn"
         self.os = "linux"
 
@@ -101,7 +101,7 @@ class CosmicWallpaperTest(unittest.TestCase):
         self.assertEqual(list(original.parent.iterdir()), [original])
 
     def test_disabled_module_and_non_linux_do_not_generate(self) -> None:
-        for modules, operating_system in (([], "linux"), (["cosmic"], "darwin")):
+        for modules, operating_system in (([], "linux"), (["de-cosmic"], "darwin")):
             self.config.write_text('[data]\nmodules = ' + json.dumps(modules) + '\n')
             self.os = operating_system
             result = self.cm("apply")

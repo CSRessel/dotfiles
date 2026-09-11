@@ -12,4 +12,4 @@ The [COSMIC wallpaper generator](../../../run_before_cosmic_wallpaper.sh.tmpl)
 uses this vendored original as the common input for hostname-specific color
 variants, without depending on a system-installed wallpaper package.
 Keep the original unchanged so every machine starts from the same image.
-See the [module runbook](../../mod_cosmic.md) for generation and cache behavior.
+See the [module runbook](../../mod_de-cosmic.md) for generation and cache behavior.

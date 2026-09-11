@@ -90,4 +90,4 @@ remains local. Selecting Ghostty in COSMIC Settings also updates that command.
 Desktop-specific files such as `~/.config/cosmic-mimeapps.list` take precedence
 over the generic defaults; remove a conflicting terminal override or select
 Ghostty in COSMIC Settings. File manager and mail defaults remain local.
-This module works independently of `cosmic`.
+This module works independently of `de-cosmic`.

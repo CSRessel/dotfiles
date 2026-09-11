@@ -16,7 +16,7 @@ Noto CJK and emoji fonts provide additional coverage.
 
 - [Installer](../run_once_before_install_fonts.sh.tmpl): Linux with apt; installs missing system font packages through sudo and checksum-pinned FiraCode into `~/.local/share/fonts/`. Runs once per script version; failures retry. Versions and checksums live in the script.
 - [Fontconfig](../dot_config/fontconfig/conf.d/60-dotfiles-fonts.conf): generic defaults under `~/.config/fontconfig/conf.d/`.
-- COSMIC [interface](../dot_config/cosmic/com.system76.CosmicTk/v1/interface_font) and [monospace](../dot_config/cosmic/com.system76.CosmicTk/v1/monospace_font) preferences: native RON under `~/.config/cosmic/`; require both `fonts` and `cosmic` modules.
+- COSMIC [interface](../dot_config/cosmic/com.system76.CosmicTk/v1/interface_font) and [monospace](../dot_config/cosmic/com.system76.CosmicTk/v1/monospace_font) preferences: native RON under `~/.config/cosmic/`; require both `fonts` and `de-cosmic` modules.
 
 Fontconfig settings work independently of COSMIC. Disabling the module leaves
 installed fonts and applied preferences in place.
