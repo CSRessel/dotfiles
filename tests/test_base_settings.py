@@ -34,6 +34,10 @@ class BaseSettingsTest(unittest.TestCase):
         paths = self.cm("managed").stdout.splitlines()
         for path in [".bashrc", ".bash_profile", ".zshrc", ".gitconfig", ".tmux.conf"]:
             self.assertIn(path, paths)
+        for path in [".local/bin/add_iso_prefixes.sh", ".local/bin/open_github.sh"]:
+            self.assertIn(path, paths)
+        for path in [".local/bin/reclaim_docker_space.sh", ".local/bin/wsp-toggle", ".config/dictation"]:
+            self.assertNotIn(path, paths)
         for path in [".codex", ".config/ghostty", ".config/systemd", ".claude"]:
             self.assertNotIn(path, paths)
         self.config.write_text('[data]\nemail = "test@example.com"\n'
@@ -44,12 +48,23 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertNotIn(".claude/settings.json", paths)
 
     def test_macos_excludes_linux_policy(self) -> None:
-        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "ghostty"]\n'
+        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "ghostty", "dictation"]\n'
                                '[data.chezmoi]\nos = "darwin"\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".bashrc", paths)
         self.assertIn(".config/ghostty/config", paths)
         self.assertFalse(any(path.startswith(".config/systemd") for path in paths))
+        self.assertNotIn(".local/bin/wsp-toggle", paths)
+        self.assertNotIn(".config/dictation", paths)
+
+    def test_dictation_is_independent(self) -> None:
+        self.config.write_text('[data]\nmodules = ["dictation"]\n')
+        paths = self.cm("managed").stdout.splitlines()
+        self.assertIn(".local/bin/wsp-toggle", paths)
+        self.assertIn(".config/dictation/wsp.py", paths)
+        self.assertNotIn(".config/cosmic", paths)
+        rendered = self.cm("cat", str(self.home / ".config/dictation/config.json")).stdout
+        self.assertIn('"tiny-streaming"', rendered)
 
     def test_memory_limits_are_explicit(self) -> None:
         self.config.write_text('[data]\nmodules = ["tmux-memory"]\n')

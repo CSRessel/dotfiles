@@ -2,6 +2,7 @@
 
 The shared base is Zsh, Bash, Git, tmux, and useful aliases on Linux and macOS.
 Original command names stay intact except `rm`, which uses recoverable trash.
+The base also installs `add_iso_prefixes.sh` and `open_github.sh` in `~/.local/bin`.
 Toolchains and desktop preferences, including Ghostty, are opt-in.
 
 Tmux loads Catppuccin when installed. The contribution graph builds when Cargo
@@ -28,7 +29,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | `tmux-memory` | Per-machine memory limits for matching tmux scopes | Linux / systemd |
 | `user-oom-policy` | User services continue after an OOM kill | Linux / systemd |
 | `mac-shortcuts` | Keyboard shortcut automation | macOS |
-| `local-scripts` | Personal command scripts | Script-dependent |
+| [dictation](mod_dictation.md) | On-device streaming speech to clipboard; optional desktop shortcut | Linux / systemd |
 
 Platform labels describe intended scope, not cross-platform validation.
 

@@ -26,6 +26,7 @@ git-contribution-graph/
 .config/boot-theme
 .config/mimeapps.list
 .config/systemd
+.config/dictation
 .local/bin/wsp-toggle
 {{ end }}
 {{ if ne .chezmoi.os "darwin" }}

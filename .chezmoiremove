@@ -1,3 +1,6 @@
+# Retired personal helper.
+.local/bin/reclaim_docker_space.sh
+
 {{ if has "dev-tools" (get . "modules" | default (list)) -}}
 # Retired helpers; only remove the files previously managed by this module.
 .config/dev-tools/env.sh

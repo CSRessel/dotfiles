@@ -65,8 +65,9 @@
     "mac-shortcuts": [
       "mac_keyboard_shortcuts.sh"
     ],
-    "local-scripts": [
-      ".local/bin"
+    "dictation": [
+      ".config/dictation",
+      ".local/bin/wsp-toggle"
     ],
     "user-oom-policy": [
       ".config/systemd/user.conf.d"

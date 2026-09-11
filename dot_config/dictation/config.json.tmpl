@@ -1,0 +1,6 @@
+{{ $dictation := get . "dictation" | default dict -}}
+{
+  "language": {{ get $dictation "language" | default "en" | toJson }},
+  "model": {{ get $dictation "model" | default "tiny-streaming" | toJson }},
+  "max_seconds": 300
+}

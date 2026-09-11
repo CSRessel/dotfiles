@@ -1,0 +1,30 @@
+{{ if and (eq .chezmoi.os "linux") (has "dictation" (get . "modules" | default (list))) -}}
+#!/bin/sh
+# Config fingerprint: {{ includeTemplate "dot_config/dictation/config.json.tmpl" . | sha256sum }}
+set -eu
+command -v uv >/dev/null || { echo 'dictation requires uv (provided by dev-tools).' >&2; exit 1; }
+command -v parecord >/dev/null || { echo 'dictation requires parecord (pulseaudio-utils on Pop!OS).' >&2; exit 1; }
+command -v systemd-run >/dev/null || { echo 'dictation requires a systemd user session.' >&2; exit 1; }
+PATH="$HOME/.local/share/wsp/clipboard/usr/bin:$PATH"
+export PATH
+# Pop!OS/Ubuntu: unpack the distro clipboard utility locally when absent.
+# This avoids requiring sudo merely to enable this user-level module.
+if ! command -v wl-copy >/dev/null && command -v apt-get >/dev/null && command -v dpkg-deb >/dev/null; then
+    temporary=$(mktemp -d)
+    trap 'rm -rf "$temporary"' EXIT HUP INT TERM
+    (cd "$temporary" && apt-get download wl-clipboard)
+    for package in "$temporary"/*.deb; do
+        dpkg-deb --extract "$package" "$HOME/.local/share/wsp/clipboard"
+    done
+fi
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+    command -v wl-copy >/dev/null || { echo 'dictation requires wl-clipboard on Wayland.' >&2; exit 1; }
+elif ! command -v xclip >/dev/null && ! command -v wl-copy >/dev/null; then
+    echo 'dictation requires wl-clipboard (Wayland) or xclip (X11).' >&2
+    exit 1
+fi
+runtime="$HOME/.local/share/wsp/venv"
+[ -x "$runtime/bin/python" ] || uv venv --python /usr/bin/python3 "$runtime"
+uv pip install --python "$runtime/bin/python" 'moonshine-voice==0.1.5'
+"$runtime/bin/python" "$HOME/.config/dictation/wsp.py" setup
+{{ end -}}
