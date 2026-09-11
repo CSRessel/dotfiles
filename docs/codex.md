@@ -15,10 +15,13 @@ The [modifier](../dot_codex/modify_private_config.toml) merges owned settings in
 Exact settings live in the modifier. Preserving a value does not create it on a
 fresh machine.
 
+Shared defaults select `gpt-6-astra`, `pragmatic` personality and the `never`
+approval policy. The remote GitHub plugin is explicitly disabled.
+
 ## Platform policy
 
 - Linux: workspace permissions extended with network access and writes to `~/.cache/sccache`.
-- macOS: workspace-write sandbox; platform-specific desktop and Computer Use preferences. The Linux default permission profile is removed.
+- macOS: `workspace-write` sandbox mode; platform-specific desktop and Computer Use preferences. The Linux default permission profile is removed.
 
 The [Zsh config](../dot_zshrc.tmpl) uses sccache when installed and gives Linux
 Codex threads separate server sockets.

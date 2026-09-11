@@ -13,10 +13,10 @@
 {{- end -}}
 
 {{- $config = $config | setValueAtPath "personality" "pragmatic" -}}
-{{- $config = $config | setValueAtPath "model" "gpt-5.6-sol" -}}
+{{- $config = $config | setValueAtPath "model" "gpt-6-astra" -}}
 {{- $config = $config | setValueAtPath "model_reasoning_effort" "medium" -}}
 {{- $config = $config | setValueAtPath "approvals_reviewer" "auto_review" -}}
-{{- $config = $config | setValueAtPath "approval_policy" "on-request" -}}
+{{- $config = $config | setValueAtPath "approval_policy" "never" -}}
 {{- $config = $config | setValueAtPath "service_tier" "default" -}}
 
 {{- $config = $config | setValueAtPath "features.hooks" true -}}

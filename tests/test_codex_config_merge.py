@@ -163,11 +163,11 @@ trust_level = "trusted"
                 "personality": "pragmatic",
                 "model_reasoning_effort": "medium",
                 "approvals_reviewer": "auto_review",
-                "approval_policy": "on-request",
+                "approval_policy": "never",
                 "service_tier": "default",
             },
         )
-        self.assertEqual(config["model"], "gpt-5.6-sol")
+        self.assertEqual(config["model"], "gpt-6-astra")
         self.assertNotIn("sandbox_mode", config)
         self.assertEqual(config["default_permissions"], "sccache-workspace")
         self.assertEqual(
@@ -280,7 +280,7 @@ trust_level = "trusted"
         self.assertEqual(config["personality"], "pragmatic")
         self.assertEqual(config["model_reasoning_effort"], "medium")
         self.assertEqual(config["approvals_reviewer"], "auto_review")
-        self.assertEqual(config["approval_policy"], "on-request")
+        self.assertEqual(config["approval_policy"], "never")
         self.assertEqual(config["service_tier"], "default")
         self.assertEqual(config["sandbox_mode"], "workspace-write")
         self.assertNotIn("default_permissions", config)
