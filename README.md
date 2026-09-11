@@ -25,9 +25,9 @@ The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chez
 
 The shared base includes Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases,
 plus standalone app configs for Ghostty, Kitty, LunarVim, VS Code, marimo,
-Tridactyl, NetHack and Nix. These configs are applied even when the app is absent;
-they do not install it. Modules keep system settings, installers, dictation and
-AI-tool integrations opt-in. The optional `dev-tools` module provides a global
+Tridactyl, NetHack, Nix, Claude and Codex. These configs are applied even when
+the app is absent; they do not install it. Modules keep system settings, installers
+and dictation opt-in. The optional `dev-tools` module provides a global
 mise configuration and shared shell integration.
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.

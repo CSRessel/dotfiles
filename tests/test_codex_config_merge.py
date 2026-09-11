@@ -48,7 +48,7 @@ class CodexConfigMergeTest(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="codex-config-merge-") as destination:
             destination_path = Path(destination)
             chezmoi_config = destination_path / "chezmoi.toml"
-            chezmoi_config.write_text('[data]\nmodules = ["codex"]\n')
+            chezmoi_config.write_text('[data]\nmodules = []\n')
             config_path = destination_path / ".codex" / "config.toml"
             config_path.parent.mkdir(parents=True)
             config_path.write_text(source)

@@ -11,18 +11,6 @@
     "keyboard-remapping": [
       ".config/keyboard-remapping"
     ],
-    "opencode": [
-      ".config/opencode"
-    ],
-    "claude": [
-      ".claude"
-    ],
-    "gemini": [
-      ".gemini"
-    ],
-    "codex": [
-      ".codex"
-    ],
     "memory-protection": [
       ".config/systemd"
     ],

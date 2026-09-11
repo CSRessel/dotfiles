@@ -1,6 +1,7 @@
 # Codex
 
-Shared preferences are enforced; machine and runtime state remain local.
+Codex preferences are always managed as part of the shared base; no module
+selection is needed. Machine and runtime state remain local.
 The [modifier](../dot_codex/modify_private_config.toml) merges owned settings into
 `~/.codex/config.toml` rather than replacing the file.
 

@@ -12,11 +12,16 @@ APP_CONFIGS = [
     ".config/ghostty/config", ".config/kitty/kitty.conf", ".config/lvim/config.lua",
     ".config/Code/User/settings.json", ".config/marimo/marimo.toml",
     ".config/tridactyl/tridactylrc", ".nethackrc", ".config/nix/nix.conf",
+    ".claude/settings.json",
+    ".codex/config.toml", ".codex/notify.py",
 ]
 RETIRED_CONFIGS = [
     ".config/alacritty/alacritty.toml", ".config/k9s/config.yml",
     ".config/k9s/monokai.yaml", ".config/pypoetry/config.toml",
     ".warp/themes/catppuccin.yaml",
+    ".gemini/settings.json", ".gemini/GEMINI.md", ".config/opencode/opencode.json",
+    ".config/opencode/.gitignore", ".config/opencode/plugin/notification.ts",
+    ".config/opencode/providers/.keep",
 ]
 
 
@@ -51,14 +56,16 @@ class BaseSettingsTest(unittest.TestCase):
             self.assertIn(path, paths)
         for path in [".local/bin/reclaim_docker_space.sh", ".local/bin/wsp-toggle", ".config/dictation"]:
             self.assertNotIn(path, paths)
-        for path in [".codex", ".config/systemd", ".claude", ".gemini", ".config/opencode", ".config/keyboard-remapping"]:
+        for path in [".config/systemd", ".gemini", ".config/opencode", ".config/keyboard-remapping"]:
             self.assertNotIn(path, paths)
         self.config.write_text('[data]\nemail = "test@example.com"\n'
-                               'modules = ["codex"]\n')
+                               'modules = ["fonts"]\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".config/ghostty/config", paths)
         self.assertIn(".codex/config.toml", paths)
-        self.assertNotIn(".claude/settings.json", paths)
+        self.assertIn(".claude/settings.json", paths)
+        self.assertIn(".config/fontconfig/conf.d/60-dotfiles-fonts.conf", paths)
+        self.assertNotIn(".config/cosmic", paths)
 
     def test_macos_excludes_linux_policy(self) -> None:
         self.config.write_text('[data]\nmodules = ["memory-protection", "dictation"]\n'
@@ -74,7 +81,7 @@ class BaseSettingsTest(unittest.TestCase):
     def test_retired_configs_removed_without_other_app_files(self) -> None:
         # Stale module selections must not keep retired configs alive.
         self.config.write_text('[data]\nemail = "test@example.com"\n'
-                               'modules = ["warp", "alacritty", "k9s", "poetry"]\n')
+                               'modules = ["warp", "alacritty", "k9s", "poetry", "gemini", "opencode"]\n')
         targets = [self.home / path for path in RETIRED_CONFIGS]
         for target in targets:
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -164,9 +171,9 @@ class BaseSettingsTest(unittest.TestCase):
 
     def test_init_preserves_module_selection(self) -> None:
         self.cm("init", "--promptDefaults")
-        self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["codex"]\n')
+        self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["fonts"]\n')
         self.cm("init", "--no-tty")
-        self.assertIn('"codex"', self.config.read_text())
+        self.assertIn('"fonts"', self.config.read_text())
 
     def test_aliases_and_trash_on_available_shells(self) -> None:
         aliases = self.home / "aliases.sh"

@@ -22,7 +22,6 @@
       "CronList"
     ],
     "additionalDirectories": [
-      "/home/clifford/.nori/profiles",
       "/home/clifford/.claude/skills"
     ]
   },
@@ -38,16 +37,6 @@
             "type": "command",
             "command": "/home/clifford/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh",
             "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/notify-hook.sh",
-            "description": "Send desktop notification when Claude needs input"
           }
         ]
       }
@@ -86,26 +75,6 @@
             "async": true
           }
         ]
-      },
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/context-usage-warning.js",
-            "description": "Warn about excessive context usage from permissions on session start"
-          }
-        ]
-      },
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/update-check.js",
-            "description": "Check for nori-skillsets updates and notify if available"
-          }
-        ]
       }
     ],
     "Stop": [
@@ -131,31 +100,11 @@
           }
         ]
       }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node /home/clifford/.nvm/versions/node/v24.14.0/lib/node_modules/nori-skillsets/build/src/cli/features/claude-code/hooks/config/commit-author.js",
-            "description": "Replace Claude Code co-author attribution with Nori in git commits"
-          }
-        ]
-      }
     ]
   },
   "disableRemoteControl": true,
   "disableWorkflows": true,
   "disableArtifact": true,
-  "statusLine": {
-    "type": "command",
-    "command": "/home/clifford/.claude/nori-statusline.sh",
-    "padding": 0
-  },
   "effortLevel": "high",
-  "companyAnnouncements": [
-    "🍙🍙🍙 Powered by Nori AI 🍙🍙🍙"
-  ],
   "skipDangerousModePermissionPrompt": true
 }

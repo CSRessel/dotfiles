@@ -1,5 +1,6 @@
 # Retired personal helper.
 .local/bin/reclaim_docker_space.sh
+.claude/nori-statusline.sh
 
 {{ if and (eq .chezmoi.os "linux") (has "keyboard-remapping" (get . "modules" | default (list))) -}}
 # Staged rule moved into the keyboard-remapping module; the system rule stays put.
@@ -12,6 +13,12 @@
 .config/k9s/monokai.yaml
 .config/pypoetry/config.toml
 .warp/themes/catppuccin.yaml
+.gemini/settings.json
+.gemini/GEMINI.md
+.config/opencode/opencode.json
+.config/opencode/.gitignore
+.config/opencode/plugin/notification.ts
+.config/opencode/providers/.keep
 
 {{ if has "dev-tools" (get . "modules" | default (list)) -}}
 # Retired helpers; only remove the files previously managed by this module.

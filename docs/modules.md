@@ -6,10 +6,17 @@ The base also installs `add_iso_prefixes.sh` and `open_github.sh` in `~/.local/b
 Standalone app configs are also always managed: Ghostty (`~/.config/ghostty`),
 Kitty (`~/.config/kitty`), LunarVim (`~/.config/lvim`), VS Code (`~/.config/Code`),
 marimo (`~/.config/marimo`), Tridactyl (`~/.config/tridactyl`), NetHack (`~/.nethackrc`)
-and Nix (`~/.config/nix`). Applying them does not install the applications.
-System settings, toolchain installation, dictation and AI-tool integrations remain opt-in.
+and Nix (`~/.config/nix`). Claude settings (`~/.claude`),
+[Codex preferences](codex.md) (`~/.codex`) are always managed too. Applying configs does not install
+the applications. System settings, toolchain installation and dictation remain opt-in.
 
-Warp, Alacritty, k9s and Poetry configs have been retired. Apply removes only their
+Only the explicitly tracked AI-tool files are managed. Credentials, sessions and
+Nori CLI project trust/first-launch state remain local. Nori CLI preferences are
+deferred until the pre-rewrite config is copied from the other laptop; it was never
+tracked in this repository.
+Pi configuration is deferred.
+
+Warp, Alacritty, k9s, Poetry, Gemini and OpenCode configs have been retired. Apply removes only their
 previously managed config files, preserving other application files and installed
 packages. The old configs remain available in Git history.
 
@@ -26,8 +33,6 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [de-cosmic](mod_de-cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
 | [de-macos](mod_de-macos.md) | macOS app-menu shortcuts and text-navigation bindings | macOS |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
-| [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
-| `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
 | `memory-protection` | Per-machine tmux scope memory limits and user-manager OOM policy | Linux / systemd |
 | [dictation](mod_dictation.md) | On-device streaming speech to clipboard; optional desktop shortcut | Linux / systemd |
