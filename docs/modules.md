@@ -16,6 +16,12 @@ deferred until the pre-rewrite config is copied from the other laptop; it was ne
 tracked in this repository.
 Pi configuration is deferred.
 
+[Claude settings](../dot_claude/settings.json.tmpl) resolve the skills directory
+from chezmoi's home directory and expand quoted `$HOME` in Handroll hook commands,
+so the same config works on Linux and macOS. Handroll must be installed separately.
+Applying replaces `~/.claude/settings.json`; it does not merge local hooks or
+other local settings into the managed file.
+
 Warp, Alacritty, k9s, Poetry, Gemini and OpenCode configs have been retired. Apply removes only their
 previously managed config files, preserving other application files and installed
 packages. The old configs remain available in Git history.
