@@ -91,11 +91,30 @@ while True:
         self.assertEqual(copies, [])
 
     def test_toggle_stops_only_our_service_main_process(self):
-        with patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run:
+        with patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(returncode=0)) as run, \
+                patch.object(wsp, "notify") as notify:
             wsp.control("toggle")
             self.assertIn("--signal=SIGUSR1", run.call_args.args[0])
             self.assertIn("--kill-whom=main", run.call_args.args[0])
             self.assertEqual(run.call_args.args[0][-1], wsp.UNIT)
+            self.assertIn("Finishing dictation", notify.call_args.args[0])
+
+    def test_notifications_work_without_notify_send(self):
+        with patch.object(wsp.shutil, "which", return_value=None), \
+                patch.object(wsp.subprocess, "run", return_value=SimpleNamespace(stdout="u 42\n")) as run:
+            self.assertEqual(wsp.notify("Recording"), 42)
+            command = run.call_args.args[0]
+            self.assertEqual(command[0], "busctl")
+            self.assertIn("org.freedesktop.Notifications", command)
+            self.assertIn("Recording", command)
+            self.assertTrue(run.call_args.kwargs["check"])
+
+    def test_notification_failure_is_logged_without_stopping_dictation(self):
+        failure = subprocess.CalledProcessError(1, ["busctl"], stderr="Notification service unavailable")
+        with patch.object(wsp.subprocess, "run", side_effect=failure), \
+                patch("sys.stderr", new_callable=io.StringIO) as log:
+            self.assertIsNone(wsp.notify("Recording"))
+            self.assertIn("notification failed: Notification service unavailable", log.getvalue())
 
     def test_start_uses_transient_service_and_session_environment(self):
         with patch.dict(os.environ, {"WAYLAND_DISPLAY": "wayland-test"}), \

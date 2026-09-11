@@ -5,6 +5,7 @@ set -eu
 command -v uv >/dev/null || { echo 'dictation requires uv (provided by dev-tools).' >&2; exit 1; }
 command -v parecord >/dev/null || { echo 'dictation requires parecord (pulseaudio-utils on Pop!OS).' >&2; exit 1; }
 command -v systemd-run >/dev/null || { echo 'dictation requires a systemd user session.' >&2; exit 1; }
+command -v busctl >/dev/null || { echo 'dictation requires busctl (provided by systemd) for notifications.' >&2; exit 1; }
 PATH="$HOME/.local/share/wsp/clipboard/usr/bin:$PATH"
 export PATH
 # Pop!OS/Ubuntu: unpack the distro clipboard utility locally when absent.

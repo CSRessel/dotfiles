@@ -18,7 +18,7 @@ Add `"dictation"` to `[data].modules` with `chezmoi edit-config`, then run
 `parecord`, a systemd user session, and a clipboard tool. On Pop!OS:
 
 ```sh
-sudo apt install pulseaudio-utils wl-clipboard libnotify-bin
+sudo apt install pulseaudio-utils wl-clipboard
 ```
 
 Use `xclip` instead of `wl-clipboard` on X11. On apt-based systems, the installer
@@ -42,7 +42,10 @@ Audio is streamed in memory, with a five-minute recording limit. The model is
 released after each recording. A transient systemd unit owns the recorder, so
 there are no shared `/tmp` audio files or stale PID files. A separate transient
 clipboard owner keeps the result available after recording ends. Notifications
-show recording/completion state, not transcript contents. Errors are available
+show loading, recording, finishing, and completion state, not transcript contents.
+They use the desktop's D-Bus notification service through systemd's `busctl`;
+`notify-send` is not required. Notification delivery failures are logged instead
+of silently ignored. Errors are available
 with `journalctl --user -u wsp-dictation.service`.
 
 ## Optional Pop!OS shortcuts

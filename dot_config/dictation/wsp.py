@@ -19,12 +19,21 @@ MODEL = Path.home() / ".local/share/wsp/model.json"
 
 
 def notify(message):
-    if shutil.which("notify-send"):
-        try:
-            subprocess.run(["notify-send", "--app-name=Dictation", "Dictation", message],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
-        except (OSError, subprocess.TimeoutExpired):
-            pass
+    # busctl is supplied by systemd, which dictation already requires. Do not
+    # silently depend on the optional notify-send/libnotify-bin package.
+    command = ["busctl", "--user", "--timeout=5s", "call",
+               "org.freedesktop.Notifications", "/org/freedesktop/Notifications",
+               "org.freedesktop.Notifications", "Notify", "susssasa{sv}i",
+               "Dictation", "0", "audio-input-microphone", "Dictation", message,
+               "0", "1", "urgency", "y", "1", "4000"]
+    try:
+        result = subprocess.run(command, capture_output=True, text=True,
+                                check=True, timeout=6)
+        return int(result.stdout.split()[1])
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError) as exc:
+        detail = getattr(exc, "stderr", None) or str(exc)
+        print(f"wsp-toggle: notification failed: {detail.strip()}", file=sys.stderr)
+        return None
 
 
 def config():
@@ -181,6 +190,7 @@ def control(action):
     elif active:
         subprocess.run(["systemctl", "--user", "kill", "--kill-whom=main",
                         "--signal=SIGUSR1", UNIT], check=True)
+        notify("Finishing dictation… The transcript will be copied shortly.")
     else:
         command = ["systemd-run", "--user", "--collect", "--quiet", f"--unit={UNIT}",
                    "--property=Type=exec", "--property=RuntimeMaxSec=360",
