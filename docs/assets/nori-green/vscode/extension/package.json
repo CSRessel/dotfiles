@@ -1,0 +1,46 @@
+{
+  "name": "nori-green",
+  "displayName": "Nori Green",
+  "description": "High contrast, accessible dark theme with bright green accents. Inspired by oxocarbon and the Nori brand.",
+  "version": "1.0.0",
+  "publisher": "tilework",
+  "author": {
+    "name": "Tilework Technologies",
+    "url": "https://tilework.tech"
+  },
+  "license": "MIT",
+  "homepage": "https://noriagentic.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tilework-tech/nori-green-theme"
+  },
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "keywords": [
+    "theme",
+    "dark",
+    "green",
+    "oxocarbon",
+    "nori",
+    "accessible",
+    "high-contrast",
+    "color-theme"
+  ],
+  "galleryBanner": {
+    "color": "#161616",
+    "theme": "dark"
+  },
+  "contributes": {
+    "themes": [
+      {
+        "label": "Nori Green",
+        "uiTheme": "vs-dark",
+        "path": "./themes/nori-green-color-theme.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+:root {
+  /* Structural — Nori brand (IBM Carbon / oxocarbon derived) */
+  --background: #161616;
+  --surface: #1c1c1c;
+  --muted: #262626;
+  --border: #262626;
+  --subtle: #393939;
+  --muted-foreground: #8a8f98;
+  --text: #dde1e6;
+  --foreground: #f2f4f8;
+
+  /* Functional — normal */
+  --primary: #42be65;
+  --primary-foreground: #161616;
+  --success: #42be65;
+  --error: #f47067;
+  --warning: #f2cc60;
+  --accent: #78a9ff;
+  --cyan: #08bdba;
+  --magenta: #be95ff;
+
+  /* Functional — bright */
+  --green-bright: #6fdc8c;
+  --red-bright: #ff9cac;
+  --yellow-bright: #fddc69;
+  --blue-bright: #a6c8ff;
+  --cyan-bright: #3ddbd9;
+  --magenta-bright: #d4b0ff;
+
+  /* Selection & focus */
+  --selection: #2a3b2e;
+  --focus: #42be6580;
+
+  /* Fonts */
+  --font-display: "Newsreader", Georgia, serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}

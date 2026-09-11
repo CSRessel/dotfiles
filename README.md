@@ -43,6 +43,8 @@ mise configuration and shared shell integration.
 Zed includes shared editor defaults and the Nori Green theme. Applying merges
 those defaults into local settings while preserving unrelated values such as SSH
 connections and model choices; JSONC comments and formatting are not preserved.
+Other [Nori Green theme snapshots](docs/assets/nori-green/README.md) are kept as
+backups for reuse in other apps.
 The optional [de-macos module](docs/mod_de-macos.md) also manages AeroSpace.
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
