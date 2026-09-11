@@ -28,7 +28,8 @@
       ".config/mise/config.toml"
     ],
     "de-macos": [
-      "mac_keyboard_shortcuts.sh"
+      "mac_keyboard_shortcuts.sh",
+      ".aerospace.toml"
     ]
   }
 }

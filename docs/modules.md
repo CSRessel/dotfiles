@@ -5,10 +5,20 @@ Original command names stay intact except `rm`, which uses recoverable trash.
 The base also installs `add_iso_prefixes.sh` and `open_github.sh` in `~/.local/bin`.
 Standalone app configs are also always managed: Ghostty (`~/.config/ghostty`),
 Kitty (`~/.config/kitty`), LunarVim (`~/.config/lvim`), VS Code (`~/.config/Code`),
-marimo (`~/.config/marimo`), Tridactyl (`~/.config/tridactyl`), NetHack (`~/.nethackrc`)
-and Nix (`~/.config/nix`). Claude settings (`~/.claude`),
+Zed (`~/.config/zed`), marimo (`~/.config/marimo`), Tridactyl (`~/.config/tridactyl`),
+NetHack (`~/.nethackrc`) and Nix (`~/.config/nix`). Claude settings (`~/.claude`),
 [Codex preferences](codex.md) (`~/.codex`) are always managed too. Applying configs does not install
 the applications. System settings, toolchain installation and dictation remain opt-in.
+
+Zed's [settings modifier](../dot_config/zed/modify_settings.json) merges
+[shared defaults](../.chezmoitemplates/zed-settings.json) into the existing JSONC
+settings, or an empty object on a fresh install. Shared values take precedence;
+unrelated local keys, including nested settings, remain local. This preserves SSH
+connections, agent-server definitions and model choices. Output is formatted JSON,
+so comments and original formatting are not preserved.
+The shared defaults set editor behavior and appearance, including the tracked
+[Nori Green theme](../dot_config/zed/themes/nori-green.json). Zed and its configured
+fonts must be installed separately; the Linux `fonts` module is optional.
 
 Only the explicitly tracked AI-tool files are managed. Credentials, sessions and
 Nori CLI project trust/first-launch state remain local. Nori CLI preferences are
@@ -37,7 +47,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [fonts](mod_fonts.md) | IBM Plex Sans, Noto fallback, FiraCode Nerd Font Mono | Linux with apt |
 | [desktop-apps](packages.md#desktop-defaults) | Firefox, VLC, Zed and Ghostty defaults when installed | Linux |
 | [de-cosmic](mod_de-cosmic.md) | Native RON settings: compact dark desktop, panel, vertical workspaces | Linux / COSMIC |
-| [de-macos](mod_de-macos.md) | macOS app-menu shortcuts and text-navigation bindings | macOS |
+| [de-macos](mod_de-macos.md) | macOS app-menu shortcuts, text-navigation bindings and AeroSpace config | macOS |
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
 | `memory-protection` | Per-machine tmux scope memory limits and user-manager OOM policy | Linux / systemd |
@@ -53,8 +63,8 @@ by default. [The catalog](../.chezmoidata.json) maps names to managed paths;
 Remove old standalone-app and retired-app names from `data.modules` when updating;
 those entries no longer control any paths.
 Rename `cosmic` to `de-cosmic` and `builtin-keyboard` to `keyboard-remapping`.
-On macOS, select `de-macos` for the existing shortcut setup; it replaces the old
-`mac-shortcuts` catalog entry, whose script previously ran without checking selection.
+On macOS, select `de-macos` for the shortcut setup and AeroSpace config; it replaces
+the old `mac-shortcuts` entry, whose script ran without checking selection.
 
 Chezmoi uses an explicit `0022` umask: ordinary files are `0644`, executable files
 and directories `0755`; `private_` attributes remove group/other access.

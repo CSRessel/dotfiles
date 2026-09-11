@@ -1,0 +1,24 @@
+{
+  "icon_theme": "Zed (Default)",
+  "agent": {
+    "show_turn_stats": true
+  },
+  "terminal": {
+    "font_family": "FiraCode Nerd Font"
+  },
+  "project_panel": {
+    "auto_reveal_entries": false
+  },
+  "base_keymap": "VSCode",
+  "buffer_font_fallbacks": ["FiraCode Nerd Font", "Consolas", "monospace"],
+  "buffer_font_family": "FiraCode Nerd Font Retina",
+  "ensure_final_newline_on_save": true,
+  "vim_mode": true,
+  "ui_font_size": 16,
+  "buffer_font_size": 16.0,
+  "theme": {
+    "mode": "dark",
+    "light": "Ayu Light",
+    "dark": "Nori Green"
+  }
+}

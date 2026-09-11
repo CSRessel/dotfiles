@@ -36,4 +36,5 @@ requirements-dev.txt
 {{ end }}
 {{ if ne .chezmoi.os "darwin" }}
 mac_keyboard_shortcuts.sh
+.aerospace.toml
 {{ end }}

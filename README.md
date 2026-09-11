@@ -34,11 +34,16 @@ The checkout is `~/.local/share/chezmoi`, local configuration is `~/.config/chez
 ## Overview
 
 The shared base includes Zsh, Bash fallback, Git, tmux, explicit tool shortcuts and aliases,
-plus standalone app configs for Ghostty, Kitty, LunarVim, VS Code, marimo,
+plus standalone app configs for Ghostty, Kitty, LunarVim, VS Code, Zed, marimo,
 Tridactyl, NetHack, Nix, Claude and Codex. These configs are applied even when
 the app is absent; they do not install it. Modules keep system settings, installers
 and dictation opt-in. The optional `dev-tools` module provides a global
 mise configuration and shared shell integration.
+
+Zed includes shared editor defaults and the Nori Green theme. Applying merges
+those defaults into local settings while preserving unrelated values such as SSH
+connections and model choices; JSONC comments and formatting are not preserved.
+The optional [de-macos module](docs/mod_de-macos.md) also manages AeroSpace.
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
 Change later selections with `chezmoi edit-config`
