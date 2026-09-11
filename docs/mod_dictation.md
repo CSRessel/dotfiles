@@ -47,16 +47,18 @@ with `journalctl --user -u wsp-dictation.service`.
 
 ## Optional Pop!OS shortcuts
 
-No shortcut is installed automatically. On COSMIC, open **Settings → Input Devices
-→ Keyboard → Keyboard Shortcuts**, and add a custom shortcut:
+When both `cosmic` and `dictation` are enabled, the managed COSMIC `custom`
+shortcuts file binds **Super+Shift+D** to `~/.local/bin/wsp-toggle`, with the home
+path expanded for each machine. Press once to record, again to finish and copy.
+Additional managed custom bindings belong in that same template.
 
-- Name: `Dictation`
-- Command: `/home/YOUR_USER/.local/bin/wsp-toggle` (use your actual home path)
-- Suggested binding: `Super+Shift+D`, if unused
+To omit the dictation binding while keeping both modules, set
+`cosmicShortcut = false` under `[data.dictation]` in `chezmoi edit-config`, then
+apply. The `dictation` module alone installs no desktop shortcut.
 
-On older GNOME-based Pop!OS, add the same command under **Settings → Keyboard →
-View and Customize Shortcuts → Custom Shortcuts**. This also works independently
-of the `cosmic` dotfiles module. The shortcut invokes the same start/stop toggle.
+On older GNOME-based Pop!OS, add `/home/YOUR_USER/.local/bin/wsp-toggle` (using
+your actual home path) under **Settings → Keyboard → View and Customize Shortcuts
+→ Custom Shortcuts**, with `Super+Shift+D` if unused.
 
 ## Models and performance
 

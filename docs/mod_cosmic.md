@@ -13,6 +13,7 @@ module requires no sudo after installing ImageMagick.
 | CosmicPanel, CosmicPanel.Panel/Dock | Panel enabled, dock disabled; panel and dock geometry |
 | CosmicComp | Edge snapping and tiling preferences; global vertical workspaces with wraparound |
 | CosmicComp input_default/input_touchpad | Reduced pointer speed; natural two-finger scrolling, tap-to-click and tap-drag |
+| CosmicSettings.Shortcuts custom | Super+Shift+D toggles dictation when the `dictation` module is enabled; opt out with `data.dictation.cosmicShortcut = false` |
 | CosmicAppletTime | Saturday week start; 12-hour clock |
 | CosmicIdle | No automatic suspend on AC; 30 minutes on battery |
 

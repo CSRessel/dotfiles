@@ -1,0 +1,6 @@
+{{- $dictation := get . "dictation" | default dict -}}
+{
+{{ if and (has "dictation" (get . "modules" | default (list))) (or (not (hasKey $dictation "cosmicShortcut")) (get $dictation "cosmicShortcut")) -}}
+    (modifiers: [Super, Shift], key: "d"): Spawn({{ joinPath .chezmoi.homeDir ".local/bin/wsp-toggle" | shellQuote | quote }}),
+{{ end -}}
+}
