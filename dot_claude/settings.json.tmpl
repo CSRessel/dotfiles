@@ -1,7 +1,91 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "disableArtifact": true,
+  "disableBundledSkills": true,
+  "disableClaudeAiConnectors": true,
+  "disableRemoteControl": true,
+  "disableWorkflows": true,
+  "effortLevel": "high",
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": "permission_prompt|elicitation_dialog"
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "async": true,
+            "command": {{ printf "%s/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh" .chezmoi.homeDir | toJson }},
+            "type": "command"
+          }
+        ],
+        "matcher": ""
+      }
+    ]
+  },
   "includeCoAuthoredBy": false,
+  "model": "claude-fable-5[1m]",
   "permissions": {
+    "additionalDirectories": [
+      {{ joinPath .chezmoi.homeDir ".claude/skills" | toJson }}
+    ],
     "defaultMode": "auto",
     "deny": [
       "EnterPlanMode",
@@ -20,91 +104,7 @@
       "CronCreate",
       "CronDelete",
       "CronList"
-    ],
-    "additionalDirectories": [
-      {{ joinPath .chezmoi.homeDir ".claude/skills" | toJson }}
     ]
   },
-  "model": "claude-fable-5[1m]",
-  "disableClaudeAiConnectors": true,
-  "disableBundledSkills": true,
-  "hooks": {
-    "Notification": [
-      {
-        "matcher": "permission_prompt|elicitation_dialog",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.nori/handroll/bin/../scripts/session-hooks/claude-code.sh\"",
-            "async": true
-          }
-        ]
-      }
-    ]
-  },
-  "disableRemoteControl": true,
-  "disableWorkflows": true,
-  "disableArtifact": true,
-  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true
 }

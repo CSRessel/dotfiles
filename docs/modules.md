@@ -26,9 +26,13 @@ deferred until the pre-rewrite config is copied from the other laptop; it was ne
 tracked in this repository.
 Pi configuration is deferred.
 
-[Claude settings](../dot_claude/settings.json.tmpl) resolve the skills directory
-from chezmoi's home directory and expand quoted `$HOME` in Handroll hook commands,
-so the same config works on Linux and macOS. Handroll must be installed separately.
+[Claude settings](../dot_claude/settings.json.tmpl) render the skills directory
+and Handroll hook commands from chezmoi's home directory, so the source is portable
+across Linux and macOS. Hook commands retain Handroll's `bin/../scripts` path
+spelling to match the installer-generated commands. Handroll must be installed
+separately.
+Keep object keys alphabetically ordered at every level with two-space indentation
+to match Handroll's formatting; preserve array order.
 Applying replaces `~/.claude/settings.json`; it does not merge local hooks or
 other local settings into the managed file.
 
