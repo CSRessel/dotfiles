@@ -23,8 +23,8 @@
     "codex": [
       ".codex"
     ],
-    "tmux-memory": [
-      ".config/systemd/user"
+    "memory-protection": [
+      ".config/systemd"
     ],
     "mac-shortcuts": [
       "mac_keyboard_shortcuts.sh"
@@ -32,9 +32,6 @@
     "dictation": [
       ".config/dictation",
       ".local/bin/wsp-toggle"
-    ],
-    "user-oom-policy": [
-      ".config/systemd/user.conf.d"
     ],
     "boot-theme": [
       ".config/boot-theme"

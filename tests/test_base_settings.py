@@ -60,7 +60,7 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertNotIn(".claude/settings.json", paths)
 
     def test_macos_excludes_linux_policy(self) -> None:
-        self.config.write_text('[data]\nmodules = ["tmux-memory", "user-oom-policy", "dictation"]\n'
+        self.config.write_text('[data]\nmodules = ["memory-protection", "dictation"]\n'
                                '[data.chezmoi]\nos = "darwin"\n')
         paths = self.cm("managed").stdout.splitlines()
         self.assertIn(".bashrc", paths)
@@ -94,17 +94,22 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertIn('"medium-streaming"', rendered)
 
     def test_memory_limits_are_explicit(self) -> None:
-        self.config.write_text('[data]\nmodules = ["tmux-memory"]\n')
+        self.config.write_text('[data]\nmodules = ["memory-protection"]\n')
         target = str(self.home / ".config/systemd/user/tmux-spawn-.scope.d/50-oom-protection.conf")
         p = self.cm("cat", target, ok=False)
         self.assertNotEqual(p.returncode, 0)
-        self.config.write_text('[data]\nmodules = ["tmux-memory"]\n'
+        self.config.write_text('[data]\nemail = "test@example.com"\nmodules = ["memory-protection"]\n'
                                '[data.tmuxMemory]\nhigh = "6G"\nmax = "8G"\nswap = "2G"\n')
         rendered = self.cm("cat", target).stdout
         for expected in ["MemoryHigh=6G", "MemoryMax=8G", "MemorySwapMax=2G"]:
             self.assertIn(expected, rendered)
-        self.assertNotIn(".config/systemd/user.conf.d/10-oom-policy.conf",
-                         self.cm("managed").stdout)
+        policy = ".config/systemd/user.conf.d/10-oom-policy.conf"
+        self.assertIn(policy, self.cm("managed").stdout.splitlines())
+        self.assertIn("DefaultOOMPolicy=continue", self.cm("cat", str(self.home / policy)).stdout)
+        # Reinitialization must retain the machine's explicit limits.
+        self.cm("init", "--no-tty")
+        self.assertIn('"memory-protection"', self.config.read_text())
+        self.assertEqual(self.cm("cat", target).stdout, rendered)
 
     def test_init_preserves_module_selection(self) -> None:
         self.cm("init", "--promptDefaults")

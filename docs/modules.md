@@ -28,8 +28,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [codex](mod_codex.md) | Shared settings merged with machine-local state | Linux / macOS |
 | `claude`, `gemini`, `opencode` | Optional AI-tool configs | App-dependent |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
-| `tmux-memory` | Per-machine memory limits for matching tmux scopes | Linux / systemd |
-| `user-oom-policy` | User services continue after an OOM kill | Linux / systemd |
+| `memory-protection` | Per-machine tmux scope memory limits and user-manager OOM policy | Linux / systemd |
 | `mac-shortcuts` | Keyboard shortcut automation | macOS |
 | [dictation](mod_dictation.md) | On-device streaming speech to clipboard; optional desktop shortcut | Linux / systemd |
 
@@ -48,8 +47,27 @@ and directories `0755`; `private_` attributes remove group/other access.
 
 - `fonts` needs `cosmic` for COSMIC font preferences; Fontconfig settings stand alone.
 - `cosmic` requires ImageMagick for hostname-colored wallpaper generation; install it manually before applying.
-- `tmux-memory` requires `data.tmuxMemory.high`, `.max`, and `.swap`; it limits existing scopes, not their creation.
+- `memory-protection` requires `data.tmuxMemory.high`, `.max`, and `.swap`; it limits matching tmux scopes, not their creation, and sets `DefaultOOMPolicy=continue` for the user manager.
 - Most modules configure existing tools. `fonts` installs dependencies; `builtin-keyboard` and `boot-theme` install system configuration through sudo.
 - Disabling a module stops management. It does not remove applied files, packages, or system changes.
 
 Selection: `chezmoi edit-config`. Review: `chezmoi diff`. Apply: `chezmoi apply`.
+
+`memory-protection` replaces `tmux-memory` and `user-oom-policy`. Replace either
+old name in `data.modules` with `memory-protection`; both policies are now managed
+together. Existing `[data.tmuxMemory]` values and deployed file paths stay the same.
+If only `user-oom-policy` was selected, also set the three per-machine memory limits
+before applying. Machines with neither selected remain opt-out.
+
+When enabling it through `chezmoi edit-config`, add the limits too; editing the
+module list does not run the `chezmoi init` prompts. For example:
+
+```toml
+[data.tmuxMemory]
+high = "24G"
+max = "32G"
+swap = "8G"
+```
+
+These are the setup's suggested values; choose limits appropriate to the machine.
+Missing limits cause `chezmoi status`, `diff` and `apply` to fail until configured.

@@ -15,10 +15,6 @@ git-contribution-graph/
 {{ end }}
 {{ end }}
 
-{{ if not (or (has "tmux-memory" $enabled) (has "user-oom-policy" $enabled)) }}
-.config/systemd
-{{ end }}
-
 {{ if ne .chezmoi.os "linux" }}
 .config/fontconfig/conf.d/60-dotfiles-fonts.conf
 .config/cosmic

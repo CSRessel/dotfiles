@@ -9,7 +9,7 @@ exclude = ["scripts"]
 [data]
 email = {{ $email | quote }}
 modules = {{ $modules | toJson }}
-{{ if and (eq .chezmoi.os "linux") (has "tmux-memory" $modules) }}
+{{ if and (eq .chezmoi.os "linux") (has "memory-protection" $modules) }}
 [data.tmuxMemory]
 high = {{ promptStringOnce . "tmuxMemory.high" "Tmux memory throttle threshold" "24G" | quote }}
 max = {{ promptStringOnce . "tmuxMemory.max" "Tmux memory hard limit" "32G" | quote }}
