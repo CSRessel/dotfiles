@@ -55,6 +55,7 @@ is available and displays in interactive Zsh login shells when its binary exists
 | [boot-theme](mod_boot-theme.md) | Coffee splash, lock-cat disk prompt; key login artwork staged only | Pop!OS 24.04 |
 | [dev-tools](dev-tools.md) | Pinned mise tools, automatic installation and shell integration | Linux / macOS |
 | `memory-protection` | Per-machine tmux scope memory limits and user-manager OOM policy | Linux / systemd |
+| [llama-cpp](mod_llama-cpp.md) | Local inference runtime, browser chat UI and OpenAI-compatible API | Linux x86_64 / systemd |
 | [dictation](mod_dictation.md) | On-device streaming speech to clipboard; optional desktop shortcut | Linux / systemd |
 
 Platform labels describe intended scope, not cross-platform validation.
@@ -76,7 +77,8 @@ and directories `0755`; `private_` attributes remove group/other access.
 - `fonts` needs `de-cosmic` for COSMIC font preferences; Fontconfig settings stand alone.
 - `de-cosmic` requires ImageMagick for hostname-colored wallpaper generation; install it manually before applying.
 - `memory-protection` requires `data.tmuxMemory.high`, `.max`, and `.swap`; it limits matching tmux scopes, not their creation, and sets `DefaultOOMPolicy=continue` for the user manager.
-- Most modules configure existing tools. `fonts` installs dependencies; Linux `keyboard-remapping` and `boot-theme` install system configuration through sudo.
+- `llama-cpp` installs a pinned Vulkan runtime and an opt-in user service; provide a GGUF model separately. Its service and `memory-protection` own separate systemd paths and can be selected independently.
+- Most modules configure existing tools. `fonts`, `dev-tools` and `dictation` install their runtimes or dependencies; Linux `keyboard-remapping` and `boot-theme` install system configuration through sudo.
 - Disabling a module stops management. It does not remove applied files, packages, or system changes.
 
 Selection: `chezmoi edit-config`. Review: `chezmoi diff`. Apply: `chezmoi apply`.

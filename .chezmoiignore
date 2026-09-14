@@ -23,6 +23,10 @@ requirements-dev.txt
 {{ end }}
 {{ end }}
 
+{{ if not (or (has "memory-protection" $enabled) (has "llama-cpp" $enabled)) }}
+.config/systemd
+{{ end }}
+
 {{ if ne .chezmoi.os "linux" }}
 .config/fontconfig/conf.d/60-dotfiles-fonts.conf
 .config/cosmic
@@ -33,6 +37,8 @@ requirements-dev.txt
 .config/systemd
 .config/dictation
 .local/bin/wsp-toggle
+.config/llama.cpp
+.local/bin/llama-server
 {{ end }}
 {{ if ne .chezmoi.os "darwin" }}
 mac_keyboard_shortcuts.sh

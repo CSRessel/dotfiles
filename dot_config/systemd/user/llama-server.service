@@ -1,0 +1,10 @@
+[Unit]
+Description=Local llama.cpp inference server
+
+[Service]
+EnvironmentFile=%h/.config/llama.cpp/server.env
+ExecStart=%h/.local/share/llama.cpp/current/llama-server
+TimeoutStopSec=30
+
+[Install]
+WantedBy=default.target

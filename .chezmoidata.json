@@ -12,7 +12,13 @@
       ".config/keyboard-remapping"
     ],
     "memory-protection": [
-      ".config/systemd"
+      ".config/systemd/user/tmux-spawn-.scope.d",
+      ".config/systemd/user.conf.d/10-oom-policy.conf"
+    ],
+    "llama-cpp": [
+      ".config/llama.cpp",
+      ".config/systemd/user/llama-server.service",
+      ".local/bin/llama-server"
     ],
     "dictation": [
       ".config/dictation",

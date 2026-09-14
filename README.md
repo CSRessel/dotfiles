@@ -46,6 +46,9 @@ connections and model choices; JSONC comments and formatting are not preserved.
 Other [Nori Green theme snapshots](docs/assets/nori-green/README.md) are kept as
 backups for reuse in other apps.
 The optional [de-macos module](docs/mod_de-macos.md) also manages AeroSpace.
+The Linux-only [llama-cpp module](docs/mod_llama-cpp.md) installs a local inference
+runtime with a browser chat UI and OpenAI-compatible API; models stay local and
+the service starts only when requested.
 
 For initial checkout, compose desired modules with `chezmoi init` and then review the diff.
 Change later selections with `chezmoi edit-config`

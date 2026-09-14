@@ -5,6 +5,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -129,6 +130,48 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertNotIn(".config/cosmic", paths)
         rendered = self.cm("cat", str(self.home / ".config/dictation/config.json")).stdout
         self.assertIn('"medium-streaming"', rendered)
+
+    def test_llama_module_platform_and_memory_policy_boundaries(self) -> None:
+        service = ".config/systemd/user/llama-server.service"
+        policy = ".config/systemd/user.conf.d/10-oom-policy.conf"
+        for platform, modules in [
+            ("linux", []),
+            ("linux", ["llama-cpp"]),
+            ("linux", ["memory-protection"]),
+            ("linux", ["llama-cpp", "memory-protection"]),
+            ("darwin", ["llama-cpp", "memory-protection"]),
+        ]:
+            with self.subTest(platform=platform, modules=modules):
+                self.config.write_text(
+                    "[data]\nmodules = "
+                    + json.dumps(modules)
+                    + '\n[data.chezmoi]\nos = "'
+                    + platform
+                    + '"\n'
+                )
+                paths = self.cm("managed").stdout.splitlines()
+                enabled = platform == "linux" and "llama-cpp" in modules
+                for path in [service, ".config/llama.cpp/server.env", ".local/bin/llama-server"]:
+                    self.assertEqual(path in paths, enabled, path)
+                self.assertEqual(
+                    policy in paths, platform == "linux" and "memory-protection" in modules
+                )
+                hook = self.cm(
+                    "execute-template",
+                    "--file",
+                    str(ROOT / "run_onchange_after_install_llama_cpp.sh.tmpl"),
+                ).stdout
+                self.assertEqual(bool(hook.strip()), enabled)
+
+    def test_init_preserves_llama_machine_settings(self) -> None:
+        self.config.write_text(
+            '[data]\nemail = "test@example.com"\nmodules = ["llama-cpp"]\n'
+            '[data.llamaCpp]\nmodel = "/models/custom.gguf"\n'
+            'context = 8192\ndevice = "Vulkan1"\nport = 9090\n'
+        )
+        original = tomllib.loads(self.config.read_text())["data"]["llamaCpp"]
+        self.cm("init", "--no-tty")
+        self.assertEqual(tomllib.loads(self.config.read_text())["data"]["llamaCpp"], original)
 
     def test_memory_limits_are_explicit(self) -> None:
         self.config.write_text('[data]\nmodules = ["memory-protection"]\n')

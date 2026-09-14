@@ -1,0 +1,25 @@
+{{ if and (eq .chezmoi.os "linux") (has "llama-cpp" (get . "modules" | default (list))) -}}
+#!/bin/sh
+set -eu
+[ "$(uname -m)" = x86_64 ] || { echo 'llama-cpp currently supports Linux x86_64 only.' >&2; exit 1; }
+version=b10948
+checksum=6f3244ca5dd34427606b1c4eff7e5a28089c9690059bd12a41b5321a9c65f87f
+root="$HOME/.local/share/llama.cpp"
+runtime="$root/$version"
+if [ ! -x "$runtime/llama-server" ]; then
+    mkdir -p "$root"
+    temporary=$(mktemp -d "$root/.install.XXXXXX")
+    trap 'rm -rf "$temporary"' EXIT HUP INT TERM
+    curl --fail --location --retry 3 --output "$temporary/runtime.tar.gz" \
+        "https://github.com/ggml-org/llama.cpp/releases/download/$version/llama-$version-bin-ubuntu-vulkan-x64.tar.gz"
+    printf '%s  %s\n' "$checksum" "$temporary/runtime.tar.gz" | sha256sum --check --status
+    mkdir "$temporary/runtime"
+    tar -xzf "$temporary/runtime.tar.gz" --strip-components=1 -C "$temporary/runtime"
+    "$temporary/runtime/llama-server" --version
+    mv -T "$temporary/runtime" "$runtime"
+fi
+ln -sfn "$version" "$root/current"
+mkdir -p "$root/models"
+systemctl --user daemon-reload
+printf '%s\n' 'llama.cpp installed. Set your model path, then: systemctl --user start llama-server'
+{{ end -}}
