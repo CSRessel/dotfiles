@@ -17,34 +17,20 @@ wsp = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(wsp)
 
 
-class Model:
-    def __init__(self):
-        self.samples = 0
-        self.stopped = False
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        pass
-
-    def start(self):
-        pass
-
-    def add_audio(self, samples, rate):
-        self.samples += len(samples)
-
-    def stop(self):
-        self.stopped = True
-        return self.update_transcription()
-
-    def update_transcription(self):
-        return SimpleNamespace(lines=[SimpleNamespace(text="Test transcript.")])
-
-
 class DictationTest(unittest.TestCase):
     def exercise_recording(self, stop_signal):
-        model = Model()
+        transcriptions = []
+
+        def transcribe(path):
+            import wave
+
+            with wave.open(str(path)) as audio:
+                self.assertEqual(audio.getframerate(), 16000)
+                self.assertEqual(audio.getsampwidth(), 2)
+                self.assertGreater(audio.getnframes(), 0)
+            transcriptions.append(path)
+            return "Test transcript."
+
         children = []
         real_popen = subprocess.Popen
         # A fake recorder emits PCM until signalled. No microphone is opened.
@@ -69,7 +55,8 @@ while True:
         handlers = {s: signal.getsignal(s) for s in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT)}
         try:
             with (
-                patch.object(wsp, "engine", return_value=model),
+                patch.object(wsp, "engine", return_value=[]),
+                patch.object(wsp, "transcribe", side_effect=transcribe),
                 patch.object(wsp, "config", return_value={"max_seconds": 5}),
                 patch.object(wsp.subprocess, "Popen", side_effect=spawn),
                 patch.object(wsp, "notify", side_effect=notify),
@@ -77,21 +64,55 @@ while True:
             ):
                 wsp.record()
                 self.assertTrue(all(p.poll() is not None for p in children))
-                return model, copied.call_args_list
+                self.assertTrue(all(not path.exists() for path in transcriptions))
+                return transcriptions, copied.call_args_list
         finally:
             for s, handler in handlers.items():
                 signal.signal(s, handler)
 
     def test_stop_finalizes_and_copies(self):
-        model, copies = self.exercise_recording(signal.SIGUSR1)
-        self.assertTrue(model.stopped)
-        self.assertGreater(model.samples, 0)
+        transcriptions, copies = self.exercise_recording(signal.SIGUSR1)
+        self.assertEqual(len(transcriptions), 1)
         self.assertEqual(copies[0].args, ("Test transcript.",))
 
     def test_cancel_reaps_recorder_without_copy(self):
-        model, copies = self.exercise_recording(signal.SIGTERM)
-        self.assertFalse(model.stopped)
+        transcriptions, copies = self.exercise_recording(signal.SIGTERM)
+        self.assertEqual(transcriptions, [])
         self.assertEqual(copies, [])
+
+    def test_transcribe_uses_whisper_and_normalizes_output(self):
+        command = ["/existing/whisper-cli", "-m", "/existing/ggml-base.en.bin", "-nt", "-np"]
+        with (
+            patch.object(wsp, "engine", return_value=command),
+            patch.object(
+                wsp.subprocess,
+                "run",
+                return_value=SimpleNamespace(stdout="  First sentence.\n Second sentence.  "),
+            ) as run,
+        ):
+            self.assertEqual(wsp.transcribe("input.wav"), "First sentence. Second sentence.")
+            self.assertEqual(run.call_args.args[0], command + ["-f", "input.wav"])
+            self.assertTrue(run.call_args.kwargs["check"])
+
+    def test_whisper_failure_is_propagated(self):
+        with (
+            patch.object(wsp, "engine", return_value=["whisper-cli"]),
+            patch.object(wsp.subprocess, "run", side_effect=subprocess.CalledProcessError(1, [])),
+        ):
+            with self.assertRaises(subprocess.CalledProcessError):
+                wsp.transcribe("input.wav")
+
+    def test_missing_installation_has_actionable_error(self):
+        with patch.object(
+            wsp,
+            "config",
+            return_value={
+                "binary": "/nonexistent/whisper-cli",
+                "model": "/nonexistent/model.bin",
+            },
+        ):
+            with self.assertRaisesRegex(RuntimeError, "set dictation.binary"):
+                wsp.setup()
 
     def test_toggle_stops_only_our_service_main_process(self):
         with (

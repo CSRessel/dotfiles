@@ -1,5 +1,6 @@
 """Exercise module boundaries and recoverable deletion without touching the real home."""
 
+import hashlib
 import json
 import os
 import shutil
@@ -129,7 +130,101 @@ class BaseSettingsTest(unittest.TestCase):
         self.assertIn(".config/dictation/wsp.py", paths)
         self.assertNotIn(".config/cosmic", paths)
         rendered = self.cm("cat", str(self.home / ".config/dictation/config.json")).stdout
-        self.assertIn('"medium-streaming"', rendered)
+        self.assertIn("ggml-base.en.bin", rendered)
+        self.assertIn(".local/share/wsp/whisper.cpp/build/bin/whisper-cli", rendered)
+
+    def test_dictation_installer_provisions_and_reuses_installation(self) -> None:
+        self.config.write_text('[data]\nmodules = ["dictation"]\n')
+        template = (ROOT / "run_onchange_after_install_dictation.sh.tmpl").read_text()
+        script = self.cm("execute-template", template).stdout
+        subprocess.run(["sh", "-n"], input=script, text=True, check=True)
+        script = script.replace(
+            "a03779c86df3323075f5e796cb2ce5029f00ec8869eee3fdfb897afe36c6d002",
+            hashlib.sha256(b"model").hexdigest(),
+        )
+        fake_bin = self.home / "fake-bin"
+        fake_bin.mkdir()
+        log = self.home / "commands.jsonl"
+        stub = r"""#!/usr/bin/python3
+import json, os, pathlib, sys
+name = pathlib.Path(sys.argv[0]).name
+args = sys.argv[1:]
+with open(os.environ['COMMAND_LOG'], 'a') as out:
+    out.write(json.dumps([name] + args) + '\n')
+if name == 'dpkg-query':
+    if os.environ.get('MISSING_PACKAGES'):
+        sys.exit(1)
+    print('install ok installed')
+elif name == 'git':
+    if args[0] == 'clone':
+        pathlib.Path(args[-1]).mkdir()
+    elif 'rev-parse' in args:
+        print('927cfce34f31707e17f2bff35c349632fb9e2c3a')
+elif name == 'curl':
+    pathlib.Path(args[args.index('--output') + 1]).write_bytes(b'model')
+    if os.environ.get('FAIL_DOWNLOAD'):
+        sys.exit(22)
+"""
+        # All external side effects are stubbed; shell filesystem operations run
+        # in the disposable home so retry and download atomicity are exercised.
+        for name in (
+            "git",
+            "cmake",
+            "curl",
+            "python3",
+            "parecord",
+            "systemd-run",
+            "busctl",
+            "wl-copy",
+            "xclip",
+            "apt-get",
+            "dpkg-query",
+            "sudo",
+            "c++",
+        ):
+            tool = fake_bin / name
+            tool.write_text(stub)
+            tool.chmod(0o755)
+        env = dict(self.env, PATH=f"{fake_bin}:{self.env['PATH']}", COMMAND_LOG=str(log))
+        failed = subprocess.run(
+            ["sh"],
+            input=script,
+            text=True,
+            env=dict(env, FAIL_DOWNLOAD="1", MISSING_PACKAGES="1"),
+            capture_output=True,
+        )
+        self.assertNotEqual(failed.returncode, 0)
+        model = self.home / ".local/share/wsp/models/ggml-base.en.bin"
+        self.assertFalse(model.exists())
+        self.assertEqual(list(model.parent.iterdir()), [])
+        for _ in range(2):
+            result = subprocess.run(["sh"], input=script, text=True, env=env, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        commands = [json.loads(line) for line in log.read_text().splitlines()]
+        self.assertEqual(sum(c[:2] == ["git", "clone"] for c in commands), 1)
+        self.assertEqual(sum(c[0] == "curl" for c in commands), 2)
+        self.assertTrue(any("-DGGML_VULKAN=ON" in c for c in commands))
+        self.assertTrue(any(c[0] == "python3" and c[-1] == "setup" for c in commands))
+        self.assertTrue(
+            any(c[:3] == ["sudo", "apt-get", "install"] and "spirv-headers" in c for c in commands)
+        )
+        self.assertEqual(model.read_bytes(), b"model")
+
+    def test_dictation_installer_respects_cpu_and_custom_paths(self) -> None:
+        template = (ROOT / "run_onchange_after_install_dictation.sh.tmpl").read_text()
+        self.config.write_text(
+            '[data]\nmodules = ["dictation"]\n[data.dictation]\nvulkan = false\n'
+        )
+        script = self.cm("execute-template", template).stdout
+        self.assertIn("-DGGML_VULKAN=OFF", script)
+        self.assertNotIn("libvulkan-dev", script)
+        self.config.write_text(
+            self.config.read_text() + 'binary = "/custom/whisper"\nmodel = "/custom/model"\n'
+        )
+        script = self.cm("execute-template", template).stdout
+        self.assertNotIn("git clone", script)
+        self.assertNotIn("curl --fail", script)
+        self.assertIn('wsp.py" setup', script)
 
     def test_llama_module_platform_and_memory_policy_boundaries(self) -> None:
         service = ".config/systemd/user/llama-server.service"

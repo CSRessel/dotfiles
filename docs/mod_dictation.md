@@ -1,10 +1,10 @@
 # Dictation
 
 The `dictation` module provides `wsp-toggle`: run once to record, again to finish
-and copy the transcript. It uses Moonshine Voice 0.1.5 and the English Medium
-Streaming model by default. Recognition runs locally on the CPU while you speak;
-it does not require a cloud account or upload audio. Model files download during
-setup and stay outside the dotfiles repository.
+and copy the transcript. It builds whisper.cpp with Vulkan acceleration and
+`ggml-base.en.bin` model. Audio is recorded first, then transcribed locally when
+you stop. This favors the previous dictation quality over streaming speed.
+No cloud account is required and no audio is uploaded.
 
 The old `local-scripts` module is retired. `add_iso_prefixes.sh` and
 `open_github.sh` are always installed by the base; the Docker prune helper is
@@ -14,21 +14,26 @@ removed. Remove `"local-scripts"` from old machine selections and add
 ## Setup
 
 Add `"dictation"` to `[data].modules` with `chezmoi edit-config`, then run
-`chezmoi apply`. The installer requires `uv` (available from `dev-tools`), Python 3,
-`parecord`, a systemd user session, and a clipboard tool. On Pop!OS:
+`chezmoi apply`. On Pop!OS/Ubuntu, the module installs missing system packages
+with `sudo apt-get`, clones [whisper.cpp](https://github.com/ggml-org/whisper.cpp)
+at pinned release **v1.9.4**, builds the CLI, and downloads the `base.en` model.
+The first apply needs network access and may ask for your sudo password.
 
-```sh
-sudo apt install pulseaudio-utils wl-clipboard
-```
+Everything lives under `~/.local/share/wsp`:
 
-Use `xclip` instead of `wl-clipboard` on X11. On apt-based systems, the installer
-can download and unpack a missing `wl-clipboard` under `~/.local/share/wsp/clipboard`
-without sudo; this private copy is used only by `wsp-toggle`.
-The installer creates an isolated
-runtime in `~/.local/share/wsp/venv`, downloads the model into Moonshine's user
-cache, and records the resolved model path in `~/.local/share/wsp/model.json`.
-Recording uses that local path without a network lookup. If the cache is cleared,
-run `wsp-toggle setup` to restore it.
+- Source: `~/.local/share/wsp/whisper.cpp`
+- Executable: `~/.local/share/wsp/whisper.cpp/build/bin/whisper-cli`
+- Model: `~/.local/share/wsp/models/ggml-base.en.bin`
+
+Builds use two jobs. Subsequent installer runs reuse the checkout, incremental
+build, and downloaded model. Downloads are checksum-verified before installation.
+Local source edits cause setup to stop rather than overwrite them.
+
+On other Linux distributions, install Python 3, PulseAudio utilities (`parecord`),
+systemd, Git, CMake, a C++ toolchain, curl, Vulkan headers/loader, `glslc`, SPIR-V headers, GPU Vulkan
+drivers, and `wl-clipboard` (Wayland) or `xclip` (X11) before applying.
+Set `vulkan = false` under `[data.dictation]` for a CPU-only build.
+Moonshine and its Python environment are no longer used.
 
 ```sh
 wsp-toggle                 # Start; wait for the Recording notification
@@ -38,8 +43,9 @@ wsp-toggle status
 wsp-toggle transcribe /path/to/mono.wav  # File test; prints text, leaves clipboard alone
 ```
 
-Audio is streamed in memory, with a five-minute recording limit. The model is
-released after each recording. A transient systemd unit owns the recorder, so
+Audio is stored in a private temporary WAV file, with a five-minute recording
+limit. The file is deleted after completion, cancellation, or a handled error.
+The model is released after each transcription. A transient systemd unit owns the recorder, so
 there are no shared `/tmp` audio files or stale PID files. A separate transient
 clipboard owner keeps the result available after recording ends. Notifications
 show loading, recording, finishing, and completion state, not transcript contents.
@@ -72,39 +78,24 @@ On older GNOME-based Pop!OS, add `/home/YOUR_USER/.local/bin/wsp-toggle` (using
 your actual home path) under **Settings → Keyboard → View and Customize Shortcuts
 → Custom Shortcuts**, with `Super+Shift+D` if unused.
 
-## Models and performance
+## Model configuration
 
 Optional machine-specific settings in `chezmoi edit-config`:
 
 ```toml
 [data.dictation]
 language = "en"
-model = "medium-streaming"
+# Optional: use an existing installation instead of the managed defaults.
+# binary = "~/my-whisper/build/bin/whisper-cli"
+# model = "~/my-models/ggml-base.en.bin"
+vulkan = true
 ```
 
-`medium-streaming` prioritizes accuracy; choose `small-streaming` or
-`tiny-streaming` for lower compute use. Only
-language/model combinations published by Moonshine are supported. After changing
-these settings, `chezmoi apply` downloads the selected model. No old Whisper build
-paths or shell aliases are needed.
-
-Moonshine's [model catalog](https://moonshine-voice.readthedocs.io/en/latest/models/available-models/)
-reports average English word error rates of 6.65% for Medium, 7.84% for Small,
-and 12.00% for Tiny on its floating-point reference models. This installation uses
-quantized models, whose accuracy differs; those figures are not a guarantee for
-personal dictation.
-
-On the Intel Core Ultra 5 325, a live-paced test of the 11-second whisper.cpp JFK
-sample fed 100ms audio chunks at their actual arrival times. Tiny finished about
-0.40s after the audio ended; Medium finished about 1.19s after it ended, about
-0.79s extra. Model loading took 0.84s and 0.48s respectively in that run (cache
-state affects startup). Medium correctly recognized “Americans” where Tiny
-produced “America”. This single sample checks responsiveness, not overall
-accuracy. Longer phrases and machine load can increase the delay.
-
-Partial-line decoding is disabled because only the final clipboard result is
-needed. This avoids repeatedly decoding text that will be replaced. See the
-[streaming API](https://moonshine-voice.readthedocs.io/en/latest/using/transcription/).
+`model` is a GGML model file path, not a Moonshine model name. Remove any old
+`model = "medium-streaming"` override to use the restored default. Run
+`chezmoi apply` after changing settings. A custom `binary` skips the managed build;
+a custom `model` skips the download. `wsp-toggle setup` only checks the paths.
+Transcription begins after stopping; allow time for whisper.cpp to finish.
 
 Disabling the module stops chezmoi management; it does not uninstall the runtime
 or remove an existing desktop shortcut. Cancel recording and remove the shortcut

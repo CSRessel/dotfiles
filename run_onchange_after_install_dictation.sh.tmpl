@@ -1,31 +1,83 @@
 {{ if and (eq .chezmoi.os "linux") (has "dictation" (get . "modules" | default (list))) -}}
+{{ $dictation := get . "dictation" | default dict -}}
 #!/bin/sh
 # Config fingerprint: {{ includeTemplate "dot_config/dictation/config.json.tmpl" . | sha256sum }}
 set -eu
-command -v uv >/dev/null || { echo 'dictation requires uv (provided by dev-tools).' >&2; exit 1; }
-command -v parecord >/dev/null || { echo 'dictation requires parecord (pulseaudio-utils on Pop!OS).' >&2; exit 1; }
-command -v systemd-run >/dev/null || { echo 'dictation requires a systemd user session.' >&2; exit 1; }
-command -v busctl >/dev/null || { echo 'dictation requires busctl (provided by systemd) for notifications.' >&2; exit 1; }
-PATH="$HOME/.local/share/wsp/clipboard/usr/bin:$PATH"
-export PATH
-# Pop!OS/Ubuntu: unpack the distro clipboard utility locally when absent.
-# This avoids requiring sudo merely to enable this user-level module.
-if ! command -v wl-copy >/dev/null && command -v apt-get >/dev/null && command -v dpkg-deb >/dev/null; then
-    temporary=$(mktemp -d)
-    trap 'rm -rf "$temporary"' EXIT HUP INT TERM
-    (cd "$temporary" && apt-get download wl-clipboard)
-    for package in "$temporary"/*.deb; do
-        dpkg-deb --extract "$package" "$HOME/.local/share/wsp/clipboard"
+
+# Pop!OS/Ubuntu: provision the dependencies on a fresh machine.
+packages='python3 pulseaudio-utils wl-clipboard xclip'
+{{ if not (get $dictation "binary") -}}
+packages="$packages git cmake build-essential"
+{{ if or (not (hasKey $dictation "vulkan")) (get $dictation "vulkan") -}}
+packages="$packages libvulkan-dev glslc spirv-headers mesa-vulkan-drivers"
+{{ end -}}
+{{ end -}}
+{{ if not (get $dictation "model") -}}
+packages="$packages curl"
+{{ end -}}
+if command -v apt-get >/dev/null && command -v dpkg-query >/dev/null; then
+    missing=''
+    for package in $packages; do
+        if [ "$(dpkg-query -W -f='${Status}' "$package" 2>/dev/null || true)" != 'install ok installed' ]; then
+            missing="$missing $package"
+        fi
     done
+    if [ -n "$missing" ]; then
+        sudo apt-get update
+        # Intentional splitting of the fixed package names above.
+        # shellcheck disable=SC2086
+        sudo apt-get install -y $missing
+    fi
 fi
+for tool in python3 parecord systemd-run busctl; do
+    command -v "$tool" >/dev/null || { echo "dictation requires $tool; install the dependencies in docs/mod_dictation.md." >&2; exit 1; }
+done
 if [ -n "${WAYLAND_DISPLAY:-}" ]; then
     command -v wl-copy >/dev/null || { echo 'dictation requires wl-clipboard on Wayland.' >&2; exit 1; }
 elif ! command -v xclip >/dev/null && ! command -v wl-copy >/dev/null; then
     echo 'dictation requires wl-clipboard (Wayland) or xclip (X11).' >&2
     exit 1
 fi
-runtime="$HOME/.local/share/wsp/venv"
-[ -x "$runtime/bin/python" ] || uv venv --python /usr/bin/python3 "$runtime"
-uv pip install --python "$runtime/bin/python" 'moonshine-voice==0.1.5'
-"$runtime/bin/python" "$HOME/.config/dictation/wsp.py" setup
+
+root="$HOME/.local/share/wsp"
+mkdir -p "$root"
+{{ if not (get $dictation "binary") -}}
+# Keep source, build output and models out of the dotfiles checkout.
+version=v1.9.4
+revision=927cfce34f31707e17f2bff35c349632fb9e2c3a
+source="$root/whisper.cpp"
+for tool in git cmake c++; do
+    command -v "$tool" >/dev/null || { echo "dictation requires $tool to build whisper.cpp." >&2; exit 1; }
+done
+if [ ! -d "$source" ]; then
+    git clone --depth 1 --branch "$version" https://github.com/ggml-org/whisper.cpp.git "$source"
+fi
+if [ -n "$(git -C "$source" status --porcelain --untracked-files=no)" ]; then
+    echo "dictation: $source has local changes; save them before rebuilding." >&2
+    exit 1
+fi
+if [ "$(git -C "$source" rev-parse HEAD)" != "$revision" ]; then
+    git -C "$source" fetch --depth 1 origin "$revision"
+    git -C "$source" checkout --detach "$revision"
+fi
+cmake -S "$source" -B "$source/build" -DCMAKE_BUILD_TYPE=Release \
+    -DGGML_VULKAN={{ if or (not (hasKey $dictation "vulkan")) (get $dictation "vulkan") }}ON{{ else }}OFF{{ end }} -DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_IS_DEV=OFF
+# Bound parallelism so first-time setup does not exhaust a small machine.
+cmake --build "$source/build" --config Release --target whisper-cli --parallel 2
+{{ end -}}
+{{ if not (get $dictation "model") -}}
+model="$root/models/ggml-base.en.bin"
+if [ ! -s "$model" ]; then
+    command -v curl >/dev/null || { echo 'dictation requires curl to download the model.' >&2; exit 1; }
+    mkdir -p "$root/models"
+    temporary=$(mktemp "$root/models/.base.en.XXXXXX")
+    trap 'rm -f "$temporary"' EXIT HUP INT TERM
+    curl --fail --location --retry 3 --output "$temporary" \
+        https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+    printf '%s  %s\n' a03779c86df3323075f5e796cb2ce5029f00ec8869eee3fdfb897afe36c6d002 "$temporary" | sha256sum -c -
+    mv "$temporary" "$model"
+    trap - EXIT HUP INT TERM
+fi
+{{ end -}}
+python3 "$HOME/.config/dictation/wsp.py" setup
 {{ end -}}

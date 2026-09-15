@@ -3,9 +3,4 @@
 set -eu
 PATH="$HOME/.local/share/wsp/clipboard/usr/bin:$PATH"
 export PATH
-python="$HOME/.local/share/wsp/venv/bin/python"
-if [ ! -x "$python" ]; then
-    echo 'wsp-toggle: enable the dictation module and run chezmoi apply first.' >&2
-    exit 1
-fi
-exec "$python" "$HOME/.config/dictation/wsp.py" "$@"
+exec python3 "$HOME/.config/dictation/wsp.py" "$@"

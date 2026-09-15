@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Local streaming dictation; systemd owns recording processes, never PID files."""
+"""Local whisper.cpp dictation; systemd owns recording processes, never PID files."""
 
 import argparse
-import array
 import base64
 import json
 import os
@@ -11,12 +10,13 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
+import wave
 from pathlib import Path
 
 UNIT = "wsp-dictation.service"
 CONFIG = Path.home() / ".config/dictation/config.json"
-MODEL = Path.home() / ".local/share/wsp/model.json"
 
 
 def notify(message):
@@ -91,39 +91,21 @@ def config():
     return json.loads(CONFIG.read_text())
 
 
-def setup():
-    from moonshine_voice import ModelArch
-    from moonshine_voice.download import get_model_for_language
-
-    cfg = config()
-    arch = ModelArch[cfg["model"].replace("-", "_").upper()]
-    path, arch = get_model_for_language(cfg["language"], arch)
-    MODEL.parent.mkdir(parents=True, exist_ok=True)
-    temporary = MODEL.with_suffix(".tmp")
-    temporary.write_text(
-        json.dumps(
-            {"path": path, "arch": arch.value, "language": cfg["language"], "model": cfg["model"]}
-        )
-    )
-    temporary.replace(MODEL)
-    print(f"Dictation ready: {cfg['language']} / {cfg['model']}")
-
-
 def engine():
-    from moonshine_voice import ModelArch, Transcriber
-
-    saved = json.loads(MODEL.read_text())
     cfg = config()
-    if any(saved[key] != cfg[key] for key in ("language", "model")):
-        raise RuntimeError("Model selection changed; run wsp-toggle setup first.")
-    # No network lookup at recording time. Two-second updates reduce repeated
-    # decoding; stop() still immediately finalizes the last partial phrase.
-    return Transcriber(
-        saved["path"],
-        ModelArch(saved["arch"]),
-        update_interval=2,
-        options={"return_audio_data": "false", "decode_incomplete_lines": "false"},
-    )
+    binary = Path(cfg["binary"]).expanduser()
+    model = Path(cfg["model"]).expanduser()
+    if not binary.is_file() or not os.access(binary, os.X_OK):
+        raise RuntimeError(f"whisper.cpp executable missing: {binary}; set dictation.binary.")
+    if not model.is_file():
+        raise RuntimeError(f"Whisper model missing: {model}; set dictation.model.")
+    return [str(binary), "-m", str(model), "-l", cfg["language"], "-nt", "-np"]
+
+
+def setup():
+    command = engine()
+    subprocess.run([command[0], "--help"], check=True, capture_output=True, timeout=30)
+    print(f"Dictation ready: whisper.cpp / {config()['model']}")
 
 
 def copy_text(text):
@@ -174,17 +156,10 @@ def session_environment():
 
 
 def transcribe(path):
-    from moonshine_voice import load_wav_file
-
-    audio, rate = load_wav_file(path)
-    with engine() as model:
-        model.start()
-        for offset in range(0, len(audio), rate // 10):
-            model.add_audio(audio[offset : offset + rate // 10], rate)
-        transcript = model.stop()
-        if transcript is None:
-            raise RuntimeError("Speech recognition failed while finalizing.")
-        return " ".join(line.text.strip() for line in transcript.lines).strip()
+    result = subprocess.run(
+        engine() + ["-f", str(path)], capture_output=True, text=True, check=True
+    )
+    return " ".join(result.stdout.split()).strip()
 
 
 def record():
@@ -198,16 +173,18 @@ def record():
 
     for sig in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, request_stop)
-    notify("Loading speech model…")
-    with engine() as model:
+    engine()  # Validate the existing whisper.cpp installation before recording.
+    with tempfile.TemporaryDirectory(prefix="wsp-") as temporary:
         if stopping:
             return
-        model.start()
+        audio_path = Path(temporary) / "recording.wav"
+        audio = wave.open(str(audio_path), "wb")
+        audio.setparams((1, 2, 16000, 0, "NONE", "not compressed"))
         recorder = subprocess.Popen(
             [
                 "parecord",
                 "--raw",
-                "--format=float32le",
+                "--format=s16le",
                 "--rate=16000",
                 "--channels=1",
                 "--latency-msec=100",
@@ -244,23 +221,25 @@ def record():
                     notify("Recording. Run wsp-toggle again to finish and copy.")
                     received_audio = True
                 pending += chunk
-                complete = len(pending) // 4 * 4
+                complete = len(pending) // 2 * 2
                 if complete:
-                    samples = array.array("f", pending[:complete])
-                    if sys.byteorder != "little":
-                        samples.byteswap()
-                    model.add_audio(samples, 16000)
+                    audio.writeframesraw(pending[:complete])
                     pending = pending[complete:]
-            transcript = model.stop()
-            if transcript is None:
-                raise RuntimeError("Speech recognition failed while finalizing.")
-            text = " ".join(line.text.strip() for line in transcript.lines).strip()
+            recorder.wait(timeout=5)
+            if recorder.returncode not in (0, -signal.SIGINT):
+                raise RuntimeError(f"Recorder failed with exit code {recorder.returncode}.")
+            audio.close()  # Flush the WAV header before whisper.cpp reads it.
+            notify("Transcribing with whisper.cpp…")
+            text = transcribe(audio_path)
+            if cancelled:
+                return
             if text:
                 copy_text(text)
                 notify("Transcription copied. Paste it where you need it.")
             else:
                 notify("No speech detected; clipboard unchanged.")
         finally:
+            audio.close()
             selector.close()
             if recorder.poll() is None:
                 recorder.terminate()
@@ -294,7 +273,7 @@ def control(action):
             "--quiet",
             f"--unit={UNIT}",
             "--property=Type=exec",
-            "--property=RuntimeMaxSec=360",
+            "--property=RuntimeMaxSec=900",
             "--property=TimeoutStopSec=5",
             "--property=UMask=0077",
         ]

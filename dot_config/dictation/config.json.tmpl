@@ -1,6 +1,7 @@
 {{ $dictation := get . "dictation" | default dict -}}
 {
   "language": {{ get $dictation "language" | default "en" | toJson }},
-  "model": {{ get $dictation "model" | default "medium-streaming" | toJson }},
+  "binary": {{ get $dictation "binary" | default (printf "%s/.local/share/wsp/whisper.cpp/build/bin/whisper-cli" .chezmoi.homeDir) | toJson }},
+  "model": {{ get $dictation "model" | default (printf "%s/.local/share/wsp/models/ggml-base.en.bin" .chezmoi.homeDir) | toJson }},
   "max_seconds": 300
 }
