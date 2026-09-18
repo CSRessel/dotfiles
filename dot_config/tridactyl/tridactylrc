@@ -48,3 +48,11 @@ blacklistadd 127.0.0.1:2718
 blacklistadd 127.0.0.1:1334
 
 set newtab about:blank
+
+" " Open text edits in Zed (Flatpak) instead of a terminal vim.
+" " --wait is required so Tridactyl can read the file back after the editor closes.
+set editorcmd flatpak run dev.zed.Zed --wait %f
+
+" " Trigger the external editor with <C-g> as well as the default <C-i>.
+bind --mode=insert <C-g> editor
+bind --mode=input <C-g> editor
