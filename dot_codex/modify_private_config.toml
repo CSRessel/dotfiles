@@ -44,7 +44,7 @@
         "filesystem" (dict $cache "write")
         "network" (dict "enabled" true)
       -}}
-{{-   $config = $config | deleteValueAtPath "sandbox_mode" -}}
+{{-   $config = $config | setValueAtPath "sandbox_mode" "danger-full-access" -}}
 {{-   $config = $config | setValueAtPath "default_permissions" "sccache-workspace" -}}
 {{-   $config = $config | setValueAtPath "permissions.sccache-workspace" $profile -}}
 {{-   $config = $config | setValueAtPath "features.use_linux_sandbox_bwrap" true -}}
