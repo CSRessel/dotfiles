@@ -49,9 +49,10 @@ blacklistadd 127.0.0.1:1334
 
 set newtab about:blank
 
-" " Open text edits in Zed (Flatpak) instead of a terminal vim.
-" " --wait is required so Tridactyl can read the file back after the editor closes.
-set editorcmd flatpak run dev.zed.Zed --wait %f
+" " Open text edits in Neovim inside a fresh Ghostty window.
+" " Single-instance is disabled so the command blocks until Neovim exits,
+" " which is when Tridactyl reads the file back into the page.
+set editorcmd ghostty --gtk-single-instance=false -e nvim %f
 
 " " Trigger the external editor with <C-g> as well as the default <C-i>.
 bind --mode=insert <C-g> editor
