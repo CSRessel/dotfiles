@@ -36,7 +36,10 @@ its cluster: the client must stay within one minor version of the server
 ([compatibility guidance](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)).
 
 Rustup's native Cargo proxies are refreshed when the mise-managed installer
-changes. Self-updates are disabled so mise owns the rustup version. After setup,
+changes. The [apply hook](../run_after_10_dev_tools.sh.tmpl) stages the installer
+as a regular binary copy; a symlink can leave Cargo proxies pointing into the
+temporary directory after cleanup on macOS.
+Self-updates are disabled so mise owns the rustup version. After setup,
 the githubgraph script builds the contribution graph if its executable is missing
 or its tracked source changes (with one follow-up run after initial creation).
 

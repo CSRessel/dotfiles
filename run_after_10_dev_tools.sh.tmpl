@@ -23,8 +23,15 @@ mise_env=$(mise env -s bash)
 eval "$mise_env"
 
 # Aqua exposes rustup; installer mode is selected by the rustup-init filename.
-if ! cmp -s "$(command -v rustup)" "${CARGO_HOME:-$HOME/.cargo}/bin/rustup"; then
-    ln -s "$(command -v rustup)" "$work/rustup-init"
+cargo_rustup="${CARGO_HOME:-$HOME/.cargo}/bin/rustup"
+if ! cmp -s "$(command -v rustup)" "$cargo_rustup"; then
+    # Copy the binary: rustup can preserve an installer symlink in CARGO_HOME,
+    # leaving every Cargo proxy broken when this temporary directory is removed.
+    cp "$(command -v rustup)" "$work/rustup-init"
+    # Repair links left by earlier symlink-based installer staging.
+    if [ -L "$cargo_rustup" ] && [ ! -e "$cargo_rustup" ]; then
+        unlink "$cargo_rustup"
+    fi
     quiet "$work/rustup-init" -y --no-modify-path --default-toolchain none
 fi
 quiet rustup set auto-self-update disable
