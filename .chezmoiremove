@@ -1,6 +1,5 @@
 # Retired personal helper.
 .local/bin/reclaim_docker_space.sh
-.claude/nori-statusline.sh
 
 {{ if and (eq .chezmoi.os "linux") (has "keyboard-remapping" (get . "modules" | default (list))) -}}
 # Staged rule moved into the keyboard-remapping module; the system rule stays put.
